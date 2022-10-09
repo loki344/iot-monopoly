@@ -13,7 +13,7 @@ func StartInternalEventBus() {
 func initChannels() {
 
 	//TODO external is simply to mock the rabbitMQ
-	channels := []string{"external", "internal"}
+	channels := []string{"external", "internal", "lapFinished"}
 	tr := bus.GetBus()
 	for _, channel := range channels {
 		tr.GetChannelManager().CreateChannel(channel)

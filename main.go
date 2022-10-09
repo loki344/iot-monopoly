@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"github.com/vmware/transport-go/bus"
 	"iot-monopoly/eventing"
+	"iot-monopoly/finance"
 	"iot-monopoly/game_master"
+	"iot-monopoly/movement"
 )
 
 func Init() {
 	eventing.ConnectToRabbitMQ()
 	eventing.StartInternalEventBus()
+	movement.Init()
+	finance.Init()
 	game_master.Init()
 }
 
@@ -38,4 +42,15 @@ func main() {
 		}
 		handler.Fire()
 	}
+	printGameState()
+}
+func printGameState() {
+
+	fmt.Println("-------------------------------------")
+	fmt.Println("Game State")
+	fmt.Println("Players:")
+	fmt.Println(game_master.Players)
+	fmt.Println("Fields:")
+	fmt.Println(game_master.Fields)
+	fmt.Println("-------------------------------------")
 }
