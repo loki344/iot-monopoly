@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/vmware/transport-go/bus"
 	"github.com/vmware/transport-go/model"
-	"iot-monopoly/game_master"
-	"iot-monopoly/movement"
+	"iot-monopoly/board"
+	"iot-monopoly/board/boardDomain"
 )
 
-func Init() {
+func StartEventbus() {
 
 	tr := bus.GetBus()
 	channel := "lapFinished"
@@ -19,9 +19,9 @@ func Init() {
 	}
 	sensorEventHandler.Handle(
 		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(movement.LapFinishedEvent)
+			lapFinishedEvent := msg.Payload.(boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
-			game_master.GetPlayer(lapFinishedEvent.PlayerId).Balance += 100
+			board.GetPlayer(lapFinishedEvent.PlayerId).Balance += 100
 		},
 		func(err error) {
 			fmt.Println(err)

@@ -6,7 +6,7 @@ import (
 )
 
 func StartInternalEventBus() {
-	fmt.Println("Starting eventbus")
+	fmt.Println("Starting internal eventbus")
 	initChannels()
 }
 

@@ -3,23 +3,33 @@ package main
 import (
 	"fmt"
 	"github.com/vmware/transport-go/bus"
+	"iot-monopoly/board"
+	"iot-monopoly/board/boardDomain"
 	"iot-monopoly/eventing"
 	"iot-monopoly/finance"
-	"iot-monopoly/game_master"
 	"iot-monopoly/movement"
 )
 
-func Init() {
-	eventing.ConnectToRabbitMQ()
+func StartGame(players []boardDomain.Player) {
+	eventing.StartExternalEventbus()
 	eventing.StartInternalEventBus()
-	movement.Init()
-	finance.Init()
-	game_master.Init()
+	movement.StartEventbus()
+	finance.StartEventbus()
+	board.InitBoard(nil, players)
+}
+
+func EndGame() {
+	eventing.CloseExternalEventbus()
+	eventing.CloseInternalEventbus()
+	movement.CloseEventbus()
+	finance.CloseEventbus()
+	board.ClearBoard()
 }
 
 //start with CompileDaemon -command="./iot-monopoly"
 func main() {
-	Init()
+	//TODO get player infos from board
+	StartGame([]boardDomain.Player{{1, 0, 1000}, {2, 0, 1000}})
 
 	//TODO remove later
 	fmt.Println("Sending external Events!!")
@@ -42,15 +52,15 @@ func main() {
 		}
 		handler.Fire()
 	}
-	printGameState()
+	PrintGameState()
 }
-func printGameState() {
+func PrintGameState() {
 
 	fmt.Println("-------------------------------------")
 	fmt.Println("Game State")
 	fmt.Println("Players:")
-	fmt.Println(game_master.Players)
+	fmt.Println(board.Players)
 	fmt.Println("Fields:")
-	fmt.Println(game_master.Fields)
+	fmt.Println(board.Fields)
 	fmt.Println("-------------------------------------")
 }
