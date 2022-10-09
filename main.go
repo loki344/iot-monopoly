@@ -19,7 +19,16 @@ func main() {
 
 	//TODO remove later
 	fmt.Println("Sending external Events!!")
-	events := []eventing.SensorEvent{{1, 5}}
+	events := []eventing.SensorEvent{
+		{1, 5},
+		{2, 3},
+		{1, 9},
+		{2, 7},
+		{1, 15},
+		{2, 12},
+		{1, 3},
+		{2, 1},
+	}
 	ts := bus.GetBus()
 	for _, event := range events {
 		handler, err := ts.RequestOnce("external", event)

@@ -9,6 +9,6 @@ func ConnectToRabbitMQ() {
 }
 
 type SensorEvent struct {
-	PlayerId int
-	FieldId  int
+	PlayerId   int
+	FieldIndex int
 }
