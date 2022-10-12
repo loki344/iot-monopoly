@@ -2,11 +2,10 @@ package eventing
 
 import (
 	"fmt"
-	"github.com/vmware/transport-go/bus"
 	"github.com/vmware/transport-go/model"
 )
 
-func StartExternalEventbus() {
+func StartExternalEventHandler() {
 
 	// TODO connect to rabbitMQ
 
@@ -15,13 +14,10 @@ func StartExternalEventbus() {
 }
 func initExternalEventbus() {
 
-	tr := bus.GetBus()
-	channel := "external"
+	channel := EXTERNAL
 
-	sensorEventHandler, err := tr.ListenRequestStream(channel)
-	if err != nil {
-		fmt.Println(err)
-	}
+	sensorEventHandler := ListenRequestStream(channel)
+
 	sensorEventHandler.Handle(
 		func(msg *model.Message) {
 			fmt.Println("received message on EXTERNAL channel")
@@ -34,6 +30,6 @@ func initExternalEventbus() {
 }
 
 type SensorEvent struct {
-	PlayerId   int
+	PlayerId   string
 	FieldIndex int
 }

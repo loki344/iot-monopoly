@@ -2,25 +2,21 @@ package movement
 
 import (
 	"fmt"
-	"github.com/vmware/transport-go/bus"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/board"
 	"iot-monopoly/eventing"
 )
 
-func StartEventbus() {
+func StartEventHandler() {
 
-	tr := bus.GetBus()
-	channel := "external"
+	channel := eventing.EXTERNAL
 
-	sensorEventHandler, err := tr.ListenRequestStream(channel)
-	if err != nil {
-		fmt.Println(err)
-	}
+	sensorEventHandler := eventing.ListenRequestStream(channel)
+
 	sensorEventHandler.Handle(
 		func(msg *model.Message) {
 			sensorEvent := msg.Payload.(eventing.SensorEvent)
-			board.GetPlayer(sensorEvent.PlayerId).MovePlayer(sensorEvent.FieldIndex)
+			board.MovePlayer(sensorEvent.PlayerId, sensorEvent.FieldIndex)
 		},
 		func(err error) {
 			fmt.Println(err)

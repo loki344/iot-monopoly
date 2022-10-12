@@ -2,22 +2,19 @@ package finance
 
 import (
 	"fmt"
-	"github.com/vmware/transport-go/bus"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/board"
 	"iot-monopoly/board/boardDomain"
+	"iot-monopoly/eventing"
 )
 
-func StartEventbus() {
+func StartEventHandler() {
 
-	tr := bus.GetBus()
-	channel := "lapFinished"
+	channel := eventing.LAP_FINISHED
 
-	sensorEventHandler, err := tr.ListenRequestStream(channel)
-	if err != nil {
-		fmt.Println(err)
-	}
-	sensorEventHandler.Handle(
+	lapFinishedEventhandler := eventing.ListenRequestStream(channel)
+
+	lapFinishedEventhandler.Handle(
 		func(msg *model.Message) {
 			lapFinishedEvent := msg.Payload.(boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")

@@ -1,4 +1,4 @@
-package finance
+package movement
 
 import (
 	"github.com/google/uuid"
@@ -9,12 +9,12 @@ import (
 	"testing"
 )
 
-func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
+func TestSensorEventsMovePlayer(t *testing.T) {
 
 	StartEventHandler()
 
 	id := uuid.New().String()
 	board.StartGame([]boardDomain.Player{{id, 0, 1000}})
-	eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.LapFinishedEvent{id})
-	assert.Equal(t, 1100, board.GetPlayer(id).Balance)
+	eventing.FireEvent(eventing.EXTERNAL, eventing.SensorEvent{id, 3})
+	assert.Equal(t, 3, board.GetPlayer(id).Position)
 }

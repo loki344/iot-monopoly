@@ -5,17 +5,49 @@ import (
 	"github.com/vmware/transport-go/bus"
 )
 
-func StartInternalEventBus() {
-	fmt.Println("Starting internal eventbus")
-	initChannels()
+type ChannelName string
+
+const (
+	EXTERNAL     ChannelName = "external"
+	INTERNAL     ChannelName = "internal"
+	LAP_FINISHED ChannelName = "lapFinished"
+)
+
+func ListenRequestStream(channelName ChannelName) bus.MessageHandler {
+
+	createChannelIfNotExists(channelName)
+	tr := bus.GetBus()
+
+	eventHandler, err := tr.ListenRequestStream(string(channelName))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return eventHandler
 }
 
-func initChannels() {
+func FireEvent(channelName ChannelName, event any) {
 
-	//TODO external is simply to mock the rabbitMQ
-	channels := []string{"external", "internal", "lapFinished"}
+	name := string(channelName)
+	createChannelIfNotExists(channelName)
 	tr := bus.GetBus()
-	for _, channel := range channels {
-		tr.GetChannelManager().CreateChannel(channel)
+	handler, err := tr.RequestOnce(name, event)
+	if err != nil {
+		//TODO something went wrong
+		fmt.Println(err)
+	}
+	err = handler.Fire()
+	if err != nil {
+		//TODO something went wrong
+		fmt.Println(err)
+	}
+}
+
+func createChannelIfNotExists(name ChannelName) {
+	tr := bus.GetBus()
+
+	if !tr.GetChannelManager().CheckChannelExists(string(name)) {
+		fmt.Printf("Channel %s not found, creating it\n", name)
+		tr.GetChannelManager().CreateChannel(string(name))
 	}
 }

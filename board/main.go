@@ -1,8 +1,10 @@
 package board
 
 import (
+	"errors"
 	"fmt"
 	"iot-monopoly/board/boardDomain"
+	"iot-monopoly/eventing"
 )
 
 var Players []boardDomain.Player
@@ -33,7 +35,7 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.EventField{"Gehe ins gefaengnis", func(player *boardDomain.Player) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
-		//TODO trigger movement of player
+		MovePlayer(player.Id, 4)
 	}},
 	boardDomain.PropertyField{"Property blue 1", 100, nil},
 	boardDomain.EventField{"Ereignisfeld 3", func(player *boardDomain.Player) {
@@ -43,17 +45,43 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.PropertyField{"Property blue 2", 100, nil},
 }
 
+func StartGame(players []boardDomain.Player) {
+
+	InitBoard(nil, players)
+}
+
 func InitBoard(fields []boardDomain.Field, players []boardDomain.Player) {
 
 	if fields != nil {
 		Fields = fields
 	} else {
+		fmt.Println("Initializing default fields")
 		Fields = DefaultFields
 	}
 	Players = players
 }
 
-func GetPlayer(playerId int) *boardDomain.Player {
+func MovePlayer(playerId string, fieldIndex int) error {
+
+	if fieldIndex > len(Fields)-1 || fieldIndex < 0 {
+		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldIndex, len(Fields)))
+	}
+
+	player := GetPlayer(playerId)
+
+	//TODO get rid of magic numbers 10!!
+	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {
+		fmt.Println("Player completed a lap, creating lap finished")
+		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.LapFinishedEvent{player.Id})
+	}
+
+	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)
+	player.Position = fieldIndex
+	(*GetField(fieldIndex)).OnPlayerEnter(player)
+	return nil
+}
+
+func GetPlayer(playerId string) *boardDomain.Player {
 
 	for i := range Players {
 		if Players[i].Id == playerId {
