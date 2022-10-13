@@ -1,28 +1,19 @@
 import cv2
-# read the QRCODE image
-img = cv2.imread("qrcode.jpg")
+img = cv2.imread('qrcode.jpg')
+det = cv2.QRCodeDetector()
+info, box_coordinates, _ = det.detectAndDecode(img)
 
-# initialize the cv2 QRCode detector
-detector = cv2.QRCodeDetector()
+if box_coordinates is None:
+    print('No Code')
+else:
+    print(info)
 
-# detect and decode
-data, bbox, straight_qrcode = detector.detectAndDecode(img)
+if box_coordinates is not None:
+    box_coordinates = [box_coordinates[0].astype(int)]
+    n = len(box_coordinates[0])
+    for i in range(n):
+        cv2.line(img, tuple(box_coordinates[0][i]), tuple(box_coordinates[0][(i+1) % n]), (0,255,0), 3)
 
-
-# if there is a QR code
-if bbox is not None:
-    print(f"QRCode data:\n{data}")
-    # display the image with lines
-    # length of bounding box
-    n_lines = len(bbox)
-    for i in range(n_lines):
-        # draw all lines
-        point1 = tuple(bbox[i][0])
-        point2 = tuple(bbox[(i+1) % n_lines][0])
-        cv2.line(img, point1, point2, color=(255, 0, 0), thickness=2)
-
-# display the result
-cv2.imshow("img", img)
+cv2.imshow('Output', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
