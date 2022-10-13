@@ -8,9 +8,10 @@ import (
 type ChannelName string
 
 const (
-	EXTERNAL     ChannelName = "external"
-	INTERNAL     ChannelName = "internal"
-	LAP_FINISHED ChannelName = "lapFinished"
+	EXTERNAL              ChannelName = "external"
+	PROPERTY_BUY_QUESTION ChannelName = "propertyBuyQuestion"
+	TRANSACTION_REQUESTED ChannelName = "transactionRequested"
+	LAP_FINISHED          ChannelName = "lapFinished"
 )
 
 func ListenRequestStream(channelName ChannelName) bus.MessageHandler {

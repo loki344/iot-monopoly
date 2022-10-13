@@ -3,68 +3,71 @@ package board
 import (
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"iot-monopoly/board/boardDomain"
 	"iot-monopoly/eventing"
 )
 
-var Players []boardDomain.Player
-var Fields []boardDomain.Field
+var players []boardDomain.Player
+var fields []boardDomain.Field
 
 var DefaultFields = []boardDomain.Field{
-	boardDomain.BasicField{"Start"},
-	boardDomain.PropertyField{"Property purple 1", 100, nil},
-	boardDomain.PropertyField{"Property purple 2", 100, nil},
-	boardDomain.EventField{"Ereignisfeld 1", func(player *boardDomain.Player) {
+	boardDomain.BasicField{uuid.New().String(), "Start"},
+	boardDomain.PropertyField{uuid.New().String(), "Property purple 1", 100, ""},
+	boardDomain.PropertyField{uuid.New().String(), "Property purple 2", 100, ""},
+	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 1", func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.BasicField{"Gefaengnis"},
-	boardDomain.EventField{"Ereignisfeld 2", func(player *boardDomain.Player) {
+	boardDomain.BasicField{uuid.New().String(), "Gefaengnis"},
+	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 2", func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.PropertyField{"Property orange 1", 100, nil},
-	boardDomain.PropertyField{"Property orange 2", 100, nil},
-	boardDomain.BasicField{"Frei parken"},
-	boardDomain.PropertyField{"Property green 1", 100, nil},
-	boardDomain.EventField{"Start", func(player *boardDomain.Player) {
+	boardDomain.PropertyField{uuid.New().String(), "Property orange 1", 100, ""},
+	boardDomain.PropertyField{uuid.New().String(), "Property orange 2", 100, ""},
+	boardDomain.BasicField{uuid.New().String(), "Frei parken"},
+	boardDomain.PropertyField{uuid.New().String(), "Property green 1", 100, ""},
+	boardDomain.EventField{uuid.New().String(), "Start", func(player *boardDomain.Player) {
 		//TODO remove money from bankAccount
 		fmt.Println("Remove money from Bank account")
 	}},
-	boardDomain.PropertyField{"Property green 2", 100, nil},
-	boardDomain.EventField{"Gehe ins gefaengnis", func(player *boardDomain.Player) {
+	boardDomain.PropertyField{uuid.New().String(), "Property green 2", 100, ""},
+	boardDomain.EventField{uuid.New().String(), "Gehe ins gefaengnis", func(player *boardDomain.Player) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
 		MovePlayer(player.Id, 4)
 	}},
-	boardDomain.PropertyField{"Property blue 1", 100, nil},
-	boardDomain.EventField{"Ereignisfeld 3", func(player *boardDomain.Player) {
+	boardDomain.PropertyField{uuid.New().String(), "Property blue 1", 100, ""},
+	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 3", func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.PropertyField{"Property blue 2", 100, nil},
+	boardDomain.PropertyField{uuid.New().String(), "Property blue 2", 100, ""},
 }
 
 func StartGame(players []boardDomain.Player) {
 
+	players = nil
+	fields = nil
 	InitBoard(nil, players)
 }
 
-func InitBoard(fields []boardDomain.Field, players []boardDomain.Player) {
+func InitBoard(initFields []boardDomain.Field, players []boardDomain.Player) {
 
-	if fields != nil {
-		Fields = fields
+	if initFields != nil {
+		fields = initFields
 	} else {
-		fmt.Println("Initializing default fields")
-		Fields = DefaultFields
+		fmt.Println("Initializing default initFields")
+		fields = DefaultFields
 	}
-	Players = players
+	players = players
 }
 
 func MovePlayer(playerId string, fieldIndex int) error {
 
-	if fieldIndex > len(Fields)-1 || fieldIndex < 0 {
-		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldIndex, len(Fields)))
+	if fieldIndex > len(fields)-1 || fieldIndex < 0 {
+		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldIndex, len(fields)))
 	}
 
 	player := GetPlayer(playerId)
@@ -72,7 +75,7 @@ func MovePlayer(playerId string, fieldIndex int) error {
 	//TODO get rid of magic numbers 10!!
 	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.LapFinishedEvent{player.Id})
+		eventing.FireEvent(eventing.LAP_FINISHED, eventing.LapFinishedEvent{PlayerId: player.Id})
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)
@@ -83,9 +86,9 @@ func MovePlayer(playerId string, fieldIndex int) error {
 
 func GetPlayer(playerId string) *boardDomain.Player {
 
-	for i := range Players {
-		if Players[i].Id == playerId {
-			return &Players[i]
+	for i := range players {
+		if players[i].Id == playerId {
+			return &players[i]
 		}
 	}
 
@@ -94,5 +97,17 @@ func GetPlayer(playerId string) *boardDomain.Player {
 
 func GetField(fieldIndex int) *boardDomain.Field {
 
-	return &Fields[fieldIndex]
+	return &fields[fieldIndex]
+}
+
+func GetFieldsCount() int {
+	return len(fields)
+}
+
+func GetPlayers() []boardDomain.Player {
+	return players
+}
+
+func GetFields() []boardDomain.Field {
+	return fields
 }

@@ -1,9 +1,12 @@
 package board
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/vmware/transport-go/model"
 	"iot-monopoly/board/boardDomain"
+	"iot-monopoly/eventing"
 	"testing"
 )
 
@@ -13,7 +16,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 	StartGame([]boardDomain.Player{{id, 0, 1000}})
 
 	player := GetPlayer(id)
-	for i := 0; i < len(Fields); i++ {
+	for i := 0; i < GetFieldsCount(); i++ {
 		err := MovePlayer(id, i)
 		//TODO determine prison fieldindex somehow different
 		if i == 12 {
@@ -38,7 +41,31 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 	player := GetPlayer(id)
 	assert.Equal(t, 0, player.Position)
 
-	errorUpperBound := MovePlayer(id, len(Fields)+1)
+	errorUpperBound := MovePlayer(id, GetFieldsCount()+1)
 	assert.Error(t, errorUpperBound)
 	assert.Equal(t, 0, player.Position)
+}
+
+func TestLapFiresEvent(t *testing.T) {
+
+	id := uuid.New().String()
+	StartGame([]boardDomain.Player{{id, 0, 1000}})
+
+	lapFinishedEventHandler := eventing.ListenRequestStream(eventing.LAP_FINISHED)
+
+	var receivedEvents = 0
+	lapFinishedEventHandler.Handle(
+		func(msg *model.Message) {
+			lapFinishedEvent := msg.Payload.(eventing.LapFinishedEvent)
+			assert.Equal(t, id, lapFinishedEvent.PlayerId)
+			receivedEvents++
+		},
+		func(err error) {
+			fmt.Println(err)
+		})
+
+	MovePlayer(id, 15)
+	MovePlayer(id, 1)
+
+	assert.Equal(t, 1, receivedEvents)
 }

@@ -6,7 +6,3 @@ type Player struct {
 	Position int
 	Balance  int
 }
-
-type LapFinishedEvent struct {
-	PlayerId string
-}

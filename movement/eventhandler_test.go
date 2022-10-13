@@ -15,6 +15,6 @@ func TestSensorEventsMovePlayer(t *testing.T) {
 
 	id := uuid.New().String()
 	board.StartGame([]boardDomain.Player{{id, 0, 1000}})
-	eventing.FireEvent(eventing.EXTERNAL, eventing.SensorEvent{id, 3})
+	eventing.FireEvent(eventing.EXTERNAL, eventing.SensorEvent{PlayerId: id, FieldIndex: 3})
 	assert.Equal(t, 3, board.GetPlayer(id).Position)
 }
