@@ -47,14 +47,14 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.PropertyField{uuid.New().String(), "Property blue 2", 100, ""},
 }
 
-func StartGame(players []boardDomain.Player) {
+func StartGame(initPlayers []boardDomain.Player) {
 
 	players = nil
 	fields = nil
-	InitBoard(nil, players)
+	InitBoard(nil, initPlayers)
 }
 
-func InitBoard(initFields []boardDomain.Field, players []boardDomain.Player) {
+func InitBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player) {
 
 	if initFields != nil {
 		fields = initFields
@@ -62,7 +62,7 @@ func InitBoard(initFields []boardDomain.Field, players []boardDomain.Player) {
 		fmt.Println("Initializing default initFields")
 		fields = DefaultFields
 	}
-	players = players
+	players = initPlayers
 }
 
 func MovePlayer(playerId string, fieldIndex int) error {
@@ -72,6 +72,10 @@ func MovePlayer(playerId string, fieldIndex int) error {
 	}
 
 	player := GetPlayer(playerId)
+	if player.Position == fieldIndex {
+		fmt.Println(fmt.Errorf("player already at position %d", fieldIndex))
+		return nil
+	}
 
 	//TODO get rid of magic numbers 10!!
 	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {

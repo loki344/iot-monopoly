@@ -42,7 +42,10 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		validateTransaction(transactionToPatch, finance.GetTransaction(c.Params("id")))
+		err := validateTransaction(transactionToPatch, finance.GetTransaction(c.Params("id")))
+		if err != nil {
+			return err
+		}
 
 		if transactionToPatch.Accepted {
 			transactionToPatch.Resolve()

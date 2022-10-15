@@ -35,6 +35,9 @@ func startLapFinishedEventHandler() {
 func AddTransaction(transaction financeDomain.Transaction) {
 	fmt.Printf("Adding transaction %s to pending transactions\n", transaction.Id())
 	transactions = append(transactions, transaction)
+	if transaction.IsPending() {
+		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, transaction)
+	}
 }
 
 func GetTransaction(id string) *financeDomain.Transaction {

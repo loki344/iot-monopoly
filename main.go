@@ -5,15 +5,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"iot-monopoly/board"
+	"iot-monopoly/board/api"
 	"iot-monopoly/board/domain"
 	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
-	"iot-monopoly/movement"
-	movementApi "iot-monopoly/movement/api"
 )
 
 func Init() {
-	movement.StartEventHandler()
 	finance.StartEventHandler()
 }
 
