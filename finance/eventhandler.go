@@ -40,7 +40,7 @@ func startTransactionRequestedEventHandler() {
 		func(msg *model.Message) {
 			transactionRequest := msg.Payload.(eventingDomain.TransactionRequested)
 			//TODO handle error
-			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id, transactionRequest.RecipientId, transactionRequest.SenderId, transactionRequest.Amount))
+			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id(), transactionRequest.RecipientId(), transactionRequest.SenderId(), transactionRequest.Amount()))
 		},
 		func(err error) {
 			fmt.Println(err)

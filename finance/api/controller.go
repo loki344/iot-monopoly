@@ -25,7 +25,7 @@ func Routes(app *fiber.App) {
 		}
 
 		if transactionToPatch.Accepted {
-			transactionToPatch.Resolve()
+			finance.ResolveTransaction(transactionToPatch.Id())
 		}
 		return c.Status(200).JSON(transactionToPatch)
 	})

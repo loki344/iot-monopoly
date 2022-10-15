@@ -2,6 +2,7 @@ package boardDomain
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/domain"
 )
@@ -47,6 +48,6 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 		fmt.Println("player owns the property..")
 	} else {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.Price)
-		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, eventingDomain.NewTransactionRequest(propertyField.OwnerId, player.Id, propertyField.Price))
+		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, eventingDomain.NewTransactionRequest(uuid.NewString(), propertyField.OwnerId, player.Id, propertyField.Price))
 	}
 }

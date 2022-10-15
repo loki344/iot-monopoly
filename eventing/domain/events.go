@@ -1,7 +1,5 @@
 package eventingDomain
 
-import "github.com/google/uuid"
-
 type LapFinishedEvent struct {
 	PlayerId string
 }
@@ -17,18 +15,32 @@ type PropertyBuyQuestion struct {
 }
 
 type TransactionRequested struct {
-	Id          string
-	RecipientId string
-	SenderId    string
-	Amount      int
+	id          string
+	recipientId string
+	senderId    string
+	amount      int
 }
 
-func NewTransactionRequest(recipientId string, senderId string, amount int) TransactionRequested {
+func (t TransactionRequested) Id() string {
+	return t.id
+}
+
+func (t TransactionRequested) RecipientId() string {
+	return t.recipientId
+}
+
+func (t TransactionRequested) SenderId() string {
+	return t.senderId
+}
+
+func (t TransactionRequested) Amount() int {
+	return t.amount
+}
+
+func NewTransactionRequest(id string, recipientId string, senderId string, amount int) TransactionRequested {
 
 	if amount <= 0 {
 		panic("amount has to be greater than 0")
 	}
-	id := uuid.New().String()
-
-	return TransactionRequested{Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount}
+	return TransactionRequested{id: id, recipientId: recipientId, senderId: senderId, amount: amount}
 }

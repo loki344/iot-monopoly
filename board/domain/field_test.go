@@ -44,9 +44,9 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
 			transactionRequest := msg.Payload.(eventingDomain.TransactionRequested)
-			assert.Equal(t, payerId, transactionRequest.SenderId)
-			assert.Equal(t, ownerId, transactionRequest.RecipientId)
-			assert.Equal(t, price, transactionRequest.Amount)
+			assert.Equal(t, payerId, transactionRequest.SenderId())
+			assert.Equal(t, ownerId, transactionRequest.RecipientId())
+			assert.Equal(t, price, transactionRequest.Amount())
 			receivedEvents++
 		},
 		func(err error) {
