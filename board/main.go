@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"iot-monopoly/board/boardDomain"
+	"iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/domain"
 )
 
 var players []boardDomain.Player
@@ -75,7 +76,7 @@ func MovePlayer(playerId string, fieldIndex int) error {
 	//TODO get rid of magic numbers 10!!
 	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, eventing.LapFinishedEvent{PlayerId: player.Id})
+		eventing.FireEvent(eventing.LAP_FINISHED, eventingDomain.LapFinishedEvent{PlayerId: player.Id})
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)
