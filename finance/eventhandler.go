@@ -12,9 +12,8 @@ import (
 func StartEventHandler() {
 
 	startLapFinishedEventHandler()
+	startTransactionRequestedEventHandler()
 }
-
-var transactions []financeDomain.Transaction
 
 func startLapFinishedEventHandler() {
 	channel := eventing.LAP_FINISHED
@@ -32,25 +31,18 @@ func startLapFinishedEventHandler() {
 		})
 }
 
-func AddTransaction(transaction financeDomain.Transaction) {
-	fmt.Printf("Adding transaction %s to pending transactions\n", transaction.Id())
-	transactions = append(transactions, transaction)
-	if transaction.IsPending() {
-		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, transaction)
-	}
-}
+func startTransactionRequestedEventHandler() {
+	channel := eventing.TRANSACTION_REQUESTED
 
-func GetTransaction(id string) *financeDomain.Transaction {
+	transactionRequestedHandler := eventing.ListenRequestStream(channel)
 
-	for _, transaction := range transactions {
-		if transaction.Id() == id {
-			return &transaction
-		}
-	}
-
-	panic(fmt.Sprintf("no transaction found with id %s", id))
-}
-
-func getPendingTransactions() []financeDomain.Transaction {
-	return transactions
+	transactionRequestedHandler.Handle(
+		func(msg *model.Message) {
+			transactionRequest := msg.Payload.(eventingDomain.TransactionRequested)
+			//TODO handle error
+			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id, transactionRequest.RecipientId, transactionRequest.SenderId, transactionRequest.Amount))
+		},
+		func(err error) {
+			fmt.Println(err)
+		})
 }

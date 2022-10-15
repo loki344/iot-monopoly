@@ -16,7 +16,8 @@ type Transaction struct {
 }
 
 func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
-	return &Transaction{id: id, recipientId: recipientId, senderId: senderId, amount: amount}
+
+	return &Transaction{id: id, recipientId: recipientId, senderId: senderId, amount: amount, executionTime: time.Time{}}
 }
 
 func (transaction *Transaction) RecipientId() string {
@@ -36,7 +37,7 @@ func (transaction *Transaction) Id() string {
 }
 
 func (transaction *Transaction) IsPending() bool {
-	return !transaction.executionTime.IsZero()
+	return transaction.executionTime.IsZero()
 }
 
 func (transaction *Transaction) Amount() int {
@@ -49,10 +50,6 @@ func (transaction *Transaction) Resolve() {
 	}
 	sender := board.GetPlayer(transaction.senderId)
 	recipient := board.GetPlayer(transaction.recipientId)
-
-	if sender.Balance < transaction.amount {
-		panic(fmt.Sprintf("Player %s has insufficient balance for transaction %s. Balance: %d, amount: %d", transaction.senderId, transaction.id, sender.Balance, transaction.amount))
-	}
 
 	fmt.Printf("Transferring %d from player %s to player %s\n", transaction.amount, sender.Id, recipient.Id)
 	recipient.Balance += transaction.amount
