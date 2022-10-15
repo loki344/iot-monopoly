@@ -1,28 +1,66 @@
-import cv2
-# read the QRCODE image
-img = cv2.imread("qrcode.jpg")
+# import the necessary packages
+from picamera.array import PiRGBArray # Generates a 3D RGB array
+from picamera import PiCamera # Provides a Python interface for the RPi Camera Module
+import time # Provides time-related functions
+import cv2 # OpenCV library
+from pyzbar.pyzbar import decode, ZBarSymbol
+ 
+# Initialize the camera
+camera = PiCamera()
+ 
+# Set the camera resolution
+camera.resolution = (1600, 925)
+ 
+# Set the number of frames per second
+camera.framerate = 5
+ 
+# Generates a 3D RGB array and stores it in rawCapture
+raw_capture = PiRGBArray(camera, size=(1600, 925))
 
-# initialize the cv2 QRCode detector
-detector = cv2.QRCodeDetector()
+camera.color_effects = (128,128) # turn camera to black and white
+ 
+# Wait a certain number of seconds to allow the camera time to warmup
+time.sleep(1)
+det = cv2.QRCodeDetector()
+ 
+# Capture frames continuously from the camera
+for frame in camera.capture_continuous(raw_capture, format="rgb", use_video_port="true"):
+     
+    im = frame.array  # if use cv2
+        
+    
+    # codes = decode(im, symbols=[ZBarSymbol.QRCODE])  # specify code type
+    codes = decode(im)  # auto detect code type
+    print('Decoded:', codes)
 
-# detect and decode
-data, bbox, straight_qrcode = detector.detectMulti(img)
+    for code in codes:
+        data = code.data.decode('ascii')
+        print('Data:', code.data.decode('ascii'))
+        print('Code Type:', code.type)
+        print('BBox:', code.rect)
+        x, y, w, h = code.rect.left, code.rect.top, code.rect.width, code.rect.height
+        cv2.rectangle(im, (x,y),(x+w, y+h),(255, 0, 0), 8)
+        print('Polygon:', code.polygon)
+        cv2.rectangle(im, code.polygon[0], code.polygon[1],(0, 255, 0), 4)
 
+        txt = '(' + code.type + ')  ' + data
+        cv2.putText(im, txt, (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 50, 255), 2)
 
-# if there is a QR code
-if bbox is not None:
-    print(f"QRCode data:\n{data}")
-    # display the image with lines
-    # length of bounding box
-    n_lines = len(bbox)
-    for i in range(n_lines):
-        # draw all lines
-        point1 = tuple(bbox[i][0])
-        point2 = tuple(bbox[(i+1) % n_lines][0])
-        cv2.line(img, point1, point2, color=(255, 0, 0), thickness=2)
+    text1 = 'No. Codes: %s' % len(codes)
+    cv2.putText(im, text1, (5, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-# display the result
-cv2.imshow("img", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    im = cv2.resize(im, (960,720) , interpolation = cv2.INTER_AREA)
+    cv2.imshow('bounding box', im)
+
+    # Wait for keyPress for 1 millisecond
+    key = cv2.waitKey(1) & 0xFF
+     
+    # Clear the stream in preparation for the next frame
+    raw_capture.truncate(0)
+
+    # If the `q` key was pressed, break from the loop
+    if key == ord("q"):
+        break
+
+    
 
