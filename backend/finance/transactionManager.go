@@ -47,9 +47,9 @@ func ResolveTransaction(id string) {
 	recipient.Balance += transaction.Amount()
 	sender.Balance -= transaction.Amount()
 
-	transactions = remove(transactions, *transaction)
+	transactions = remove(transactions, transaction)
 	transaction.ExecutionTime = time.Now()
-	transactions = append(transactions, *transaction)
+	transactions = append(transactions, transaction)
 }
 
 func remove[T comparable](l []T, item T) []T {
@@ -61,11 +61,11 @@ func remove[T comparable](l []T, item T) []T {
 	return l
 }
 
-func GetTransaction(id string) *financeDomain.Transaction {
+func GetTransaction(id string) financeDomain.Transaction {
 
 	for _, transaction := range transactions {
 		if transaction.Id() == id {
-			return &transaction
+			return transaction
 		}
 	}
 

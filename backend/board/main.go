@@ -56,11 +56,18 @@ var DefaultFields = []boardDomain.Field{
 }
 
 func StartGame(playerCount int) []boardDomain.Player {
+	players = nil
+	fields = nil
 
-	if playerCount < 2 || playerCount > 4 {
-		panic(fmt.Sprintf("invalid playerCount %d (must be between 2 and 4)", playerCount))
+	if playerCount < 1 || playerCount > 4 {
+		panic(fmt.Sprintf("invalid playerCount %d (must be between 1 and 4)", playerCount))
 	}
-	players := defaultPlayers[0:playerCount]
+
+	newPlayers := make([]boardDomain.Player, playerCount)
+
+	copy(newPlayers, defaultPlayers)
+
+	players := newPlayers[0:playerCount]
 
 	initBoard(nil, players)
 	return players

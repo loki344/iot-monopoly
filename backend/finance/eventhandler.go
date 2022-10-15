@@ -9,10 +9,15 @@ import (
 	"iot-monopoly/finance/financeDomain"
 )
 
+var started = false
+
 func StartEventHandler() {
 
-	startLapFinishedEventHandler()
-	startTransactionRequestedEventHandler()
+	if !started {
+		startLapFinishedEventHandler()
+		startTransactionRequestedEventHandler()
+		started = true
+	}
 }
 
 func startLapFinishedEventHandler() {

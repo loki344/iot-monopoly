@@ -6,6 +6,7 @@ import (
 	"iot-monopoly/board"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/domain"
+	"iot-monopoly/finance/financeDomain"
 	"testing"
 )
 
@@ -32,8 +33,10 @@ func TestTransactionRequestTurnsIntoTransaction(t *testing.T) {
 
 	eventing.FireEvent(eventing.TRANSACTION_REQUESTED, eventingDomain.NewTransactionRequest(transactionId, recipientId, senderId, amount))
 
-	transaction := GetTransaction(transactionId)
-	assert.Equal(t, 1, len(getPendingTransactions()))
+	var transaction financeDomain.Transaction
+	assert.NotPanics(t, func() {
+		transaction = GetTransaction(transactionId)
+	})
 	assert.Equal(t, transactionId, transaction.Id())
 	assert.Equal(t, true, transaction.IsPending())
 	assert.Equal(t, senderId, transaction.SenderId())
