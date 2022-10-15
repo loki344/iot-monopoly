@@ -6,7 +6,7 @@ img = cv2.imread("qrcode.jpg")
 detector = cv2.QRCodeDetector()
 
 # detect and decode
-data, bbox, straight_qrcode = detector.detectAndDecode(img)
+data, bbox, straight_qrcode = detector.detectMulti(img)
 
 
 # if there is a QR code
