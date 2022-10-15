@@ -8,7 +8,7 @@ import (
 type ChannelName string
 
 const (
-	EXTERNAL              ChannelName = "external"
+	MOVEMENT              ChannelName = "movement"
 	PROPERTY_BUY_QUESTION ChannelName = "propertyBuyQuestion"
 	TRANSACTION_REQUESTED ChannelName = "transactionRequested"
 	LAP_FINISHED          ChannelName = "lapFinished"
