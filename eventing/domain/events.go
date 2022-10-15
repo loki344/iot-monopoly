@@ -1,9 +1,14 @@
-package eventing
+package eventingDomain
 
 import "github.com/google/uuid"
 
 type LapFinishedEvent struct {
 	PlayerId string
+}
+
+type SensorEvent struct {
+	PlayerId   string
+	FieldIndex int
 }
 
 type PropertyBuyQuestion struct {
