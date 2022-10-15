@@ -42,7 +42,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		checkIntegrity(transactionToPatch, finance.GetTransaction(c.Params("id")))
+		validateTransaction(transactionToPatch, finance.GetTransaction(c.Params("id")))
 
 		if transactionToPatch.Accepted {
 			transactionToPatch.Resolve()
@@ -52,7 +52,7 @@ func Routes(app *fiber.App) {
 
 }
 
-func checkIntegrity(toCheck *financeDomain.Transaction, transaction *financeDomain.Transaction) error {
+func validateTransaction(toCheck *financeDomain.Transaction, transaction *financeDomain.Transaction) error {
 
 	if toCheck.Id() != transaction.Id() || toCheck.SenderId() != transaction.SenderId() || toCheck.RecipientId() != transaction.RecipientId() || toCheck.Amount() != transaction.Amount() {
 		return errors.New("Transaction invalid, only changing the accept state of a transaction is allowed")
