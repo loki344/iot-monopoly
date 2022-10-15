@@ -2,10 +2,8 @@ package board
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/vmware/transport-go/model"
-	"iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/domain"
 	"testing"
@@ -13,12 +11,11 @@ import (
 
 func TestPlayerCanMoveAround(t *testing.T) {
 
-	id := uuid.New().String()
-	StartGame([]boardDomain.Player{{id, 0, 1000}})
+	playerId := StartGame(1)[0].Id
 
-	player := GetPlayer(id)
+	player := GetPlayer(playerId)
 	for i := 0; i < GetFieldsCount(); i++ {
-		err := MovePlayer(id, i)
+		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
 		if i == 12 {
 			assert.NoError(t, err)
@@ -34,8 +31,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 
 func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
-	id := uuid.New().String()
-	StartGame([]boardDomain.Player{{id, 0, 1000}})
+	id := StartGame(1)[0].Id
 
 	errorLowerBound := MovePlayer(id, -1)
 	assert.Error(t, errorLowerBound)
@@ -49,8 +45,7 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
 func TestLapFiresEvent(t *testing.T) {
 
-	id := uuid.New().String()
-	StartGame([]boardDomain.Player{{id, 0, 1000}})
+	id := StartGame(1)[0].Id
 
 	lapFinishedEventHandler := eventing.ListenRequestStream(eventing.LAP_FINISHED)
 

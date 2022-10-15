@@ -20,23 +20,40 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		err := validateMessage(player, board.GetPlayer(c.Params("id")))
+		playerId := c.Params("id")
+		err := validateMessage(player, board.GetPlayer(playerId))
 		if err != nil {
 			return err
 		}
 
-		board.MovePlayer(player.Id, player.Position)
+		board.MovePlayer(playerId, player.Position)
 
-		return c.Status(201).JSON(player)
+		return c.Status(201).JSON(board.GetPlayer(playerId))
+	})
+
+	app.Post("/games", func(c *fiber.Ctx) error {
+
+		gameRequest := new(GameRequest)
+
+		if err := c.BodyParser(gameRequest); err != nil {
+			fmt.Println("error = ", err)
+			return fiber.ErrBadRequest
+		}
+
+		return c.Status(201).JSON(board.StartGame(gameRequest.PlayerCount))
 	})
 
 }
 
 func validateMessage(toCheck *boardDomain.Player, player *boardDomain.Player) error {
 
-	if toCheck.Id != player.Id || toCheck.Balance != player.Balance {
+	if toCheck.Id != "" || toCheck.Balance != 0 {
 		return errors.New("Patch player invalid, only changing the position field of a player is allowed")
 	}
 
 	return nil
+}
+
+type GameRequest struct {
+	PlayerCount int
 }

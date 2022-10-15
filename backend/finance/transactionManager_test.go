@@ -4,15 +4,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
-	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/finance/financeDomain"
 	"testing"
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
-	recipientId := uuid.NewString()
-	senderId := uuid.NewString()
-	board.StartGame([]boardDomain.Player{{recipientId, 0, 1000}, {senderId, 0, 500}})
+	players := board.StartGame(2)
+	recipientId := players[0].Id
+	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
 	amount := 1_000
@@ -25,9 +24,9 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 
 func TestValidTransaction(t *testing.T) {
 
-	recipientId := uuid.NewString()
-	senderId := uuid.NewString()
-	board.StartGame([]boardDomain.Player{{recipientId, 0, 1000}, {senderId, 0, 1000}})
+	players := board.StartGame(2)
+	recipientId := players[0].Id
+	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
 	amount := 1_000
@@ -46,10 +45,9 @@ func TestValidTransaction(t *testing.T) {
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
 
-	recipientId := uuid.NewString()
-	senderId := uuid.NewString()
-	const balance = 1_000
-	board.StartGame([]boardDomain.Player{{recipientId, 0, balance}, {senderId, 0, balance}})
+	players := board.StartGame(2)
+	recipientId := players[0].Id
+	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
 	amount := 1_000
@@ -66,10 +64,9 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 }
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
-	recipientId := uuid.NewString()
-	senderId := uuid.NewString()
-	const balance = 1_000
-	board.StartGame([]boardDomain.Player{{recipientId, 0, balance}, {senderId, 0, balance}})
+	players := board.StartGame(2)
+	recipientId := players[0].Id
+	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
 	amount := 1_000

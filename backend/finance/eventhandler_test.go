@@ -4,7 +4,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
-	"iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/domain"
 	"testing"
@@ -14,8 +13,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
 	StartEventHandler()
 
-	id := uuid.New().String()
-	board.StartGame([]boardDomain.Player{{id, 0, 1000}})
+	id := board.StartGame(1)[0].Id
 	eventing.FireEvent(eventing.LAP_FINISHED, eventingDomain.LapFinishedEvent{PlayerId: id})
 	assert.Equal(t, 1100, board.GetPlayer(id).Balance)
 }
@@ -25,10 +23,9 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 func TestTransactionRequestTurnsIntoTransaction(t *testing.T) {
 
 	startTransactionRequestedEventHandler()
-	recipientId := uuid.NewString()
-	senderId := uuid.NewString()
-	const balance = 1_000
-	board.StartGame([]boardDomain.Player{{recipientId, 0, balance}, {senderId, 0, balance}})
+	players := board.StartGame(2)
+	recipientId := players[0].Id
+	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
 	amount := 1_000

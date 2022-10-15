@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
-	"iot-monopoly/board"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"iot-monopoly/board/api"
-	"iot-monopoly/board/domain"
 	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
 )
@@ -19,12 +17,9 @@ func Init() {
 func main() {
 
 	Init()
-	//TODO get player infos from board
-	playerOneId := uuid.New().String()
-	playerTwoId := uuid.New().String()
-	board.StartGame([]boardDomain.Player{{playerOneId, 0, 1000}, {playerTwoId, 0, 1000}})
-
 	app := fiber.New()
+	// Default config
+	app.Use(cors.New())
 
 	financeApi.Routes(app)
 	movementApi.Routes(app)

@@ -12,6 +12,14 @@ import (
 var players []boardDomain.Player
 var fields []boardDomain.Field
 
+//TODO use static uuid
+var defaultPlayers = []boardDomain.Player{
+	{uuid.NewString(), 0, 1_000},
+	{uuid.NewString(), 0, 1_000},
+	{uuid.NewString(), 0, 1_000},
+	{uuid.NewString(), 0, 1_000},
+}
+
 var DefaultFields = []boardDomain.Field{
 	boardDomain.BasicField{uuid.New().String(), "Start"},
 	boardDomain.PropertyField{uuid.New().String(), "Property purple 1", 100, ""},
@@ -47,14 +55,18 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.PropertyField{uuid.New().String(), "Property blue 2", 100, ""},
 }
 
-func StartGame(initPlayers []boardDomain.Player) {
+func StartGame(playerCount int) []boardDomain.Player {
 
-	players = nil
-	fields = nil
-	InitBoard(nil, initPlayers)
+	if playerCount < 2 || playerCount > 4 {
+		panic(fmt.Sprintf("invalid playerCount %d (must be between 2 and 4)", playerCount))
+	}
+	players := defaultPlayers[0:playerCount]
+
+	initBoard(nil, players)
+	return players
 }
 
-func InitBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player) {
+func initBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player) {
 
 	if initFields != nil {
 		fields = initFields
