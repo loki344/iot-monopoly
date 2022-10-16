@@ -14,10 +14,10 @@ var fields []boardDomain.Field
 
 //TODO use static uuid
 var defaultPlayers = []boardDomain.Player{
-	{uuid.NewString(), 0, 1_000},
-	{uuid.NewString(), 0, 1_000},
-	{uuid.NewString(), 0, 1_000},
-	{uuid.NewString(), 0, 1_000},
+	{"21898eb5-e233-47d1-bc40-17a721bbd148", 0, 1_000},
+	{"be2dbd44-6d8d-4b8d-b345-4bccec8636cb", 0, 1_000},
+	{"1855fffc-7e78-4ae5-9407-1395abc4d024", 0, 1_000},
+	{"99b21835-8666-4342-906e-c3b6722af5e8", 0, 1_000},
 }
 
 var DefaultFields = []boardDomain.Field{
