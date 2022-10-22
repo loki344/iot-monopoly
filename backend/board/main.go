@@ -63,6 +63,7 @@ func StartGame(playerCount int) []boardDomain.Player {
 		panic(fmt.Sprintf("invalid playerCount %d (must be between 1 and 4)", playerCount))
 	}
 
+	fmt.Printf("starting game with %d players\n", playerCount)
 	newPlayers := make([]boardDomain.Player, playerCount)
 
 	copy(newPlayers, defaultPlayers)
