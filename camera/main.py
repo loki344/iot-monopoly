@@ -42,7 +42,7 @@ def draw_outer_border(edge_codes, image):
         else:
             start_point = edge_code.polygon[1]
             
-    cv2.rectangle(image, start_point, end_point, (0, 255, 0), 2)
+    #cv2.rectangle(image, start_point, end_point, (0, 255, 0), 2)
     return image[end_point[1]:start_point[1],start_point[0]:end_point[0]]
     
 
@@ -86,7 +86,7 @@ def detect_codes(image, wait=False):
 
 
 # get id from qr code
-requests.patch('http://localhost:3000/players/21898eb5-e233-47d1-bc40-17a721bbd148', json = {'position':5})
+#requests.patch('http://localhost:3000/players/21898eb5-e233-47d1-bc40-17a721bbd148', json = {'position':5})
 
 
 detect_codes(cv2.imread('Picture1.png'), True)

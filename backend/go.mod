@@ -2,15 +2,18 @@ module iot-monopoly
 
 go 1.18
 
-require github.com/vmware/transport-go v1.3.4
+require (
+	github.com/gofiber/fiber/v2 v2.38.1
+	github.com/google/uuid v1.3.0
+	github.com/stretchr/testify v1.8.0
+	github.com/vmware/transport-go v1.3.4
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/go-stomp/stomp/v3 v3.0.3 // indirect
-	github.com/gofiber/fiber/v2 v2.38.1 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
@@ -18,8 +21,6 @@ require (
 	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stretchr/objx v0.4.0 // indirect
-	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.40.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
