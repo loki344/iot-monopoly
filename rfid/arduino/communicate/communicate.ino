@@ -46,6 +46,7 @@ void setup() {
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522 
 
+  pinMode(7, OUTPUT);
   for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
   }
@@ -63,25 +64,34 @@ void loop() {
   if ( ! rfid.PICC_ReadCardSerial())
     return;
 
-
-
+  digitalWrite(7, HIGH);
  for (byte i = 0; i < 4; i++) {
       nuidPICC[i] = rfid.uid.uidByte[i];
     }
-   
-  printHex(rfid.uid.uidByte, rfid.uid.size);
-    Serial.println();
-   rfid.PICC_HaltA();
 
-  
+  printHex(rfid.uid.uidByte, rfid.uid.size);
+  Serial.println();
+  rfid.PICC_HaltA();
+
+ 
   rfid.PCD_StopCrypto1();
+  delay(500);
+  digitalWrite(7, LOW);
+  delay(100);
+  digitalWrite(7, HIGH);
+      delay(100); 
+  digitalWrite(7, LOW);
+    delay(100); 
+  digitalWrite(7, HIGH);
+        delay(100); 
+ digitalWrite(7, LOW);
 }
 
 
 
 void printHex(byte *buffer, byte bufferSize) {
 
-  Serial.print("{\"fieldId\":1, \"playerId\":\"");
+  Serial.print("{\"fieldId\":2, \"playerId\":\"");
   Serial.print(buffer[0] < 0x10 ? "0" : "");
   Serial.print(buffer[0], HEX);
   
