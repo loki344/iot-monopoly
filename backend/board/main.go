@@ -14,10 +14,10 @@ var fields []boardDomain.Field
 
 //TODO use static uuid
 var defaultPlayers = []boardDomain.Player{
-	{"21898eb5-e233-47d1-bc40-17a721bbd148", 0, 1_000},
-	{"be2dbd44-6d8d-4b8d-b345-4bccec8636cb", 0, 1_000},
-	{"1855fffc-7e78-4ae5-9407-1395abc4d024", 0, 1_000},
-	{"99b21835-8666-4342-906e-c3b6722af5e8", 0, 1_000},
+	{"53-72-A4-28-110001", 0, 1_000},
+	{"53-C8-A4-28-110001", 0, 1_000},
+	{"53-82-A4-28-110001", 0, 1_000},
+	{"53-81-A4-28-110001", 0, 1_000},
 }
 
 var DefaultFields = []boardDomain.Field{
@@ -55,12 +55,14 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.PropertyField{uuid.New().String(), "Property blue 2", 100, ""},
 }
 
-func StartGame(playerCount int) []boardDomain.Player {
+func StartGame(playerCount int) ([]boardDomain.Player, error) {
 	players = nil
 	fields = nil
 
 	if playerCount < 1 || playerCount > 4 {
-		panic(fmt.Sprintf("invalid playerCount %d (must be between 1 and 4)", playerCount))
+		errorMsg := fmt.Sprintf("invalid playerCount %d (must be between 1 and 4)", playerCount)
+		fmt.Println(errorMsg)
+		return nil, errors.New(errorMsg)
 	}
 
 	fmt.Printf("starting game with %d players\n", playerCount)
@@ -71,7 +73,7 @@ func StartGame(playerCount int) []boardDomain.Player {
 	players := newPlayers[0:playerCount]
 
 	initBoard(nil, players)
-	return players
+	return players, nil
 }
 
 func initBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player) {
