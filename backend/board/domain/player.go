@@ -1,8 +1,8 @@
 package boardDomain
 
 type Player struct {
-	Id string
+	Id string `json:"id"`
 	// TODO maybe change position to field
-	Position int
-	Balance  int
+	Position int `json:"position"`
+	Balance  int `json:"balance"`
 }
