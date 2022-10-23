@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"iot-monopoly/board/api"
 	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
@@ -20,6 +21,7 @@ func main() {
 	app := fiber.New()
 	// Default config
 	app.Use(cors.New())
+	app.Use(logger.New())
 
 	financeApi.Routes(app)
 	movementApi.Routes(app)
