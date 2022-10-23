@@ -16,8 +16,12 @@ var fields []boardDomain.Field
 var defaultPlayers = []boardDomain.Player{
 	{"53-72-A4-28-110001", 0, 1_000},
 	{"53-C8-A4-28-110001", 0, 1_000},
-	{"53-82-A4-28-110001", 0, 1_000},
+	{"53-D8-A6-28-110001", 0, 1_000},
 	{"53-81-A4-28-110001", 0, 1_000},
+	//33-A8-8A-10 Card 1
+	//	1304-B6-1A Card 2
+	// 43-F1-E70E Card 3
+	// A3-D9-350F Card 4
 }
 
 var DefaultFields = []boardDomain.Field{
