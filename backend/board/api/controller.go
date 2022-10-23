@@ -11,6 +11,12 @@ import (
 func Routes(app *fiber.App) {
 
 	//TODO look at how to organize routes https://github.com/gofiber/recipes/blob/2317ef83e51c79def9b5cb6adbfef5136f706f98/gorm-postgres/routes/routes.go
+
+	app.Get("/players", func(c *fiber.Ctx) error {
+
+		return c.Status(200).JSON(board.GetPlayers())
+	})
+
 	app.Patch("/players/:id", func(c *fiber.Ctx) error {
 
 		player := new(boardDomain.Player)
@@ -40,7 +46,12 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		return c.Status(201).JSON(board.StartGame(gameRequest.PlayerCount))
+		players, err := board.StartGame(gameRequest.PlayerCount)
+		if err != nil {
+			return err
+		}
+
+		return c.Status(201).JSON(players)
 	})
 
 }
