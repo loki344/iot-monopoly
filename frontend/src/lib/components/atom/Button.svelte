@@ -1,9 +1,19 @@
 <script lang="ts">
-
-    export let label: string = ''
-    export let onClick: any
-    export let clazz: string = ''
-    export let active: boolean = false
+	let scaleClass = '';
+	export let onClick = () => {};
 </script>
 
-<button on:click={onClick} class={`${clazz} text-md rounded-lg border p-3 px-8 ${active && "bg-white"} active:bg-white`}>{label}<slot></slot></button>
+<div>
+	<button
+		class={`px-[10rem] bg-primary rounded-full border-8
+              border-dark primary-shadow text-[5rem] uppercase
+              text-dark tracking-widest font-roboto transition ease-in-out duration-300 ${scaleClass}`}
+		on:click={() => {
+			scaleClass = 'scale-90';
+			setTimeout(() => (scaleClass = ''), 300);
+			setTimeout(() => onClick(), 600);
+		}}
+	>
+		<slot />
+	</button>
+</div>

@@ -1,38 +1,31 @@
-# create-svelte
+# Histoire + SvelteKit + TS + Vitest + Tailwind CSS
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Template repository for new projects with support to Histoire, SvelteKit, Typescript, Plop, Vitest and Tailwind CSS.
 
-## Creating a project
+## Usage
 
-If you're seeing this, you've probably already done this step. Congrats!
+1. Above the file list for this template, click Use this template.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+Read more [here](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) about Creating a repository from a template.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Run Histoire
 
 ```bash
-npm run dev
+# Install the project dependencies.
+npm run install (or pnpm install)
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Run Histoire
+npm run story (or pnpm story)
 ```
 
-## Building
+## Create a new component
 
-To create a production version of your app:
+It makes use of [plopjs](plopjs.com) to scaffold all the files (definition, test suite, story) for a new component.
 
 ```bash
-npm run build
+npm run plop (or pnpm plop)
 ```
 
-You can preview the production build with `npm run preview`.
+## License
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Free and open-source software under the [MIT License](LICENSE)
