@@ -2,13 +2,22 @@
 	export let text = '';
 	let clazz = '';
 	export { clazz as class };
-	export let medium = false;
+	export let type = "";
+
+	function getClassForType(type: string) {
+		switch(type){
+			case "small":
+				return "text-[3rem] tracking-widest"
+			case "medium":
+				return 'text-[4rem] tracking-widest'
+			default:
+				return "text-[5rem] tracking-[1.5rem]"
+		}
+	}
 </script>
 
 <p
-	class={`uppercase text-primary font-alfa  ${
-		medium ? 'text-[4rem] tracking-widest' : 'text-[5rem] tracking-[1.5rem]'
-	} ${clazz}`}
+	class={`uppercase text-primary font-alfa  ${getClassForType(type)} ${clazz}`}
 >
 	<slot />
 </p>

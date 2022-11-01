@@ -12,7 +12,7 @@ export default function (plop) {
 				// Atomic design category
 				type: 'input',
 				name: 'category',
-				message: 'What is it? Atom, Molecule, Organism, Layout, Template, Page'
+				message: 'What is it? Atom, Molecule, Organism, Layout, Template, Page, Wrapper'
 			}
 		],
 		actions: [
