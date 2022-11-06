@@ -48,5 +48,8 @@
 		"vite": "^3.1.4",
 		"vitest": "latest"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"svelte-icons": "^2.1.0"
+	}
 }

@@ -11,7 +11,9 @@ const config = {
 				primary: '#fcd24f',
 				dark: '#1f1347',
 				blue: '#004aad',
-				gray: '#9ca3af'
+				gray: '#9ca3af',
+				green: '#15803d',
+				red: '#dc2626'
 			},
 		}
 	},

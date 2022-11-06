@@ -10,9 +10,9 @@
 	const getTypeClass = (type:String) => {
 		switch(type){
 			case "NEGATIVE":
-				return "bg-red-600 red-shadow"
+				return "bg-red red-shadow"
 			case "POSITIVE":
-				return "bg-green-700 green-shadow"
+				return "bg-green green-shadow"
 			default:
 				return 'bg-primary primary-shadow'
 		}
