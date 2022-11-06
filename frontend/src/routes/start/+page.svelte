@@ -1,34 +1,31 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-	import Button from "$lib/components/atom/Button.svelte";
+	import { goto } from '$app/navigation';
+	import Button from '$lib/components/atom/Button.svelte';
 
+	import Title from '$lib/components/atom/Title.svelte';
+	import Tags from '$lib/components/molecule/Tags.svelte';
+	import { BASE_URL, extractData } from '$lib/http/backendClient';
+	
+	async function startGame(playerCount: Number){
+       let response = await fetch(`${BASE_URL}/games`, {
+            method: "POST", 
+            body: JSON.stringify({"playerCount": playerCount}),
+            headers: {
+                  'Content-Type': 'application/json'}
+        })
 
+		return await extractData(response)
+    }
 
-
-const startGame = async () => {
-    let response = await fetch("http://localhost:3000/games", {
-    method: "POST",
-    body: JSON.stringify({playerCount: playerCount}),
-    headers: {
-                    'Content-Type': 'application/json'
-                }
-
-})
-let players = await response.json()}
-
-
-
-let playerCount = 0
-
+	let playerCount = ""
 </script>
 
-<h2 class="text-md">How many are playing?</h2>
-<div class="flex flex-col justify-center grow gap-y-10">
-    <Button label={2} onClick={() => playerCount = 2} active={playerCount === 2}></Button>
-    <Button label={3} onClick={() => playerCount = 3} active={playerCount === 3}></Button>
-    <Button label={4} onClick={() => playerCount = 4} active={playerCount === 4}></Button>
-    <Button label="Start game" onClick={async () => {
-        await startGame();
-        goto('/game')
-    }}></Button>
+<div class="flex flex-col items-center justify-around h-screen">
+	<Title type="medium">HOW MANY ARE PLAYING?</Title>
+	<Tags bind:value={playerCount} items={['1', '2', '3', '4']} />
+	<Button class={!playerCount ? "invisible" : ""} onClick={async () => {
+		
+		await startGame(Number.parseInt(playerCount))
+		goto('/game')
+		}} disabled={!playerCount}>Start</Button>
 </div>

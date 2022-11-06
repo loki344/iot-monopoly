@@ -1,10 +1,11 @@
 <script>
-	import { goto } from "$app/navigation";
-	import Button from "$lib/components/atom/Button.svelte";
+	import { goto } from '$app/navigation';
 
+	import Button from '$lib/components/atom/Button.svelte';
+	import Title from '$lib/components/atom/Title.svelte';
 </script>
 
-<h1 class="text-xl">Welcome to IoT-Monopoly</h1>
-<div class="flex flex-col justify-center grow">
-    <Button label="Start" onClick={() => goto('/start')}/>
+<div class="flex flex-col items-center justify-around h-screen">
+	<Title>MONOPOLY</Title>
+	<Button onClick={() => goto('/start')}>Start</Button>
 </div>

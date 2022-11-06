@@ -1,9 +1,40 @@
 <script lang="ts">
 
-    export let label: string = ''
-    export let onClick: any
-    export let clazz: string = ''
-    export let active: boolean = false
+
+	let scaleClass = '';
+	export let onClick = () => {};
+	export let disabled = false
+	let clazz = ""
+	export { clazz as class };
+	export let type = ""
+	const getTypeClass = (type:String) => {
+		switch(type){
+			case "NEGATIVE":
+				return "bg-red-600 red-shadow"
+			case "POSITIVE":
+				return "bg-green-700 green-shadow"
+			default:
+				return 'bg-primary primary-shadow'
+		}
+	}
+	let typeClass = getTypeClass(type)
+
 </script>
 
-<button on:click={onClick} class={`${clazz} text-md rounded-lg border p-3 px-8 ${active && "bg-white"} active:bg-white`}>{label}<slot></slot></button>
+<div>
+	<button
+		class={`px-[10rem] ${disabled ? 'bg-gray gray-shadow' : typeClass} rounded-full border-8
+              border-dark  text-[5rem] uppercase ${clazz}
+              text-dark tracking-widest font-roboto transition ease-in-out duration-300 ${scaleClass}`}
+		on:click={() => {
+			if (!disabled) {
+				scaleClass = 'scale-90';
+				setTimeout(() => (scaleClass = ''), 300);
+				setTimeout(() => onClick(), 600);
+			}
+		}}
+		disabled={disabled}
+	>
+		<slot />
+	</button>
+</div>
