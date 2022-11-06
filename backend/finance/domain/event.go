@@ -31,5 +31,5 @@ func NewTransactionRequest(id string, recipientId string, senderId string, amoun
 	if amount <= 0 {
 		panic("amount has to be greater than 0")
 	}
-	return TransactionRequested{BaseEvent: eventingDomain.EventType(TransactionRequested{}), id: id, recipientId: recipientId, senderId: senderId, amount: amount}
+	return TransactionRequested{BaseEvent: eventingDomain.EventType(&TransactionRequested{}), id: id, recipientId: recipientId, senderId: senderId, amount: amount}
 }

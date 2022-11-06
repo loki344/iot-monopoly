@@ -9,7 +9,7 @@ type PropertyBuyQuestion struct {
 }
 
 func NewPropertyBuyQuestion(playerId string, property PropertyField) *PropertyBuyQuestion {
-	return &PropertyBuyQuestion{eventingDomain.EventType(PropertyBuyQuestion{}), playerId, property}
+	return &PropertyBuyQuestion{eventingDomain.EventType(&PropertyBuyQuestion{}), playerId, property}
 }
 
 type LapFinishedEvent struct {
@@ -18,5 +18,5 @@ type LapFinishedEvent struct {
 }
 
 func NewLapFinishedEvent(playerId string) *LapFinishedEvent {
-	return &LapFinishedEvent{eventingDomain.EventType(PropertyBuyQuestion{}), playerId}
+	return &LapFinishedEvent{eventingDomain.EventType(&LapFinishedEvent{}), playerId}
 }
