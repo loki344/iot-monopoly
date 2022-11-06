@@ -1,52 +1,34 @@
-import pyMultiSerial as p
+import serial
 import json
+import io
 import requests
 
 
-# Create object of class pyMultiSerial
-ms = p.MultiSerial()
+deviceToFieldIndexMap = { "0": [15, 14, 13, 12], "1": [8, 9, 10, 11], "2": [7, 6, 5, 4], "3": [3, 2, 1 ,0] }
 
-ms.baudrate = 9600
-ms.timeout = 2
+def map_message_to_field_index(device, field_id):
+    field_index = deviceToFieldIndexMap[str(device)][field_id]
+    print("mapped message to fieldIndex: " + str(field_index))
+    return field_index
 
-def port_connection_found_callback(portno, serial):
-    print ("Port Found: "+portno)
+deviceCount = 4
+devices = []
 
+for i in range(deviceCount):
+    device = serial.Serial("/dev/ttyACM"+str(i),9600,timeout=1, )
+    device.baudrate=9600
+    sio = io.TextIOWrapper(io.BufferedRWPair(device, device))
+    devices.append(sio)
+    
+    
 
-#register callback function
-ms.port_connection_found_callback = port_connection_found_callback
+while True: # Run forever
 
-
-# Callback on receiving port data
-# Parameters: Port Number, Serial Port Object, Text read from port
-def port_read_callback(portno, serial, text):
-    #print ("Received '"+text+"' from port "+portno)
-    obj = json.loads(text)
-    print(obj)
-    requests.patch('http://localhost:3000/players/'+obj['playerId'], {'position':obj['fieldId']})
-    pass
-
-
-#register callback function
-ms.port_read_callback = port_read_callback
-
-
-# Callback on port disconnection. Triggered when a device is disconnected from port.
-# Parameters: Port No
-def port_disconnection_callback(portno):
-    print("Port "+portno+" disconnected")
-
-
-#register callback function
-ms.port_disconnection_callback = port_disconnection_callback
-
-
-# Start Monitoring ports
-ms.Start()
-
-
-## To stop monitoring, press Ctrl+C in the console or command line.
-
-
-# Caution: Any code written below ms.Start() will be executed only after monitoring is stopped.
-# Make use of callback functions to execute your code.
+    for i in range(deviceCount):
+        line = devices[i].readline()
+        if (line.startswith("{")):
+            message = json.loads(line)
+            print("read message: ")
+            print(message)
+            field_index = map_message_to_field_index(message["deviceId"], message["fieldId"])
+            requests.patch("http://localhost:3000/players/" + message["playerId"], data={"position": field_index})

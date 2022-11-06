@@ -89,7 +89,7 @@ void loop() {
 
   for (uint8_t reader = 0; reader < NR_OF_READERS; reader++) {
 
-
+    delay(100);
     // Looking for new cards
     if (mfrc522[reader].PICC_IsNewCardPresent() && mfrc522[reader].PICC_ReadCardSerial()) {
 
@@ -111,7 +111,7 @@ void loop() {
   digitalWrite(ledPins[reader], HIGH);
         delay(100);
  digitalWrite(ledPins[reader], LOW);
-
+  
 
 
     }
@@ -119,7 +119,7 @@ void loop() {
 }
 void printHex(byte *buffer, byte bufferSize, uint8_t reader) {
 
-  Serial.print("{\"deviceId\":2,\"fieldId\":");
+  Serial.print("{\"deviceId\":3,\"fieldId\":");
   Serial.print(reader);
   Serial.print(", \"playerId\":\"");
   Serial.print(buffer[0] < 0x10 ? "0" : "");
