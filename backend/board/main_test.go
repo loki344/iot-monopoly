@@ -5,7 +5,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/domain"
 	"testing"
 )
 
@@ -52,7 +51,7 @@ func TestLapFiresEvent(t *testing.T) {
 	var receivedEvents = 0
 	lapFinishedEventHandler.Handle(
 		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(eventingDomain.LapFinishedEvent)
+			lapFinishedEvent := msg.Payload.(domain.LapFinishedEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},

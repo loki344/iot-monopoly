@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"iot-monopoly/board"
-	"iot-monopoly/finance/financeDomain"
+	"iot-monopoly/finance/domain"
 	"time"
 )
 

@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"iot-monopoly/board/domain"
+	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/domain"
 )
 
 var players []boardDomain.Player
@@ -24,10 +23,12 @@ var defaultPlayers = []boardDomain.Player{
 	// A3-D9-350F Card 4
 }
 
+var tempFinancialDetails = boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{100, 200, 300, 400, 500, 800}}
+
 var DefaultFields = []boardDomain.Field{
 	boardDomain.BasicField{uuid.New().String(), "Start"},
-	boardDomain.PropertyField{uuid.New().String(), "Property purple 1", 100, ""},
-	boardDomain.PropertyField{uuid.New().String(), "Property purple 2", 100, ""},
+	boardDomain.NewPropertyField("Property purple 1", uuid.NewString(), tempFinancialDetails),
+	boardDomain.NewPropertyField("Property purple 2", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 1", func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
@@ -37,26 +38,26 @@ var DefaultFields = []boardDomain.Field{
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.PropertyField{uuid.New().String(), "Property orange 1", 100, ""},
-	boardDomain.PropertyField{uuid.New().String(), "Property orange 2", 100, ""},
+	boardDomain.NewPropertyField("Property orange 1", uuid.NewString(), tempFinancialDetails),
+	boardDomain.NewPropertyField("Property orange 2", uuid.NewString(), tempFinancialDetails),
 	boardDomain.BasicField{uuid.New().String(), "Frei parken"},
-	boardDomain.PropertyField{uuid.New().String(), "Property green 1", 100, ""},
+	boardDomain.NewPropertyField("Property green 1", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Start", func(player *boardDomain.Player) {
 		//TODO remove money from bankAccount
 		fmt.Println("Remove money from Bank account")
 	}},
-	boardDomain.PropertyField{uuid.New().String(), "Property green 2", 100, ""},
+	boardDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Gehe ins gefaengnis", func(player *boardDomain.Player) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
 		MovePlayer(player.Id, 4)
 	}},
-	boardDomain.PropertyField{uuid.New().String(), "Property blue 1", 100, ""},
+	boardDomain.NewPropertyField("Property blue 1", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 3", func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.PropertyField{uuid.New().String(), "Property blue 2", 100, ""},
+	boardDomain.NewPropertyField("Property blue 2", uuid.NewString(), tempFinancialDetails),
 }
 
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
@@ -106,7 +107,7 @@ func MovePlayer(playerId string, fieldIndex int) error {
 	//TODO get rid of magic numbers 10!!
 	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, eventingDomain.LapFinishedEvent{PlayerId: player.Id})
+		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.NewLapFinishedEvent(player.Id))
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)

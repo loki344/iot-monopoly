@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"iot-monopoly/finance"
-	"iot-monopoly/finance/financeDomain"
+	"iot-monopoly/finance/domain"
 )
 
 func Routes(app *fiber.App) {

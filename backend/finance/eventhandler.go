@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/board"
+	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/domain"
-	"iot-monopoly/finance/financeDomain"
+	"iot-monopoly/finance/domain"
 )
 
 var started = false
@@ -27,7 +27,7 @@ func startLapFinishedEventHandler() {
 
 	lapFinishedEventHandler.Handle(
 		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(eventingDomain.LapFinishedEvent)
+			lapFinishedEvent := msg.Payload.(boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
 			board.GetPlayer(lapFinishedEvent.PlayerId).Balance += 100
 		},
@@ -43,7 +43,7 @@ func startTransactionRequestedEventHandler() {
 
 	transactionRequestedHandler.Handle(
 		func(msg *model.Message) {
-			transactionRequest := msg.Payload.(eventingDomain.TransactionRequested)
+			transactionRequest := msg.Payload.(financeDomain.TransactionRequested)
 			//TODO handle error
 			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id(), transactionRequest.RecipientId(), transactionRequest.SenderId(), transactionRequest.Amount()))
 		},

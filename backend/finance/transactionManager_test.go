@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
-	"iot-monopoly/finance/financeDomain"
+	"iot-monopoly/finance/domain"
 	"testing"
 )
 

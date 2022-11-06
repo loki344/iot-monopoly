@@ -15,6 +15,7 @@ const (
 
 func ListenRequestStream(channelName ChannelName) bus.MessageHandler {
 
+	fmt.Println("Registering handler for channel: " + channelName)
 	createChannelIfNotExists(channelName)
 	tr := bus.GetBus()
 
@@ -28,9 +29,13 @@ func ListenRequestStream(channelName ChannelName) bus.MessageHandler {
 
 func FireEvent(channelName ChannelName, event any) {
 
+	fmt.Println("Firing event:")
+	fmt.Println(event)
+
 	name := string(channelName)
 	createChannelIfNotExists(channelName)
 	tr := bus.GetBus()
+
 	handler, err := tr.RequestOnce(name, event)
 	if err != nil {
 		//TODO something went wrong

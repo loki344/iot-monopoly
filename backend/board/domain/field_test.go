@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/domain"
 	"testing"
 )
 
@@ -18,7 +17,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
-			buyQuestionEvent := msg.Payload.(eventingDomain.PropertyBuyQuestion)
+			buyQuestionEvent := msg.Payload.(domain.PropertyBuyQuestion)
 			assert.Equal(t, id, buyQuestionEvent.PlayerId)
 			receivedEvents++
 		},
@@ -43,7 +42,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	const price = 1000
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
-			transactionRequest := msg.Payload.(eventingDomain.TransactionRequested)
+			transactionRequest := msg.Payload.(domain.TransactionRequested)
 			assert.Equal(t, payerId, transactionRequest.SenderId())
 			assert.Equal(t, ownerId, transactionRequest.RecipientId())
 			assert.Equal(t, price, transactionRequest.Amount())
