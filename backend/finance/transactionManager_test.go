@@ -9,7 +9,7 @@ import (
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
-	players := board.StartGame(2)
+	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
@@ -24,7 +24,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 
 func TestValidTransaction(t *testing.T) {
 
-	players := board.StartGame(2)
+	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
@@ -45,7 +45,7 @@ func TestValidTransaction(t *testing.T) {
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
 
-	players := board.StartGame(2)
+	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
@@ -64,7 +64,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 }
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
-	players := board.StartGame(2)
+	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 

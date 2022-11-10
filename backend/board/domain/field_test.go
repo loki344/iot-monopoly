@@ -40,7 +40,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	ownerId := uuid.New().String()
 
 	var receivedEvents = 0
-	const price = uint64(1000)
+	const price = 1000
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionRequest := e.Data.(financeDomain.TransactionRequested)

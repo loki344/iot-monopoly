@@ -15,12 +15,12 @@ type Field interface {
 type PropertyField struct {
 	Name             string
 	Id               string
-	FinancialDetails FinancialDetails
+	FinancialDetails *FinancialDetails
 	OwnerId          string
 	Upgrades         PropertyUpgrade
 }
 
-func NewPropertyField(name string, id string, financialDetails FinancialDetails) *PropertyField {
+func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
 	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
 }
 
