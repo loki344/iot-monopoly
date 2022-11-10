@@ -1,8 +1,11 @@
 package eventing
 
 import (
+	"context"
 	"fmt"
-	"github.com/vmware/transport-go/bus"
+	"github.com/google/uuid"
+	"github.com/mustafaturan/bus/v3"
+	"iot-monopoly/eventing/config"
 )
 
 type ChannelName string
@@ -13,18 +16,14 @@ const (
 	LAP_FINISHED          ChannelName = "lapFinished"
 )
 
-func ListenRequestStream(channelName ChannelName) bus.MessageHandler {
+func RegisterEventHandler(handler bus.Handler) string {
+	fmt.Println("Registering handler for channel: " + handler.Matcher)
+	createChannelIfNotExists(handler.Matcher)
+	id := uuid.NewString()
+	fmt.Printf("Handler received id %s\n", id)
 
-	fmt.Println("Registering handler for channel: " + channelName)
-	createChannelIfNotExists(channelName)
-	tr := bus.GetBus()
-
-	eventHandler, err := tr.ListenRequestStream(string(channelName))
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return eventHandler
+	config.Bus.RegisterHandler(id, handler)
+	return id
 }
 
 func FireEvent(channelName ChannelName, event any) {
@@ -33,26 +32,31 @@ func FireEvent(channelName ChannelName, event any) {
 	fmt.Println(event)
 
 	name := string(channelName)
-	createChannelIfNotExists(channelName)
-	tr := bus.GetBus()
+	createChannelIfNotExists(name)
 
-	handler, err := tr.RequestOnce(name, event)
+	txID := config.Monoton.Next()
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, bus.CtxKeyTxID, txID)
+
+	b := config.Bus
+
+	err := b.Emit(
+		ctx,
+		name,
+		event,
+	)
 	if err != nil {
-		//TODO something went wrong
-		fmt.Println(err)
-	}
-	err = handler.Fire()
-	if err != nil {
-		//TODO something went wrong
-		fmt.Println(err)
+		fmt.Println("ERROR >>>>", err)
 	}
 }
 
-func createChannelIfNotExists(name ChannelName) {
-	tr := bus.GetBus()
-
-	if !tr.GetChannelManager().CheckChannelExists(string(name)) {
-		fmt.Printf("Channel %s not found, creating it\n", name)
-		tr.GetChannelManager().CreateChannel(string(name))
+func createChannelIfNotExists(name string) {
+	for _, topic := range config.Bus.Topics() {
+		if topic == name {
+			return
+		}
 	}
+
+	fmt.Printf("Channel %s not found, creating it\n", name)
+	config.Bus.RegisterTopics(name)
 }

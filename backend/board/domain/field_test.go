@@ -1,31 +1,30 @@
 package boardDomain
 
 import (
-	"fmt"
+	"context"
 	"github.com/google/uuid"
+	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	"github.com/vmware/transport-go/model"
 	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	financeDomain "iot-monopoly/finance/domain"
 	"testing"
 )
 
 func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 
-	propertyBuyQuestionEventHandler := eventing.ListenRequestStream(eventing.PROPERTY_BUY_QUESTION)
+	config.Init()
 	id := uuid.New().String()
 
 	var receivedEvents = 0
-	propertyBuyQuestionEventHandler.Handle(
-		func(msg *model.Message) {
-			buyQuestionEvent := msg.Payload.(*PropertyBuyQuestion)
-			assert.Equal(t, id, buyQuestionEvent.PlayerId)
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			lapFinishedEvent := e.Data.(*PropertyBuyQuestion)
+			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		func(err error) {
-			fmt.Println(err)
-			t.Fail()
-		})
+		Matcher: string(eventing.PROPERTY_BUY_QUESTION),
+	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}
 	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
@@ -36,24 +35,22 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 
 func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
-	propertyBuyQuestionEventHandler := eventing.ListenRequestStream(eventing.TRANSACTION_REQUESTED)
+	config.Init()
 	payerId := uuid.New().String()
 	ownerId := uuid.New().String()
 
 	var receivedEvents = 0
 	const price = uint64(1000)
-	propertyBuyQuestionEventHandler.Handle(
-		func(msg *model.Message) {
-			transactionRequest := msg.Payload.(financeDomain.TransactionRequested)
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			transactionRequest := e.Data.(financeDomain.TransactionRequested)
 			assert.Equal(t, payerId, transactionRequest.SenderId())
 			assert.Equal(t, ownerId, transactionRequest.RecipientId())
 			assert.Equal(t, price, transactionRequest.Amount())
 			receivedEvents++
 		},
-		func(err error) {
-			fmt.Println(err)
-			t.Fail()
-		})
+		Matcher: string(eventing.TRANSACTION_REQUESTED),
+	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{1000, 200, 300, 400, 500, 800}}
 	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)

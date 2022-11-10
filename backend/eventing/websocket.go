@@ -1,10 +1,11 @@
 package eventing
 
 import (
+	"context"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	"github.com/vmware/transport-go/model"
+	"github.com/mustafaturan/bus/v3"
 	"log"
 )
 
@@ -31,19 +32,16 @@ func registerWebsocket(app *fiber.App) fiber.Router {
 		for i := range EXTERNAL_CHANNELS {
 
 			//TODO we have an issue that crashes when we refresh the browser and then send events
-			eventHandler := ListenRequestStream(EXTERNAL_CHANNELS[i])
-			eventHandler.Handle(
-				func(eventMessage *model.Message) {
-
-					err := c.WriteJSON(eventMessage.Payload)
+			RegisterEventHandler(bus.Handler{
+				Handle: func(ctx context.Context, e bus.Event) {
+					err := c.WriteJSON(e.Data)
 					if err != nil {
 						fmt.Println(err)
 						return
 					}
 				},
-				func(err error) {
-					fmt.Println(err)
-				})
+				Matcher: string(EXTERNAL_CHANNELS[i]),
+			})
 		}
 
 		var (

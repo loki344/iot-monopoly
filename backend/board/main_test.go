@@ -1,16 +1,18 @@
 package board
 
 import (
-	"fmt"
+	"context"
+	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	"github.com/vmware/transport-go/model"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	"testing"
 )
 
 func TestPlayerCanMoveAround(t *testing.T) {
 
+	config.Init()
 	players, _ := StartGame(1)
 	playerId := players[0].Id
 	player := GetPlayer(playerId)
@@ -43,21 +45,19 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
 func TestLapFiresEvent(t *testing.T) {
 
+	config.Init()
 	players, _ := StartGame(1)
 	id := players[0].Id
 
-	lapFinishedEventHandler := eventing.ListenRequestStream(eventing.LAP_FINISHED)
-
 	var receivedEvents = 0
-	lapFinishedEventHandler.Handle(
-		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(*boardDomain.LapFinishedEvent)
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		func(err error) {
-			fmt.Println(err)
-		})
+		Matcher: string(eventing.LAP_FINISHED),
+	})
 
 	MovePlayer(id, 15)
 	MovePlayer(id, 1)

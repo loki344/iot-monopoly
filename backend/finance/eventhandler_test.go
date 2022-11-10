@@ -6,13 +6,15 @@ import (
 	"iot-monopoly/board"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	"iot-monopoly/finance/domain"
 	"testing"
 )
 
 func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
-	StartEventHandler()
+	config.Init()
+	StartEventListeners()
 
 	players, _ := board.StartGame(1)
 	id := players[0].Id
@@ -24,6 +26,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
 func TestTransactionRequestTurnsIntoTransaction(t *testing.T) {
 
+	config.Init()
 	startTransactionRequestedEventHandler()
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id

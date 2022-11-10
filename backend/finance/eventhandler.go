@@ -1,53 +1,41 @@
 package finance
 
 import (
+	"context"
 	"fmt"
-	"github.com/vmware/transport-go/model"
+	"github.com/mustafaturan/bus/v3"
 	"iot-monopoly/board"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
 	"iot-monopoly/finance/domain"
 )
 
-var started = false
+func StartEventListeners() {
 
-func StartEventHandler() {
-
-	if !started {
-		startLapFinishedEventHandler()
-		startTransactionRequestedEventHandler()
-		started = true
-	}
+	startLapFinishedEventHandler()
+	startTransactionRequestedEventHandler()
 }
 
 func startLapFinishedEventHandler() {
-	channel := eventing.LAP_FINISHED
 
-	lapFinishedEventHandler := eventing.ListenRequestStream(channel)
-
-	lapFinishedEventHandler.Handle(
-		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(boardDomain.LapFinishedEvent)
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			lapFinishedEvent := e.Data.(boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
 			board.GetPlayer(lapFinishedEvent.PlayerId).Balance += 100
 		},
-		func(err error) {
-			fmt.Println(err)
-		})
+		Matcher: string(eventing.LAP_FINISHED),
+	})
 }
 
 func startTransactionRequestedEventHandler() {
-	channel := eventing.TRANSACTION_REQUESTED
 
-	transactionRequestedHandler := eventing.ListenRequestStream(channel)
-
-	transactionRequestedHandler.Handle(
-		func(msg *model.Message) {
-			transactionRequest := msg.Payload.(financeDomain.TransactionRequested)
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			transactionRequest := e.Data.(financeDomain.TransactionRequested)
 			//TODO handle error
 			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id(), transactionRequest.RecipientId(), transactionRequest.SenderId(), transactionRequest.Amount()))
 		},
-		func(err error) {
-			fmt.Println(err)
-		})
+		Matcher: string(eventing.TRANSACTION_REQUESTED),
+	})
 }

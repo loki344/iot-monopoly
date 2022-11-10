@@ -4,9 +4,11 @@ go 1.18
 
 require (
 	github.com/gofiber/fiber/v2 v2.39.0
+	github.com/gofiber/websocket/v2 v2.1.1
 	github.com/google/uuid v1.3.0
+	github.com/mustafaturan/bus/v3 v3.0.3
+	github.com/mustafaturan/monoton/v3 v3.0.0
 	github.com/stretchr/testify v1.8.0
-	github.com/vmware/transport-go v1.3.4
 )
 
 require (
@@ -15,7 +17,6 @@ require (
 	github.com/fasthttp/websocket v1.5.0 // indirect
 	github.com/fatih/color v1.12.0 // indirect
 	github.com/go-stomp/stomp/v3 v3.0.3 // indirect
-	github.com/gofiber/websocket/v2 v2.1.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
