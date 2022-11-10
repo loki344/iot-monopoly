@@ -2,9 +2,7 @@ package boardDomain
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"iot-monopoly/eventing"
-	financeDomain "iot-monopoly/finance/domain"
 )
 
 type Field interface {
@@ -91,12 +89,13 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 
 	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
-		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, NewPropertyBuyQuestion(player.Id, propertyField))
+		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, *NewPropertyBuyQuestion(player.Id, propertyField))
 	} else if propertyField.OwnerId == player.Id {
 		fmt.Println("player owns the property..")
 	} else {
-		//TODO maybe it's cleaner to not fire the event here, fire it via service from finance domain?
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPriceToPay())
-		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, financeDomain.NewTransactionRequest(uuid.NewString(), propertyField.OwnerId, player.Id, propertyField.GetPriceToPay()))
+		//TODO maybe it's cleaner to not fire the event here, fire it via service from finance domain?
+		// -- use TransactionManager
+		//eventing.FireEvent(eventing.TRANSACTION_ADDED, financeDomain.NewTransactionRequest(uuid.NewString(), propertyField.OwnerId, player.Id, propertyField.GetPriceToPay()))
 	}
 }

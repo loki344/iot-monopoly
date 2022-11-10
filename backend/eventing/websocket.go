@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-var EXTERNAL_CHANNELS = [2]ChannelName{PROPERTY_BUY_QUESTION, TRANSACTION_REQUESTED}
+var EXTERNAL_CHANNELS = [2]ChannelName{PROPERTY_BUY_QUESTION, TRANSACTION_ADDED}
 
 func StartWebsocket(app *fiber.App) {
 

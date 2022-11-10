@@ -19,7 +19,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			lapFinishedEvent := e.Data.(*PropertyBuyQuestion)
+			lapFinishedEvent := e.Data.(PropertyBuyQuestion)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
@@ -43,13 +43,13 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	const price = 1000
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionRequest := e.Data.(*financeDomain.TransactionRequested)
+			transactionRequest := e.Data.(financeDomain.TransactionRequested)
 			assert.Equal(t, payerId, transactionRequest.SenderId())
 			assert.Equal(t, ownerId, transactionRequest.RecipientId())
 			assert.Equal(t, price, transactionRequest.Amount())
 			receivedEvents++
 		},
-		Matcher: string(eventing.TRANSACTION_REQUESTED),
+		Matcher: string(eventing.TRANSACTION_ADDED),
 	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{1000, 200, 300, 400, 500, 800}}

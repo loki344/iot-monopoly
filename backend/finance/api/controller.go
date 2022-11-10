@@ -18,13 +18,15 @@ func Routes(app *fiber.App) {
 			fmt.Println("error = ", err)
 			return fiber.ErrBadRequest
 		}
-		//TODO Create new transaction
 
-		if newTransaction.Accepted {
-			finance.ResolveTransaction(newTransaction.Id())
+		newTransaction = financeDomain.NewTransactionFromTransactionDTO(newTransaction)
+
+		_, err := finance.AddTransaction(*newTransaction)
+		if err != nil {
+			return fiber.ErrBadRequest
 		}
-		return c.Status(200).JSON(newTransaction)
 
+		return c.Status(200).JSON(newTransaction)
 	})
 
 	app.Patch("/transactions/:id", func(c *fiber.Ctx) error {
@@ -42,7 +44,7 @@ func Routes(app *fiber.App) {
 		}
 
 		if transactionToPatch.Accepted {
-			finance.ResolveTransaction(transactionToPatch.Id())
+			finance.ResolveTransaction(transactionToPatch.Id)
 		}
 		return c.Status(200).JSON(transactionToPatch)
 	})
@@ -51,7 +53,7 @@ func Routes(app *fiber.App) {
 
 func validatePatchTransaction(toCheck financeDomain.Transaction, transaction financeDomain.Transaction) error {
 
-	if toCheck.Id() != transaction.Id() || toCheck.SenderId() != transaction.SenderId() || toCheck.RecipientId() != transaction.RecipientId() || toCheck.Amount() != transaction.Amount() {
+	if toCheck.Id != transaction.Id || toCheck.SenderId != transaction.SenderId || toCheck.RecipientId != transaction.RecipientId || toCheck.Amount != transaction.Amount {
 		return errors.New("Transaction invalid, only changing the accept state of a transaction is allowed")
 	}
 
