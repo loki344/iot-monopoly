@@ -14,7 +14,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 
 	amount := 1_000
 
-	_, err := AddTransaction(*financeDomain.NewTransaction(recipientId, senderId, amount))
+	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -28,7 +28,7 @@ func TestValidTransaction(t *testing.T) {
 
 	amount := 1_000
 
-	transaction, err := AddTransaction(*financeDomain.NewTransaction(recipientId, senderId, amount))
+	transaction, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
 	if err != nil {
 		assert.NoError(t, err)
 	}
@@ -46,7 +46,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 	amount := 1_000
 
-	transaction, err := AddTransaction(*financeDomain.NewTransaction(recipientId, senderId, amount))
+	transaction, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
 	if err != nil {
 		assert.NoError(t, err)
 	}
@@ -64,7 +64,7 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 
 	amount := 1_000
 
-	transaction, err := AddTransaction(*financeDomain.NewTransaction(recipientId, senderId, amount))
+	transaction, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
 	if err != nil {
 		assert.NoError(t, err)
 	}

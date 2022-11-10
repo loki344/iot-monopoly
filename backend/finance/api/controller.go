@@ -21,7 +21,7 @@ func Routes(app *fiber.App) {
 
 		newTransaction = financeDomain.NewTransactionFromTransactionDTO(newTransaction)
 
-		_, err := finance.AddTransaction(*newTransaction)
+		_, err := finance.AddTransaction(newTransaction)
 		if err != nil {
 			return fiber.ErrBadRequest
 		}

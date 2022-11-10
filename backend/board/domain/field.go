@@ -3,6 +3,7 @@ package boardDomain
 import (
 	"fmt"
 	"iot-monopoly/eventing"
+	financeDomain "iot-monopoly/finance/domain"
 )
 
 type Field interface {
@@ -96,6 +97,6 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPriceToPay())
 		//TODO maybe it's cleaner to not fire the event here, fire it via service from finance domain?
 		// -- use TransactionManager
-		//eventing.FireEvent(eventing.TRANSACTION_ADDED, financeDomain.NewTransactionRequest(uuid.NewString(), propertyField.OwnerId, player.Id, propertyField.GetPriceToPay()))
+		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, financeDomain.TransactionRequest{SenderId: player.Id, RecipientId: propertyField.Id, Amount: propertyField.GetPriceToPay()})
 	}
 }

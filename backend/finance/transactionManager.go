@@ -11,7 +11,7 @@ import (
 
 var transactions []financeDomain.Transaction
 
-func AddTransaction(transaction financeDomain.Transaction) (*financeDomain.Transaction, error) {
+func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Transaction, error) {
 
 	err := validateTransaction(transaction)
 	if err != nil {
@@ -20,14 +20,14 @@ func AddTransaction(transaction financeDomain.Transaction) (*financeDomain.Trans
 	}
 
 	fmt.Printf("Adding transaction %s to pending transactions\n", transaction.Id)
-	transactions = append(transactions, transaction)
+	transactions = append(transactions, *transaction)
 
-	eventing.FireEvent(eventing.TRANSACTION_ADDED, financeDomain.NewTransactionRequest(&transaction))
+	eventing.FireEvent(eventing.TRANSACTION_ADDED, financeDomain.NewTransactionAddedEvent(transaction))
 
-	return &transaction, nil
+	return transaction, nil
 }
 
-func validateTransaction(transaction financeDomain.Transaction) error {
+func validateTransaction(transaction *financeDomain.Transaction) error {
 
 	if !transaction.IsPending() {
 		return errors.New(fmt.Sprintf("cannot add non-pending transaction, please add only pending transactions: %s", transaction.Id))

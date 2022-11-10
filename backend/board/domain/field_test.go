@@ -43,7 +43,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	const price = 1000
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionRequest := e.Data.(financeDomain.TransactionRequested)
+			transactionRequest := e.Data.(financeDomain.TransactionAddedEvent)
 			assert.Equal(t, payerId, transactionRequest.SenderId())
 			assert.Equal(t, ownerId, transactionRequest.RecipientId())
 			assert.Equal(t, price, transactionRequest.Amount())

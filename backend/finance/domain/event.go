@@ -2,12 +2,12 @@ package financeDomain
 
 import eventingDomain "iot-monopoly/eventing/domain"
 
-type TransactionRequested struct {
+type TransactionAddedEvent struct {
 	eventingDomain.BaseEvent
 	Transaction *Transaction
 }
 
-func NewTransactionRequest(transaction *Transaction) TransactionRequested {
+func NewTransactionAddedEvent(transaction *Transaction) TransactionAddedEvent {
 
-	return TransactionRequested{BaseEvent: eventingDomain.EventType(&TransactionRequested{}), Transaction: transaction}
+	return TransactionAddedEvent{BaseEvent: eventingDomain.EventType(&TransactionAddedEvent{}), Transaction: transaction}
 }
