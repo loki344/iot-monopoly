@@ -13,25 +13,15 @@ type Field interface {
 
 //TODO consolidate Name to super class?
 type PropertyField struct {
-	Name          string
-	Id            string
-	PropertyPrice int
-	HousePrice    int
-	HotelPrice    int
-	Normal        int
-	OneHouse      int
-	TwoHouses     int
-	ThreeHouses   int
-	FourHouses    int
-	Hotel         int
-	OwnerId       string
-	Upgrades      PropertyUpgrade
+	Name             string
+	Id               string
+	FinancialDetails *FinancialDetails
+	OwnerId          string
+	Upgrades         *PropertyUpgrade
 }
 
 func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
-	return &PropertyField{Name: name, Id: id, PropertyPrice: financialDetails.PropertyPrice, HousePrice: financialDetails.HousePrice, HotelPrice: financialDetails.HotelPrice,
-		Normal: financialDetails.Revenue.Normal, OneHouse: financialDetails.Revenue.OneHouse, TwoHouses: financialDetails.Revenue.TwoHouses, ThreeHouses: financialDetails.Revenue.ThreeHouses,
-		FourHouses: financialDetails.Revenue.FourHouses, Hotel: financialDetails.Revenue.Hotel}
+	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
 }
 
 type PropertyUpgrade string
@@ -72,19 +62,19 @@ type BasicField struct {
 }
 
 func (propertyField PropertyField) GetPriceToPay() int {
-	switch propertyField.Upgrades {
+	switch *propertyField.Upgrades {
 	case ONE_HOUSE:
-		return propertyField.OneHouse
+		return propertyField.FinancialDetails.Revenue.OneHouse
 	case TWO_HOUSES:
-		return propertyField.TwoHouses
+		return propertyField.FinancialDetails.Revenue.TwoHouses
 	case THREE_HOUSES:
-		return propertyField.ThreeHouses
+		return propertyField.FinancialDetails.Revenue.ThreeHouses
 	case FOUR_HOUSES:
-		return propertyField.FourHouses
+		return propertyField.FinancialDetails.Revenue.FourHouses
 	case HOTEL:
-		return propertyField.Hotel
+		return propertyField.FinancialDetails.Revenue.Hotel
 	default:
-		return propertyField.Normal
+		return propertyField.FinancialDetails.Revenue.Normal
 	}
 }
 
