@@ -66,5 +66,5 @@ func validateMessage(toCheck *boardDomain.Player, player *boardDomain.Player) er
 }
 
 type GameRequest struct {
-	PlayerCount uint64 `json:"playerCount"`
+	PlayerCount uint8 `json:"playerCount"`
 }
