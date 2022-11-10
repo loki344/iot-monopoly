@@ -3,13 +3,13 @@ package boardDomain
 import eventingDomain "iot-monopoly/eventing/domain"
 
 type PropertyBuyQuestion struct {
-	Property *PropertyField
+	PropertyId string
+	PlayerId   string
 	*eventingDomain.BaseEvent
-	PlayerId string
 }
 
-func NewPropertyBuyQuestion(playerId string, property *PropertyField) *PropertyBuyQuestion {
-	return &PropertyBuyQuestion{property, eventingDomain.EventType(PropertyBuyQuestion{}), playerId}
+func NewPropertyBuyQuestion(playerId string, propertyId string) *PropertyBuyQuestion {
+	return &PropertyBuyQuestion{propertyId, playerId, eventingDomain.EventType(PropertyBuyQuestion{})}
 }
 
 type LapFinishedEvent struct {
