@@ -14,7 +14,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := uint32(1_000)
+	amount := uint64(1_000)
 
 	err := AddTransaction(*financeDomain.NewTransaction(transactionId, recipientId, senderId, amount))
 	if err != nil {
@@ -29,7 +29,7 @@ func TestValidTransaction(t *testing.T) {
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := uint32(1_000)
+	amount := uint64(1_000)
 
 	err := AddTransaction(*financeDomain.NewTransaction(transactionId, recipientId, senderId, amount))
 	if err != nil {
@@ -50,7 +50,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := uint32(1_000)
+	amount := uint64(1_000)
 
 	err := AddTransaction(*financeDomain.NewTransaction(transactionId, recipientId, senderId, amount))
 	if err != nil {
@@ -59,8 +59,8 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 	ResolveTransaction(transactionId)
 
-	assert.Equal(t, uint32(0), board.GetPlayer(senderId).Balance)
-	assert.Equal(t, uint32(2_000), board.GetPlayer(recipientId).Balance)
+	assert.Equal(t, uint64(0), board.GetPlayer(senderId).Balance)
+	assert.Equal(t, uint64(2_000), board.GetPlayer(recipientId).Balance)
 }
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
@@ -69,7 +69,7 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := uint32(1_000)
+	amount := uint64(1_000)
 
 	err := AddTransaction(*financeDomain.NewTransaction(transactionId, recipientId, senderId, amount))
 	if err != nil {

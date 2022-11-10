@@ -19,7 +19,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	players, _ := board.StartGame(1)
 	id := players[0].Id
 	eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.LapFinishedEvent{PlayerId: id})
-	assert.Equal(t, uint32(1100), board.GetPlayer(id).Balance)
+	assert.Equal(t, uint64(1100), board.GetPlayer(id).Balance)
 }
 
 //TODO transactionrequest turns into transaction
@@ -33,7 +33,7 @@ func TestTransactionRequestTurnsIntoTransaction(t *testing.T) {
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := uint32(1_000)
+	amount := uint64(1_000)
 
 	eventing.FireEvent(eventing.TRANSACTION_REQUESTED, financeDomain.NewTransactionRequest(transactionId, recipientId, senderId, amount))
 
