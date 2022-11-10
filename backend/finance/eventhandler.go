@@ -20,7 +20,7 @@ func startLapFinishedEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			lapFinishedEvent := e.Data.(boardDomain.LapFinishedEvent)
+			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
 			board.GetPlayer(lapFinishedEvent.PlayerId).Balance += 100
 		},
@@ -32,7 +32,7 @@ func startTransactionRequestedEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionRequest := e.Data.(financeDomain.TransactionRequested)
+			transactionRequest := e.Data.(*financeDomain.TransactionRequested)
 			//TODO handle error
 			AddTransaction(*financeDomain.NewTransaction(transactionRequest.Id(), transactionRequest.RecipientId(), transactionRequest.SenderId(), transactionRequest.Amount()))
 		},
