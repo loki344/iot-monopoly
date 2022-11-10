@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vmware/transport-go/model"
 	"iot-monopoly/eventing"
+	financeDomain "iot-monopoly/finance/domain"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
-			buyQuestionEvent := msg.Payload.(domain.PropertyBuyQuestion)
+			buyQuestionEvent := msg.Payload.(*PropertyBuyQuestion)
 			assert.Equal(t, id, buyQuestionEvent.PlayerId)
 			receivedEvents++
 		},
@@ -26,7 +27,8 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 			t.Fail()
 		})
 
-	property := PropertyField{"TestProperty", uuid.New().String(), 1000, ""}
+	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}
+	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
 	property.OnPlayerEnter(&Player{id, 0, 1000})
 
 	assert.Equal(t, 1, receivedEvents)
@@ -39,10 +41,10 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	ownerId := uuid.New().String()
 
 	var receivedEvents = 0
-	const price = 1000
+	const price = uint32(1000)
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
-			transactionRequest := msg.Payload.(domain.TransactionRequested)
+			transactionRequest := msg.Payload.(financeDomain.TransactionRequested)
 			assert.Equal(t, payerId, transactionRequest.SenderId())
 			assert.Equal(t, ownerId, transactionRequest.RecipientId())
 			assert.Equal(t, price, transactionRequest.Amount())
@@ -53,7 +55,10 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 			t.Fail()
 		})
 
-	property := PropertyField{"TestProperty", uuid.New().String(), price, ownerId}
+	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{1000, 200, 300, 400, 500, 800}}
+	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
+	property.OwnerId = ownerId
+
 	property.OnPlayerEnter(&Player{payerId, 0, 0})
 
 	assert.Equal(t, 1, receivedEvents)

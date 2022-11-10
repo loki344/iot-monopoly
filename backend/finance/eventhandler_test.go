@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
+	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
 	"iot-monopoly/finance/domain"
 	"testing"
@@ -13,9 +14,10 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
 	StartEventHandler()
 
-	id := board.StartGame(1)[0].Id
-	eventing.FireEvent(eventing.LAP_FINISHED, domain.LapFinishedEvent{PlayerId: id})
-	assert.Equal(t, 1100, board.GetPlayer(id).Balance)
+	players, _ := board.StartGame(1)
+	id := players[0].Id
+	eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.LapFinishedEvent{PlayerId: id})
+	assert.Equal(t, uint32(1100), board.GetPlayer(id).Balance)
 }
 
 //TODO transactionrequest turns into transaction
@@ -23,14 +25,14 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 func TestTransactionRequestTurnsIntoTransaction(t *testing.T) {
 
 	startTransactionRequestedEventHandler()
-	players := board.StartGame(2)
+	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	transactionId := uuid.NewString()
-	amount := 1_000
+	amount := uint32(1_000)
 
-	eventing.FireEvent(eventing.TRANSACTION_REQUESTED, domain.NewTransactionRequest(transactionId, recipientId, senderId, amount))
+	eventing.FireEvent(eventing.TRANSACTION_REQUESTED, financeDomain.NewTransactionRequest(transactionId, recipientId, senderId, amount))
 
 	var transaction financeDomain.Transaction
 	assert.NotPanics(t, func() {

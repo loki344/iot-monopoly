@@ -4,22 +4,23 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vmware/transport-go/model"
+	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
 	"testing"
 )
 
 func TestPlayerCanMoveAround(t *testing.T) {
 
-	playerId := StartGame(1)[0].Id
-
+	players, _ := StartGame(1)
+	playerId := players[0].Id
 	player := GetPlayer(playerId)
-	for i := 0; i < GetFieldsCount(); i++ {
+	for i := uint8(0); i < GetFieldsCount(); i++ {
 		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
 		if i == 12 {
 			assert.NoError(t, err)
 			//TODO resolve prison index differently
-			assert.Equal(t, 4, player.Position)
+			assert.Equal(t, uint8(4), player.Position)
 		} else {
 			assert.NoError(t, err)
 			assert.Equal(t, i, player.Position)
@@ -30,28 +31,27 @@ func TestPlayerCanMoveAround(t *testing.T) {
 
 func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
-	id := StartGame(1)[0].Id
+	players, _ := StartGame(1)
+	id := players[0].Id
 
-	errorLowerBound := MovePlayer(id, -1)
-	assert.Error(t, errorLowerBound)
 	player := GetPlayer(id)
-	assert.Equal(t, 0, player.Position)
 
 	errorUpperBound := MovePlayer(id, GetFieldsCount()+1)
 	assert.Error(t, errorUpperBound)
-	assert.Equal(t, 0, player.Position)
+	assert.Equal(t, uint8(0), player.Position)
 }
 
 func TestLapFiresEvent(t *testing.T) {
 
-	id := StartGame(1)[0].Id
+	players, _ := StartGame(1)
+	id := players[0].Id
 
 	lapFinishedEventHandler := eventing.ListenRequestStream(eventing.LAP_FINISHED)
 
 	var receivedEvents = 0
 	lapFinishedEventHandler.Handle(
 		func(msg *model.Message) {
-			lapFinishedEvent := msg.Payload.(domain.LapFinishedEvent)
+			lapFinishedEvent := msg.Payload.(*boardDomain.LapFinishedEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},

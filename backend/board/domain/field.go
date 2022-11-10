@@ -13,19 +13,19 @@ type Field interface {
 
 //TODO consolidate Name to super class?
 type PropertyField struct {
+	PropertyPrice uint32
+	HousePrice    uint32
+	HotelPrice    uint32
+	Normal        uint32
+	OneHouse      uint32
+	TwoHouses     uint32
+	ThreeHouses   uint32
+	FourHouses    uint32
+	Hotel         uint32
+	Upgrades      PropertyUpgrade
 	Name          string
 	Id            string
-	PropertyPrice int
-	HousePrice    int
-	HotelPrice    int
-	Normal        int
-	OneHouse      int
-	TwoHouses     int
-	ThreeHouses   int
-	FourHouses    int
-	Hotel         int
 	OwnerId       string
-	Upgrades      PropertyUpgrade
 }
 
 func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
@@ -45,18 +45,18 @@ const (
 )
 
 type Revenue struct {
-	Normal      int
-	OneHouse    int
-	TwoHouses   int
-	ThreeHouses int
-	FourHouses  int
-	Hotel       int
+	Normal      uint32
+	OneHouse    uint32
+	TwoHouses   uint32
+	ThreeHouses uint32
+	FourHouses  uint32
+	Hotel       uint32
 }
 
 type FinancialDetails struct {
-	PropertyPrice int
-	HousePrice    int
-	HotelPrice    int
+	PropertyPrice uint32
+	HousePrice    uint32
+	HotelPrice    uint32
 	Revenue       Revenue
 }
 
@@ -71,7 +71,7 @@ type BasicField struct {
 	Id   string
 }
 
-func (propertyField PropertyField) GetPriceToPay() int {
+func (propertyField PropertyField) GetPriceToPay() uint32 {
 	switch propertyField.Upgrades {
 	case ONE_HOUSE:
 		return propertyField.OneHouse
