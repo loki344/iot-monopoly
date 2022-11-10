@@ -23,7 +23,7 @@ var defaultPlayers = []boardDomain.Player{
 	// A3-D9-350F Card 4
 }
 
-var tempFinancialDetails = boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{100, 200, 300, 400, 500, 800}}
+var tempFinancialDetails = &boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{100, 200, 300, 400, 500, 800}}
 
 var DefaultFields = []boardDomain.Field{
 	boardDomain.BasicField{uuid.New().String(), "Start"},

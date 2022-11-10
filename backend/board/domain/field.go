@@ -15,12 +15,12 @@ type Field interface {
 type PropertyField struct {
 	Name             string
 	Id               string
-	FinancialDetails FinancialDetails
+	FinancialDetails *FinancialDetails
 	OwnerId          string
-	Upgrades         PropertyUpgrade
+	Upgrades         *PropertyUpgrade
 }
 
-func NewPropertyField(name string, id string, financialDetails FinancialDetails) *PropertyField {
+func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
 	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
 }
 
@@ -62,7 +62,7 @@ type BasicField struct {
 }
 
 func (propertyField PropertyField) GetPriceToPay() int {
-	switch propertyField.Upgrades {
+	switch *propertyField.Upgrades {
 	case ONE_HOUSE:
 		return propertyField.FinancialDetails.Revenue.OneHouse
 	case TWO_HOUSES:
