@@ -5,10 +5,11 @@ import eventingDomain "iot-monopoly/eventing/domain"
 type PropertyBuyQuestion struct {
 	PropertyId string
 	PlayerId   string
+	*eventingDomain.BaseEvent
 }
 
 func NewPropertyBuyQuestion(playerId string, propertyId string) *PropertyBuyQuestion {
-	return &PropertyBuyQuestion{propertyId, playerId}
+	return &PropertyBuyQuestion{propertyId, playerId, eventingDomain.EventType(PropertyBuyQuestion{})}
 }
 
 type LapFinishedEvent struct {
