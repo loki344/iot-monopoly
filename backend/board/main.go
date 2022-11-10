@@ -43,8 +43,8 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.BasicField{uuid.New().String(), "Frei parken"},
 	boardDomain.NewPropertyField("Property green 1", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Start", func(player *boardDomain.Player) {
-		//TODO remove money from bankAccount
-		fmt.Println("Remove money from Bank account")
+		fmt.Printf("Remove 100 from Bank account of player %s\n", player.Id)
+		player.Balance -= 100
 	}},
 	boardDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Gehe ins gefaengnis", func(player *boardDomain.Player) {
