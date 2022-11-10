@@ -60,7 +60,7 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.NewPropertyField("Property blue 2", uuid.NewString(), tempFinancialDetails),
 }
 
-func StartGame(playerCount uint64) ([]boardDomain.Player, error) {
+func StartGame(playerCount uint8) ([]boardDomain.Player, error) {
 	players = nil
 	fields = nil
 
@@ -92,9 +92,9 @@ func initBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player)
 	players = initPlayers
 }
 
-func MovePlayer(playerId string, fieldIndex uint64) error {
+func MovePlayer(playerId string, fieldIndex uint8) error {
 
-	if fieldIndex > uint64(len(fields)-1) {
+	if fieldIndex > uint8(len(fields)-1) {
 		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldIndex, len(fields)))
 	}
 
@@ -127,13 +127,13 @@ func GetPlayer(playerId string) *boardDomain.Player {
 	panic(fmt.Sprintf("Player with id %s not found", playerId))
 }
 
-func GetField(fieldIndex uint64) *boardDomain.Field {
+func GetField(fieldIndex uint8) *boardDomain.Field {
 
 	return &fields[fieldIndex]
 }
 
-func GetFieldsCount() uint64 {
-	return uint64(len(fields))
+func GetFieldsCount() uint8 {
+	return uint8(len(fields))
 }
 
 func GetPlayers() []boardDomain.Player {

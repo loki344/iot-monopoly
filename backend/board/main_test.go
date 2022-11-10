@@ -14,13 +14,13 @@ func TestPlayerCanMoveAround(t *testing.T) {
 	players, _ := StartGame(1)
 	playerId := players[0].Id
 	player := GetPlayer(playerId)
-	for i := uint64(0); i < GetFieldsCount(); i++ {
+	for i := uint8(0); i < GetFieldsCount(); i++ {
 		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
 		if i == 12 {
 			assert.NoError(t, err)
 			//TODO resolve prison index differently
-			assert.Equal(t, uint64(4), player.Position)
+			assert.Equal(t, uint8(4), player.Position)
 		} else {
 			assert.NoError(t, err)
 			assert.Equal(t, i, player.Position)
@@ -38,7 +38,7 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
 	errorUpperBound := MovePlayer(id, GetFieldsCount()+1)
 	assert.Error(t, errorUpperBound)
-	assert.Equal(t, uint64(0), player.Position)
+	assert.Equal(t, uint8(0), player.Position)
 }
 
 func TestLapFiresEvent(t *testing.T) {

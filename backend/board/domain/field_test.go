@@ -41,7 +41,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	ownerId := uuid.New().String()
 
 	var receivedEvents = 0
-	const price = uint64(1000)
+	const price = uint32(1000)
 	propertyBuyQuestionEventHandler.Handle(
 		func(msg *model.Message) {
 			transactionRequest := msg.Payload.(financeDomain.TransactionRequested)
