@@ -30,6 +30,7 @@ func registerWebsocket(app *fiber.App) fiber.Router {
 
 		for i := range EXTERNAL_CHANNELS {
 
+			//TODO we have an issue that crashes when we refresh the browser and then send events
 			eventHandler := ListenRequestStream(EXTERNAL_CHANNELS[i])
 			eventHandler.Handle(
 				func(eventMessage *model.Message) {
