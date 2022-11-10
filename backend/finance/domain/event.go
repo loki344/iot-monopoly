@@ -7,7 +7,7 @@ type TransactionRequested struct {
 	id          string
 	recipientId string
 	senderId    string
-	amount      uint32
+	amount      int
 }
 
 func (t TransactionRequested) Id() string {
@@ -22,11 +22,11 @@ func (t TransactionRequested) SenderId() string {
 	return t.senderId
 }
 
-func (t TransactionRequested) Amount() uint32 {
+func (t TransactionRequested) Amount() int {
 	return t.amount
 }
 
-func NewTransactionRequest(id string, recipientId string, senderId string, amount uint32) TransactionRequested {
+func NewTransactionRequest(id string, recipientId string, senderId string, amount int) TransactionRequested {
 
 	if amount <= 0 {
 		panic("amount has to be greater than 0")

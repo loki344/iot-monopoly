@@ -8,12 +8,12 @@ type Transaction struct {
 	id            string
 	recipientId   string
 	senderId      string
-	amount        uint32
+	amount        int
 	Accepted      bool
 	ExecutionTime time.Time
 }
 
-func NewTransaction(id string, recipientId string, senderId string, amount uint32) *Transaction {
+func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
 
 	return &Transaction{id: id, recipientId: recipientId, senderId: senderId, amount: amount, ExecutionTime: time.Time{}}
 }
@@ -34,6 +34,6 @@ func (transaction *Transaction) IsPending() bool {
 	return transaction.ExecutionTime.IsZero()
 }
 
-func (transaction *Transaction) Amount() uint32 {
+func (transaction *Transaction) Amount() int {
 	return transaction.amount
 }
