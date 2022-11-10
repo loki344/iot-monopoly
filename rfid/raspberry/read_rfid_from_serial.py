@@ -31,4 +31,8 @@ while True: # Run forever
             print("read message: ")
             print(message)
             field_index = map_message_to_field_index(message["deviceId"], message["fieldId"])
-            requests.patch("http://localhost:3000/players/" + message["playerId"], data={"position": field_index})
+            try:
+                requests.patch("http://localhost:3000/players/" + message["playerId"], data={"position": field_index})
+            except Exception:
+                print("Request failed")
+                

@@ -13,7 +13,7 @@ var fields []boardDomain.Field
 
 //TODO use static uuid
 var defaultPlayers = []boardDomain.Player{
-	{"53-72-A4-28-110001", 0, 1_000},
+	{"AA-19-F6-5B", 0, 1_000},
 	{"53-C8-A4-28-110001", 0, 1_000},
 	{"53-D8-A6-28-110001", 0, 1_000},
 	{"53-81-A4-28-110001", 0, 1_000},
