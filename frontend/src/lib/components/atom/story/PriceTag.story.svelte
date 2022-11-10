@@ -6,15 +6,16 @@
 
 	export let Hst: Histoire;
 
-	let disabled = false
-
+	let disabled = false;
+	let price = 1;
 </script>
 
 <Hst.Story title="Example/PriceTag">
-	<PriceTag price={50} on:click={(event) => logEvent('click', event)} />
+	<PriceTag {price} on:click={(event) => logEvent('click', event)} />
 
 	<svelte:fragment slot="controls">
 		<Hst.Checkbox bind:value={disabled} title="Disabled" />
-		<pre>{JSON.stringify({disabled }, null, 2)}</pre>
+		<Hst.Number bind:value={price} title="Price" />
+		<pre>{JSON.stringify({ disabled }, null, 2)}</pre>
 	</svelte:fragment>
 </Hst.Story>

@@ -10,4 +10,4 @@ describe('Text ', () => {
 		});
 		expect(container).toBeInTheDocument();
 	});
-})
+});

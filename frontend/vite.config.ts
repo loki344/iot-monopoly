@@ -15,7 +15,8 @@ const config: UserConfig = {
 	},
 	resolve: {
 		alias: {
-			$components: path.resolve('./src/lib/components')
+			$components: path.resolve('./src/lib/components'),
+			$lib: path.resolve('./src/lib')
 		}
 	},
 	test: {

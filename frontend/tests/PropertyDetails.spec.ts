@@ -10,4 +10,4 @@ describe('PropertyDetails ', () => {
 		});
 		expect(container).toBeInTheDocument();
 	});
-})
+});

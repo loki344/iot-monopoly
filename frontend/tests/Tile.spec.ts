@@ -10,4 +10,4 @@ describe('Tile ', () => {
 		});
 		expect(container).toBeInTheDocument();
 	});
-})
+});

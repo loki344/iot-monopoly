@@ -10,6 +10,23 @@ import (
 
 func Routes(app *fiber.App) {
 
+	app.Post("/transactions", func(c *fiber.Ctx) error {
+
+		newTransaction := new(financeDomain.Transaction)
+
+		if err := c.BodyParser(newTransaction); err != nil {
+			fmt.Println("error = ", err)
+			return fiber.ErrBadRequest
+		}
+		//TODO Create new transaction
+
+		if newTransaction.Accepted {
+			finance.ResolveTransaction(newTransaction.Id())
+		}
+		return c.Status(200).JSON(newTransaction)
+
+	})
+
 	app.Patch("/transactions/:id", func(c *fiber.Ctx) error {
 
 		transactionToPatch := new(financeDomain.Transaction)
@@ -19,7 +36,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		err := validateTransaction(*transactionToPatch, finance.GetTransaction(c.Params("id")))
+		err := validatePatchTransaction(*transactionToPatch, finance.GetTransaction(c.Params("id")))
 		if err != nil {
 			return err
 		}
@@ -32,7 +49,7 @@ func Routes(app *fiber.App) {
 
 }
 
-func validateTransaction(toCheck financeDomain.Transaction, transaction financeDomain.Transaction) error {
+func validatePatchTransaction(toCheck financeDomain.Transaction, transaction financeDomain.Transaction) error {
 
 	if toCheck.Id() != transaction.Id() || toCheck.SenderId() != transaction.SenderId() || toCheck.RecipientId() != transaction.RecipientId() || toCheck.Amount() != transaction.Amount() {
 		return errors.New("Transaction invalid, only changing the accept state of a transaction is allowed")

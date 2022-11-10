@@ -28,9 +28,9 @@ type PropertyUpgrade string
 
 const (
 	ONE_HOUSE    PropertyUpgrade = "oneHouse"
-	TWO_HOUSES   PropertyUpgrade = "twoHouse"
-	THREE_HOUSES PropertyUpgrade = "threeHouse"
-	FOUR_HOUSES  PropertyUpgrade = "fourHouse"
+	TWO_HOUSES   PropertyUpgrade = "twoHouses"
+	THREE_HOUSES PropertyUpgrade = "threeHouses"
+	FOUR_HOUSES  PropertyUpgrade = "fourHouses"
 	HOTEL        PropertyUpgrade = "hotel"
 )
 

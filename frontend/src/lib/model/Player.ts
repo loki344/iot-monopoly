@@ -1,5 +1,5 @@
- export type Player = {
-    id: String;
-    position: Number;
-    balance: Number;
-}
+export type Player = {
+	id: String;
+	position: Number;
+	balance: Number;
+};

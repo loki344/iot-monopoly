@@ -1,7 +1,1 @@
 @tailwind components;
-
-@layer components {
-	.cell {
-		@apply text-green text-center
-	}
-}

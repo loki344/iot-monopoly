@@ -14,7 +14,7 @@ const config = {
 				gray: '#9ca3af',
 				green: '#15803d',
 				red: '#dc2626'
-			},
+			}
 		}
 	},
 

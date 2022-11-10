@@ -1,24 +1,21 @@
 <script lang="ts">
-
-
 	let scaleClass = '';
 	export let onClick = () => {};
-	export let disabled = false
-	let clazz = ""
+	export let disabled = false;
+	let clazz = '';
 	export { clazz as class };
-	export let type = ""
-	const getTypeClass = (type:String) => {
-		switch(type){
-			case "NEGATIVE":
-				return "bg-red red-shadow"
-			case "POSITIVE":
-				return "bg-green green-shadow"
+	export let type = '';
+	const getTypeClass = (type: String) => {
+		switch (type) {
+			case 'NEGATIVE':
+				return 'bg-red red-shadow';
+			case 'POSITIVE':
+				return 'bg-green green-shadow';
 			default:
-				return 'bg-primary primary-shadow'
+				return 'bg-primary primary-shadow';
 		}
-	}
-	let typeClass = getTypeClass(type)
-
+	};
+	let typeClass = getTypeClass(type);
 </script>
 
 <div>
@@ -33,7 +30,7 @@
 				setTimeout(() => onClick(), 600);
 			}
 		}}
-		disabled={disabled}
+		{disabled}
 	>
 		<slot />
 	</button>
