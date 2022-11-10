@@ -8,11 +8,13 @@ import (
 	"iot-monopoly/board/api"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/config"
+	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
 )
 
 func Init() {
 	config.Init()
+	finance.StartEventListeners()
 }
 
 //start with CompileDaemon -command="./iot-monopoly"
