@@ -22,10 +22,10 @@ type PropertyField struct {
 	ThreeHouses   uint64
 	FourHouses    uint64
 	Hotel         uint64
-	Upgrades      PropertyUpgrade
 	Name          string
 	Id            string
 	OwnerId       string
+	Upgrades      PropertyUpgrade
 }
 
 func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
