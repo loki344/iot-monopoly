@@ -28,14 +28,14 @@ func InitAccounts() {
 	}
 }
 
-func getAccountById(accountId string) *financeDomain.Account {
+func GetAccountById(accountId string) (*financeDomain.Account, error) {
 
 	for i := range accounts {
 		if accounts[i].Id == accountId {
-			return &accounts[i]
+			return &accounts[i], nil
 		}
 	}
-	panic(fmt.Sprintf("No account with id %s found", accountId))
+	return nil, errors.New(fmt.Sprintf("No account with id %s found", accountId))
 }
 
 func getAccountByPlayerId(playerId string) *financeDomain.Account {
@@ -49,13 +49,13 @@ func getAccountByPlayerId(playerId string) *financeDomain.Account {
 
 func addToAccount(accountId string, amount int) {
 	fmt.Printf("Adding %d to account %s\n", amount, accountId)
-	account := getAccountById(accountId)
+	account, _ := GetAccountById(accountId)
 	account.Balance += amount
 }
 
 func removeFromAccount(accountId string, amount int) {
 	fmt.Printf("Removing %d from account %s\n", amount, accountId)
-	account := getAccountById(accountId)
+	account, _ := GetAccountById(accountId)
 	account.Balance -= amount
 
 }
@@ -98,17 +98,12 @@ func ResolveTransaction(id string) {
 	addToAccount(getAccountByPlayerId(transaction.RecipientId).Id, transaction.Amount)
 	removeFromAccount(getAccountByPlayerId(transaction.SenderId).Id, transaction.Amount)
 
-	GetTransaction(id).ExecutionTime = time.Now()
-	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, transaction.Id)
+	transaction.ExecutionTime = time.Now()
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(transaction.Id))
 }
 
-func remove[T comparable](l []T, item T) []T {
-	for i, other := range l {
-		if other == item {
-			return append(l[:i], l[i+1:]...)
-		}
-	}
-	return l
+func GetAccounts() []financeDomain.Account {
+	return accounts
 }
 
 func GetTransaction(id string) *financeDomain.Transaction {

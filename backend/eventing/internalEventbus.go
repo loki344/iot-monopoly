@@ -11,12 +11,13 @@ import (
 type ChannelName string
 
 const (
+	GAME_STARTED                 ChannelName = "gameStarted"
 	PROPERTY_BUY_QUESTION        ChannelName = "propertyBuyQuestion"        // player lands on field and can buy it
 	PROPERTY_FEE                 ChannelName = "propertyFee"                // player lands on owned field and has to pay
 	PROPERTY_TRANSACTION_STARTED ChannelName = "propertyTransactionStarted" // player is willing to buy a property, transaction process initiated
 	TRANSACTION_REQUEST          ChannelName = "transactionAdded"           // player has to pay the amount with his card
-	TRANSACTION_RESOLVED         ChannelName = "transactionResolved"        // transaction resolved
-	LAP_FINISHED                 ChannelName = "lapFinished"                // player finished a lap
+	TRANSACTION_RESOLVED         ChannelName = "transactionResolved"
+	LAP_FINISHED                 ChannelName = "lapFinished"
 )
 
 func RegisterEventHandler(handler bus.Handler) string {

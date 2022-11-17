@@ -10,7 +10,6 @@ import (
 )
 
 var players []boardDomain.Player
-var fields []boardDomain.Field
 
 //TODO use static uuid
 var defaultPlayers = []boardDomain.Player{
@@ -26,7 +25,7 @@ var defaultPlayers = []boardDomain.Player{
 
 var tempFinancialDetails = &boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{100, 200, 300, 400, 500, 800}}
 
-var eventFields = []boardDomain.EventField{
+var defaultEventFields = []boardDomain.EventField{
 	{boardDomain.BaseFieldInformation{Id: "4", Name: "Ereignisfeld 1"}, func(player *boardDomain.Player) {
 		fmt.Println("Ereignisfeld")
 		//TODO implement ereignis
@@ -50,13 +49,13 @@ var eventFields = []boardDomain.EventField{
 	}},
 }
 
-var basicField = []boardDomain.BasicField{
+var defaultBasicFields = []boardDomain.BasicField{
 	{boardDomain.BaseFieldInformation{Id: "1", Name: "Start"}},
 	{boardDomain.BaseFieldInformation{Id: "5", Name: "Gefaengnis"}},
 	{boardDomain.BaseFieldInformation{Id: "9", Name: "Frei parken"}},
 }
 
-var properties = []boardDomain.PropertyField{
+var defaultProperties = []boardDomain.PropertyField{
 	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "2", Name: "Property purple 1"}, tempFinancialDetails),
 	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "3", Name: "Property purple 2"}, tempFinancialDetails),
 	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "7", Name: "Property orange 1"}, tempFinancialDetails),
@@ -67,12 +66,21 @@ var properties = []boardDomain.PropertyField{
 	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "16", Name: "Property blue 2"}, tempFinancialDetails),
 }
 
-var DefaultFields []boardDomain.Field
+var properties []boardDomain.PropertyField
+var basicFields []boardDomain.BasicField
+var eventFields []boardDomain.EventField
+
 var pendingPropertyTransfer []boardDomain.PendingPropertyTransaction
 
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
+	eventing.FireEvent(eventing.GAME_STARTED, boardDomain.NewGameStartedEvent(playerCount))
 	players = nil
-	fields = nil
+	properties = nil
+	basicFields = nil
+	eventFields = nil
+	properties = defaultProperties
+	basicFields = defaultBasicFields
+	eventFields = defaultEventFields
 
 	if playerCount < 1 || playerCount > 4 {
 		errorMsg := fmt.Sprintf("invalid playerCount %d (must be between 1 and 4)", playerCount)
@@ -85,35 +93,16 @@ func StartGame(playerCount int) ([]boardDomain.Player, error) {
 
 	copy(newPlayers, defaultPlayers)
 
-	players := newPlayers[0:playerCount]
+	players = newPlayers
 
-	initBoard(nil, players)
 	return players, nil
-}
-
-func initBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player) {
-
-	if initFields != nil {
-		fields = initFields
-	} else {
-		fmt.Println("Initializing default initFields")
-		for _, field := range eventFields {
-			fields = append(fields, field)
-		}
-		for _, field := range basicField {
-			fields = append(fields, field)
-		}
-		for _, field := range properties {
-			fields = append(fields, field)
-		}
-	}
-	players = initPlayers
 }
 
 func MovePlayer(playerId string, fieldId int) error {
 
-	if fieldId > len(fields)-1 || fieldId < 0 {
-		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldId, len(fields)))
+	totalFieldCount := GetFieldsCount()
+	if fieldId > totalFieldCount-1 || fieldId < 0 {
+		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldId, totalFieldCount))
 	}
 
 	player := GetPlayer(playerId)
@@ -123,7 +112,7 @@ func MovePlayer(playerId string, fieldId int) error {
 	}
 
 	//TODO get rid of magic numbers 10!!
-	if (player.Position >= 10 && player.Position < GetFieldsCount()) && (fieldId >= 0 && fieldId <= 5) {
+	if (player.Position >= 10 && player.Position < totalFieldCount) && (fieldId >= 0 && fieldId <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
 		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.NewLapFinishedEvent(player.Id))
 	}
@@ -171,9 +160,9 @@ func GetPlayer(playerId string) *boardDomain.Player {
 
 func GetPropertyById(fieldId string) *boardDomain.PropertyField {
 
-	for i := 0; i < len(properties); i++ {
-		if properties[i].GetId() == fieldId {
-			return &properties[i]
+	for i := 0; i < len(defaultProperties); i++ {
+		if defaultProperties[i].GetId() == fieldId {
+			return &defaultProperties[i]
 		}
 	}
 	panic("Field not found")
@@ -181,22 +170,28 @@ func GetPropertyById(fieldId string) *boardDomain.PropertyField {
 
 func GetFieldById(fieldId string) boardDomain.Field {
 
-	for i := 0; i < len(fields); i++ {
-		if fields[i].GetId() == fieldId {
-			return fields[i]
+	for i := 0; i < len(basicFields); i++ {
+		if basicFields[i].GetId() == fieldId {
+			return basicFields[i]
+		}
+	}
+	for i := 0; i < len(eventFields); i++ {
+		if eventFields[i].GetId() == fieldId {
+			return eventFields[i]
+		}
+	}
+	for i := 0; i < len(properties); i++ {
+		if properties[i].GetId() == fieldId {
+			return properties[i]
 		}
 	}
 	panic("Field not found")
 }
 
 func GetFieldsCount() int {
-	return len(fields)
+	return len(properties) + len(basicFields) + len(eventFields)
 }
 
 func GetPlayers() []boardDomain.Player {
 	return players
-}
-
-func GetFields() []boardDomain.Field {
-	return fields
 }

@@ -32,7 +32,7 @@ func Routes(app *fiber.App) {
 		return c.Status(201).JSON(board.GetPlayer(playerId))
 	})
 
-	app.Patch("/fields/:id", func(c *fiber.Ctx) error {
+	app.Patch("/properties/:id", func(c *fiber.Ctx) error {
 
 		patchRequest := new(PropertyPatchRequest)
 
@@ -72,6 +72,5 @@ type GameRequest struct {
 }
 
 type PropertyPatchRequest struct {
-	Id      string `json:"id"`
 	OwnerId string `json:"ownerId"`
 }

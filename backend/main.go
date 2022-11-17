@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"iot-monopoly/board"
 	"iot-monopoly/board/api"
 	"iot-monopoly/eventing"
 	"iot-monopoly/eventing/config"
@@ -15,6 +16,7 @@ import (
 func Init() {
 	config.Init()
 	finance.StartEventListeners()
+	board.StartEventListeners()
 }
 
 //start with CompileDaemon -command="./iot-monopoly"

@@ -13,6 +13,7 @@ func StartEventListeners() {
 
 	startLapFinishedEventHandler()
 	startPropertyFeeEventHandler()
+	startGameStartedEventHandler()
 }
 
 func startLapFinishedEventHandler() {
@@ -24,6 +25,15 @@ func startLapFinishedEventHandler() {
 			addToAccount(getAccountByPlayerId(lapFinishedEvent.PlayerId).Id, 100)
 		},
 		Matcher: string(eventing.LAP_FINISHED),
+	})
+}
+func startGameStartedEventHandler() {
+
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			InitAccounts()
+		},
+		Matcher: string(eventing.GAME_STARTED),
 	})
 }
 func startPropertyFeeEventHandler() {

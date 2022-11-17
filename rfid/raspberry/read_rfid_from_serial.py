@@ -4,7 +4,7 @@ import io
 import requests
 
 
-deviceToFieldIndexMap = { "0": [15, 14, 13, 12], "1": [8, 9, 10, 11], "2": [7, 6, 5, 4], "3": [3, 2, 1 ,0] }
+deviceToFieldIndexMap = { "0": [16, 15, 14, 13], "1": [9, 10, 11, 12], "2": [8, 7, 6, 5], "3": [4, 3, 2, 1] }
 
 def map_message_to_field_index(device, field_id):
     field_index = deviceToFieldIndexMap[str(device)][field_id]
