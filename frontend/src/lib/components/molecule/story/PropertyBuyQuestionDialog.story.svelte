@@ -12,6 +12,7 @@
 
 <Hst.Story title="Example/PropertyBuyQuestionDialog">
 	<PropertyBuyQuestionDialog
+	buyerId={"Player_1"}
 	property={{
 		Name: 'TestProperty',
 		Id: 'abcd-wer-we93',

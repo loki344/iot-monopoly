@@ -5,9 +5,11 @@
 
 	export let data: PageData;
 	let players = JSON.parse(data.players);
+	console.log(JSON.parse(data.accounts))
+	console.log(players)
+	let accounts = JSON.parse(data.accounts).reduce((map:any, account:any) => (map[account.id] = account.balance, map), {});
 
 	const getClass = (index: Number): String => {
-		console.log(index);
 
 		switch (index) {
 			case 0:
@@ -28,7 +30,7 @@
 	{#each players as player, i}
 		<!-- TODO determine which players turn it is and set the others active = false -->
 		<Tile active={true} class={`absolute ${getClass(i)}`}
-			><Text>Player {i + 1}</Text><Text class="text-center">{player.balance} $</Text></Tile
+			><Text>Player {i + 1}</Text><Text class="text-center">{accounts[player.accountId]} $</Text></Tile
 		>
 	{/each}
 </div>

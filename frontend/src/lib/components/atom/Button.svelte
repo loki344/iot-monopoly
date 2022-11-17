@@ -27,7 +27,7 @@
 			if (!disabled) {
 				scaleClass = 'scale-90';
 				setTimeout(() => (scaleClass = ''), 300);
-				setTimeout(() => onClick(), 600);
+				setTimeout(() => onClick(), 400);
 			}
 		}}
 		{disabled}
