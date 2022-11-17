@@ -14,6 +14,7 @@ var defaultAccounts = []financeDomain.Account{
 	{"Account_Player_2", "Player_2", 1_000},
 	{"Account_Player_3", "Player_3", 1_000},
 	{"Account_Player_4", "Player_4", 1_000},
+	{"Bank", "Bank", 100_000_000},
 }
 var accounts = defaultAccounts
 
@@ -23,6 +24,7 @@ func InitAccounts() {
 		{"Account_Player_2", "Player_2", 1_000},
 		{"Account_Player_3", "Player_3", 1_000},
 		{"Account_Player_4", "Player_4", 1_000},
+		{"Bank", "Bank", 100_000_000},
 	}
 }
 
@@ -46,12 +48,13 @@ func getAccountByPlayerId(playerId string) *financeDomain.Account {
 }
 
 func addToAccount(accountId string, amount int) {
+	fmt.Printf("Adding %d to account %s\n", amount, accountId)
 	account := getAccountById(accountId)
 	account.Balance += amount
-
 }
 
 func removeFromAccount(accountId string, amount int) {
+	fmt.Printf("Removing %d from account %s\n", amount, accountId)
 	account := getAccountById(accountId)
 	account.Balance -= amount
 
@@ -91,13 +94,12 @@ func ResolveTransaction(id string) {
 		panic(fmt.Sprintf("Transaction %s is already resolved", transaction.Id))
 	}
 
-	fmt.Printf("Transferring %d from account %s to account %s\n", transaction.Amount, transaction.SenderId, transaction.RecipientId)
+	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", transaction.Id, transaction.Amount, transaction.SenderId, transaction.RecipientId)
 	addToAccount(getAccountByPlayerId(transaction.RecipientId).Id, transaction.Amount)
 	removeFromAccount(getAccountByPlayerId(transaction.SenderId).Id, transaction.Amount)
 
-	transactions = remove(transactions, transaction)
-	transaction.ExecutionTime = time.Now()
-	transactions = append(transactions, transaction)
+	GetTransaction(id).ExecutionTime = time.Now()
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, transaction.Id)
 }
 
 func remove[T comparable](l []T, item T) []T {
@@ -109,11 +111,11 @@ func remove[T comparable](l []T, item T) []T {
 	return l
 }
 
-func GetTransaction(id string) financeDomain.Transaction {
+func GetTransaction(id string) *financeDomain.Transaction {
 
-	for _, transaction := range transactions {
-		if transaction.Id == id {
-			return transaction
+	for i := range transactions {
+		if transactions[i].Id == id {
+			return &transactions[i]
 		}
 	}
 

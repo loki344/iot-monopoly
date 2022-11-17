@@ -16,10 +16,10 @@ func TestPlayerCanMoveAround(t *testing.T) {
 	players, _ := StartGame(1)
 	playerId := players[0].Id
 	player := GetPlayer(playerId)
-	for i := 0; i < GetFieldsCount(); i++ {
+	for i := 1; i < GetFieldsCount(); i++ {
 		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
-		if i == 12 {
+		if i == 13 {
 			assert.NoError(t, err)
 			//TODO resolve prison index differently
 			assert.Equal(t, 4, player.Position)
@@ -68,9 +68,15 @@ func TestLapFiresEvent(t *testing.T) {
 func TestBuyProperty(t *testing.T) {
 
 	config.Init()
+	StartEventListeners()
 	players, _ := StartGame(1)
-	id := players[0].Id
+	playerId := players[0].Id
 
-	BuyProperty(GetFields()[1].GetId(), id)
+	propertyId := "2"
+	transactionId := BuyProperty(propertyId, playerId)
 
+	transferOwnerShip(transactionId)
+
+	property := *GetPropertyById(propertyId)
+	assert.Equal(t, playerId, property.OwnerId)
 }

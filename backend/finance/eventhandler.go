@@ -30,9 +30,9 @@ func startPropertyFeeEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			propertyFeeRequest := e.Data.(*boardDomain.PropertyFeeRequest)
-			AddTransaction(financeDomain.NewTransaction(propertyFeeRequest.OwnerId, propertyFeeRequest.GuestId, propertyFeeRequest.Price))
+			transactionRequest := e.Data.(*boardDomain.TransactionRequest)
+			AddTransaction(financeDomain.NewTransactionWithId(transactionRequest.TransactionId, transactionRequest.ReceiverId, transactionRequest.SenderId, transactionRequest.Price))
 		},
-		Matcher: string(eventing.PROPERTY_FEE),
+		Matcher: "((^|, )(propertyTransactionStarted|propertyFee))+$",
 	})
 }

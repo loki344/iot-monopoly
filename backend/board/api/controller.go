@@ -43,9 +43,9 @@ func Routes(app *fiber.App) {
 
 		propertyId := c.Params("id")
 
-		board.BuyProperty(propertyId, patchRequest.OwnerId)
+		transactionId := board.BuyProperty(propertyId, patchRequest.OwnerId)
 
-		return c.Status(200).JSON(board.GetFieldById(propertyId))
+		return c.Status(200).JSON(transactionId)
 	})
 
 	app.Post("/games", func(c *fiber.Ctx) error {

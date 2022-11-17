@@ -19,7 +19,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		err := validatePatchTransaction(*transactionToPatch, finance.GetTransaction(c.Params("id")))
+		err := validatePatchTransaction(*transactionToPatch, *finance.GetTransaction(c.Params("id")))
 		if err != nil {
 			return err
 		}

@@ -8,13 +8,15 @@ import (
 type Field interface {
 	OnPlayerEnter(player *Player)
 	GetId() string
-	GetPriceToPay() int
 }
 
-//TODO consolidate Name to super class?
+type BaseFieldInformation struct {
+	Name string
+	Id   string
+}
+
 type PropertyField struct {
-	Name             string
-	Id               string
+	BaseFieldInformation
 	FinancialDetails *FinancialDetails
 	OwnerId          string
 	Upgrades         PropertyUpgrade
@@ -24,8 +26,8 @@ func (propertyField PropertyField) GetId() string {
 	return propertyField.Id
 }
 
-func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
-	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
+func NewPropertyField(baseInformation BaseFieldInformation, financialDetails *FinancialDetails) *PropertyField {
+	return &PropertyField{BaseFieldInformation: baseInformation, FinancialDetails: financialDetails}
 }
 
 type PropertyUpgrade string
@@ -55,14 +57,12 @@ type FinancialDetails struct {
 }
 
 type EventField struct {
-	Name  string
-	Id    string
+	BaseFieldInformation
 	Event func(player *Player)
 }
 
 type BasicField struct {
-	Name string
-	Id   string
+	BaseFieldInformation
 }
 
 func (field BasicField) GetId() string {
@@ -72,15 +72,8 @@ func (field BasicField) GetId() string {
 func (eventField EventField) GetId() string {
 	return eventField.Id
 }
-func (field BasicField) GetPriceToPay() int {
-	panic("BasicField is not buyable and has no price")
-}
 
-func (eventField EventField) GetPriceToPay() int {
-	panic("EventField is not buyable and has no price")
-}
-
-func (propertyField PropertyField) GetPriceToPay() int {
+func (propertyField PropertyField) GetPropertyFee() int {
 	switch propertyField.Upgrades {
 	case ONE_HOUSE:
 		return propertyField.FinancialDetails.Revenue.OneHouse
@@ -114,7 +107,7 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 	} else if propertyField.OwnerId == player.Id {
 		fmt.Println("player owns the property..")
 	} else {
-		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPriceToPay())
-		eventing.FireEvent(eventing.PROPERTY_FEE, NewPropertyFeeRequest(propertyField.OwnerId, player.Id, propertyField.GetPriceToPay()))
+		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPropertyFee())
+		eventing.FireEvent(eventing.PROPERTY_FEE, NewTransactionRequest(propertyField.OwnerId, player.Id, propertyField.GetPropertyFee()))
 	}
 }

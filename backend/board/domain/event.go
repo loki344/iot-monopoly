@@ -1,6 +1,9 @@
 package boardDomain
 
-import eventingDomain "iot-monopoly/eventing/domain"
+import (
+	"github.com/google/uuid"
+	eventingDomain "iot-monopoly/eventing/domain"
+)
 
 type PropertyBuyQuestion struct {
 	eventingDomain.BaseEvent
@@ -12,15 +15,20 @@ func NewPropertyBuyQuestion(playerId string, property PropertyField) *PropertyBu
 	return &PropertyBuyQuestion{eventingDomain.EventType(&PropertyBuyQuestion{}), playerId, property}
 }
 
-type PropertyFeeRequest struct {
+type TransactionRequest struct {
 	eventingDomain.BaseEvent
-	OwnerId string
-	GuestId string
-	Price   int
+	TransactionId string
+	ReceiverId    string
+	SenderId      string
+	Price         int
 }
 
-func NewPropertyFeeRequest(ownerId string, guestId string, price int) *PropertyFeeRequest {
-	return &PropertyFeeRequest{eventingDomain.EventType(&PropertyFeeRequest{}), ownerId, guestId, price}
+func NewTransactionRequestWithId(id string, receiverId string, senderId string, price int) *TransactionRequest {
+	return &TransactionRequest{eventingDomain.EventType(&TransactionRequest{}), id, receiverId, senderId, price}
+}
+
+func NewTransactionRequest(receiverId string, senderId string, price int) *TransactionRequest {
+	return NewTransactionRequestWithId(uuid.NewString(), receiverId, senderId, price)
 }
 
 type LapFinishedEvent struct {

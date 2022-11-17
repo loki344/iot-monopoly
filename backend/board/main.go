@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
-	financeDomain "iot-monopoly/finance/domain"
+	"strconv"
 )
 
 var players []boardDomain.Player
@@ -26,40 +26,49 @@ var defaultPlayers = []boardDomain.Player{
 
 var tempFinancialDetails = &boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{100, 200, 300, 400, 500, 800}}
 
-var DefaultFields = []boardDomain.Field{
-	boardDomain.BasicField{uuid.New().String(), "Start"},
-	boardDomain.NewPropertyField("Property purple 1", uuid.NewString(), tempFinancialDetails),
-	boardDomain.NewPropertyField("Property purple 2", uuid.NewString(), tempFinancialDetails),
-	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 1", func(player *boardDomain.Player) {
-		//TODO implement ereignis
+var eventFields = []boardDomain.EventField{
+	{boardDomain.BaseFieldInformation{Id: "4", Name: "Ereignisfeld 1"}, func(player *boardDomain.Player) {
 		fmt.Println("Ereignisfeld")
-	}},
-	boardDomain.BasicField{uuid.New().String(), "Gefaengnis"},
-	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 2", func(player *boardDomain.Player) {
 		//TODO implement ereignis
-		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.NewPropertyField("Property orange 1", uuid.NewString(), tempFinancialDetails),
-	boardDomain.NewPropertyField("Property orange 2", uuid.NewString(), tempFinancialDetails),
-	boardDomain.BasicField{uuid.New().String(), "Frei parken"},
-	boardDomain.NewPropertyField("Property green 1", uuid.NewString(), tempFinancialDetails),
-	boardDomain.EventField{uuid.New().String(), "Start", func(player *boardDomain.Player) {
+	{boardDomain.BaseFieldInformation{Id: "6", Name: "Ereignisfeld 2"}, func(player *boardDomain.Player) {
+		fmt.Println("Ereignisfeld")
+		//TODO implement ereignis
+	}},
+	{boardDomain.BaseFieldInformation{Id: "11", Name: "Ereignisfeld 3"}, func(player *boardDomain.Player) {
 		fmt.Printf("Remove 100 from Bank account of player %s\n", player.Id)
 		//TODO Add transaction
 	}},
-	boardDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails),
-	boardDomain.EventField{uuid.New().String(), "Gehe ins gefaengnis", func(player *boardDomain.Player) {
+	{boardDomain.BaseFieldInformation{Id: "13", Name: "Gehe ins Gefaengnis"}, func(player *boardDomain.Player) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
 		MovePlayer(player.Id, 4)
 	}},
-	boardDomain.NewPropertyField("Property blue 1", uuid.NewString(), tempFinancialDetails),
-	boardDomain.EventField{uuid.New().String(), "Ereignisfeld 3", func(player *boardDomain.Player) {
+	{boardDomain.BaseFieldInformation{Id: "15", Name: "Ereignisfeld 3"}, func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
-	boardDomain.NewPropertyField("Property blue 2", uuid.NewString(), tempFinancialDetails),
 }
+
+var basicField = []boardDomain.BasicField{
+	{boardDomain.BaseFieldInformation{Id: "1", Name: "Start"}},
+	{boardDomain.BaseFieldInformation{Id: "5", Name: "Gefaengnis"}},
+	{boardDomain.BaseFieldInformation{Id: "9", Name: "Frei parken"}},
+}
+
+var properties = []boardDomain.PropertyField{
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "2", Name: "Property purple 1"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "3", Name: "Property purple 2"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "7", Name: "Property orange 1"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "8", Name: "Property orange 2"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "10", Name: "Property green 1"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "12", Name: "Property green 2"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "14", Name: "Property blue 1"}, tempFinancialDetails),
+	*boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{Id: "16", Name: "Property blue 2"}, tempFinancialDetails),
+}
+
+var DefaultFields []boardDomain.Field
+var pendingPropertyTransfer []boardDomain.PendingPropertyTransaction
 
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
 	players = nil
@@ -88,40 +97,65 @@ func initBoard(initFields []boardDomain.Field, initPlayers []boardDomain.Player)
 		fields = initFields
 	} else {
 		fmt.Println("Initializing default initFields")
-		fields = DefaultFields
+		for _, field := range eventFields {
+			fields = append(fields, field)
+		}
+		for _, field := range basicField {
+			fields = append(fields, field)
+		}
+		for _, field := range properties {
+			fields = append(fields, field)
+		}
 	}
 	players = initPlayers
 }
 
-func MovePlayer(playerId string, fieldIndex int) error {
+func MovePlayer(playerId string, fieldId int) error {
 
-	if fieldIndex > len(fields)-1 || fieldIndex < 0 {
-		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldIndex, len(fields)))
+	if fieldId > len(fields)-1 || fieldId < 0 {
+		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", fieldId, len(fields)))
 	}
 
 	player := GetPlayer(playerId)
-	if player.Position == fieldIndex {
-		fmt.Println(fmt.Errorf("player already at position %d", fieldIndex))
+	if player.Position == fieldId {
+		fmt.Println(fmt.Errorf("player already at position %d", fieldId))
 		return nil
 	}
 
 	//TODO get rid of magic numbers 10!!
-	if (player.Position >= 10 && player.Position < GetFieldsCount()) && (fieldIndex >= 0 && fieldIndex <= 5) {
+	if (player.Position >= 10 && player.Position < GetFieldsCount()) && (fieldId >= 0 && fieldId <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
 		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.NewLapFinishedEvent(player.Id))
 	}
 
-	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)
-	player.Position = fieldIndex
-	GetFieldByIndex(fieldIndex).OnPlayerEnter(player)
+	fmt.Printf("MovePlayer player %s to fieldId %d\n", player.Id, fieldId)
+	player.Position = fieldId
+	GetFieldById(strconv.FormatInt(int64(fieldId), 10)).OnPlayerEnter(player)
 	return nil
 }
 
-func BuyProperty(propertyId string, buyerId string) {
+func BuyProperty(propertyId string, buyerId string) string {
 
-	transaction := financeDomain.NewTransactionWithCallback("Bank", buyerId, GetFieldById(propertyId).GetPriceToPay(), fmt.Sprintf("http://localhost:3000/fields/%s", propertyId), boardDomain.PropertyField{OwnerId: buyerId})
+	transactionId := uuid.NewString()
+	property := *GetPropertyById(propertyId)
+	eventing.FireEvent(eventing.PROPERTY_TRANSACTION_STARTED, boardDomain.NewTransactionRequestWithId(transactionId, "Bank", buyerId, property.GetPropertyFee()))
+	pendingPropertyTransfer = append(pendingPropertyTransfer, boardDomain.PendingPropertyTransaction{TransactionId: transactionId, PropertyId: propertyId, BuyerId: buyerId})
 
-	eventing.FireEvent(eventing.TRANSACTION_REQUEST, financeDomain.NewTransactionRequest(transaction))
+	return transactionId
+}
+
+func transferOwnerShip(transactionId string) {
+
+	for i := range pendingPropertyTransfer {
+		pendingTransfer := pendingPropertyTransfer[i]
+		if pendingTransfer.TransactionId == transactionId {
+			fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId, pendingTransfer.BuyerId)
+			property := GetPropertyById(pendingTransfer.PropertyId)
+			property.OwnerId = pendingTransfer.BuyerId
+			return
+		}
+	}
+
 }
 
 func GetPlayer(playerId string) *boardDomain.Player {
@@ -135,9 +169,14 @@ func GetPlayer(playerId string) *boardDomain.Player {
 	panic(fmt.Sprintf("Player with id %s not found", playerId))
 }
 
-func GetFieldByIndex(fieldIndex int) boardDomain.Field {
+func GetPropertyById(fieldId string) *boardDomain.PropertyField {
 
-	return fields[fieldIndex]
+	for i := 0; i < len(properties); i++ {
+		if properties[i].GetId() == fieldId {
+			return &properties[i]
+		}
+	}
+	panic("Field not found")
 }
 
 func GetFieldById(fieldId string) boardDomain.Field {

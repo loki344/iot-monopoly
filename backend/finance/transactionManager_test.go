@@ -3,11 +3,13 @@ package finance
 import (
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
+	"iot-monopoly/eventing/config"
 	"iot-monopoly/finance/domain"
 	"testing"
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
+	config.Init()
 	InitAccounts()
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
@@ -22,6 +24,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 }
 
 func TestValidTransaction(t *testing.T) {
+	config.Init()
 	InitAccounts()
 
 	players, _ := board.StartGame(2)
@@ -41,6 +44,7 @@ func TestValidTransaction(t *testing.T) {
 }
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
+	config.Init()
 	InitAccounts()
 
 	players, _ := board.StartGame(2)
@@ -62,6 +66,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 	InitAccounts()
+	config.Init()
 
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id

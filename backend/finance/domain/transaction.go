@@ -6,24 +6,22 @@ import (
 )
 
 type Transaction struct {
-	Id            string      `json:"id"`
-	RecipientId   string      `json:"recipientId"`
-	SenderId      string      `json:"senderId"`
-	Amount        int         `json:"amount"`
-	Accepted      bool        `json:"accepted"`
-	ExecutionTime time.Time   `json:"executionTime"`
-	CallbackUrl   string      `json:"callbackUrl"`
-	CallbackBody  interface{} `json:"callbackBody"`
+	Id            string    `json:"id"`
+	RecipientId   string    `json:"recipientId"`
+	SenderId      string    `json:"senderId"`
+	Amount        int       `json:"amount"`
+	Accepted      bool      `json:"accepted"`
+	ExecutionTime time.Time `json:"executionTime"`
 }
 
 func NewTransaction(recipientId string, senderId string, amount int) *Transaction {
 
-	return &Transaction{Id: uuid.NewString(), RecipientId: recipientId, SenderId: senderId, Amount: amount, ExecutionTime: time.Time{}}
+	return NewTransactionWithId(uuid.NewString(), recipientId, senderId, amount)
 }
 
-func NewTransactionWithCallback(recipientId string, senderId string, amount int, callbackUrl string, callbackBody interface{}) *Transaction {
+func NewTransactionWithId(id string, recipientId string, senderId string, amount int) *Transaction {
 
-	return &Transaction{Id: uuid.NewString(), RecipientId: recipientId, SenderId: senderId, Amount: amount, ExecutionTime: time.Time{}, CallbackUrl: callbackUrl, CallbackBody: callbackBody}
+	return &Transaction{Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount, ExecutionTime: time.Time{}}
 }
 
 func (transaction *Transaction) IsPending() bool {
