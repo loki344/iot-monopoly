@@ -8,6 +8,7 @@ import (
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
+	InitAccounts()
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
@@ -21,6 +22,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 }
 
 func TestValidTransaction(t *testing.T) {
+	InitAccounts()
 
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
@@ -39,6 +41,7 @@ func TestValidTransaction(t *testing.T) {
 }
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
+	InitAccounts()
 
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
@@ -53,11 +56,13 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 	ResolveTransaction(transaction.Id)
 
-	assert.Equal(t, 0, board.GetPlayer(senderId).Balance)
-	assert.Equal(t, 2_000, board.GetPlayer(recipientId).Balance)
+	assert.Equal(t, 0, getAccountByPlayerId(senderId).Balance)
+	assert.Equal(t, 2_000, getAccountByPlayerId(recipientId).Balance)
 }
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
+	InitAccounts()
+
 	players, _ := board.StartGame(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id

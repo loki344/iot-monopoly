@@ -7,7 +7,7 @@ type TransactionAddedEvent struct {
 	Transaction *Transaction
 }
 
-func NewTransactionAddedEvent(transaction *Transaction) TransactionAddedEvent {
+func NewTransactionRequest(transaction *Transaction) TransactionAddedEvent {
 
 	return TransactionAddedEvent{BaseEvent: eventingDomain.EventType(&TransactionAddedEvent{}), Transaction: transaction}
 }

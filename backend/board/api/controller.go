@@ -1,7 +1,6 @@
 package movementApi
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"iot-monopoly/board"
@@ -27,14 +26,26 @@ func Routes(app *fiber.App) {
 		}
 
 		playerId := c.Params("id")
-		err := validateMessage(player, board.GetPlayer(playerId))
-		if err != nil {
-			return err
-		}
 
 		board.MovePlayer(playerId, player.Position)
 
 		return c.Status(201).JSON(board.GetPlayer(playerId))
+	})
+
+	app.Patch("/fields/:id", func(c *fiber.Ctx) error {
+
+		patchRequest := new(PropertyPatchRequest)
+
+		if err := c.BodyParser(patchRequest); err != nil {
+			fmt.Println("error = ", err)
+			return fiber.ErrBadRequest
+		}
+
+		propertyId := c.Params("id")
+
+		board.BuyProperty(propertyId, patchRequest.OwnerId)
+
+		return c.Status(200).JSON(board.GetFieldById(propertyId))
 	})
 
 	app.Post("/games", func(c *fiber.Ctx) error {
@@ -56,15 +67,11 @@ func Routes(app *fiber.App) {
 
 }
 
-func validateMessage(toCheck *boardDomain.Player, player *boardDomain.Player) error {
-
-	if toCheck.Id != "" || toCheck.Balance != 0 {
-		return errors.New("Patch player invalid, only changing the position field of a player is allowed")
-	}
-
-	return nil
-}
-
 type GameRequest struct {
 	PlayerCount int `json:"playerCount"`
+}
+
+type PropertyPatchRequest struct {
+	Id      string `json:"id"`
+	OwnerId string `json:"ownerId"`
 }

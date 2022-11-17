@@ -10,25 +10,6 @@ import (
 
 func Routes(app *fiber.App) {
 
-	app.Post("/transactions", func(c *fiber.Ctx) error {
-
-		newTransaction := new(financeDomain.Transaction)
-
-		if err := c.BodyParser(newTransaction); err != nil {
-			fmt.Println("error = ", err)
-			return fiber.ErrBadRequest
-		}
-
-		newTransaction = financeDomain.NewTransactionFromTransactionDTO(newTransaction)
-
-		_, err := finance.AddTransaction(newTransaction)
-		if err != nil {
-			return fiber.ErrBadRequest
-		}
-
-		return c.Status(200).JSON(newTransaction)
-	})
-
 	app.Patch("/transactions/:id", func(c *fiber.Ctx) error {
 
 		transactionToPatch := new(financeDomain.Transaction)

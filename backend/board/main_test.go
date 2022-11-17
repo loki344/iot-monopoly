@@ -64,3 +64,13 @@ func TestLapFiresEvent(t *testing.T) {
 
 	assert.Equal(t, 1, receivedEvents)
 }
+
+func TestBuyProperty(t *testing.T) {
+
+	config.Init()
+	players, _ := StartGame(1)
+	id := players[0].Id
+
+	BuyProperty(GetFields()[1].GetId(), id)
+
+}

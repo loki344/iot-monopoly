@@ -3,11 +3,12 @@ package boardDomain
 import (
 	"fmt"
 	"iot-monopoly/eventing"
-	financeDomain "iot-monopoly/finance/domain"
 )
 
 type Field interface {
 	OnPlayerEnter(player *Player)
+	GetId() string
+	GetPriceToPay() int
 }
 
 //TODO consolidate Name to super class?
@@ -17,6 +18,10 @@ type PropertyField struct {
 	FinancialDetails *FinancialDetails
 	OwnerId          string
 	Upgrades         PropertyUpgrade
+}
+
+func (propertyField PropertyField) GetId() string {
+	return propertyField.Id
 }
 
 func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
@@ -60,6 +65,21 @@ type BasicField struct {
 	Id   string
 }
 
+func (field BasicField) GetId() string {
+	return field.Id
+}
+
+func (eventField EventField) GetId() string {
+	return eventField.Id
+}
+func (field BasicField) GetPriceToPay() int {
+	panic("BasicField is not buyable and has no price")
+}
+
+func (eventField EventField) GetPriceToPay() int {
+	panic("EventField is not buyable and has no price")
+}
+
 func (propertyField PropertyField) GetPriceToPay() int {
 	switch propertyField.Upgrades {
 	case ONE_HOUSE:
@@ -90,13 +110,11 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 
 	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
-		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, *NewPropertyBuyQuestion(player.Id, propertyField))
+		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, NewPropertyBuyQuestion(player.Id, propertyField))
 	} else if propertyField.OwnerId == player.Id {
 		fmt.Println("player owns the property..")
 	} else {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPriceToPay())
-		//TODO maybe it's cleaner to not fire the event here, fire it via service from finance domain?
-		// -- use TransactionManager
-		eventing.FireEvent(eventing.TRANSACTION_REQUESTED, financeDomain.TransactionRequest{SenderId: player.Id, RecipientId: propertyField.Id, Amount: propertyField.GetPriceToPay()})
+		eventing.FireEvent(eventing.PROPERTY_FEE, NewPropertyFeeRequest(propertyField.OwnerId, player.Id, propertyField.GetPriceToPay()))
 	}
 }

@@ -19,7 +19,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			lapFinishedEvent := e.Data.(PropertyBuyQuestion)
+			lapFinishedEvent := e.Data.(*PropertyBuyQuestion)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
@@ -28,7 +28,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}
 	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
-	property.OnPlayerEnter(&Player{id, 0, 1000})
+	property.OnPlayerEnter(&Player{id, 0, "Account_Player_1"})
 
 	assert.Equal(t, 1, receivedEvents)
 }
@@ -43,20 +43,20 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	const price = 1000
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionRequest := e.Data.(financeDomain.TransactionAddedEvent)
-			assert.Equal(t, payerId, transactionRequest.SenderId())
-			assert.Equal(t, ownerId, transactionRequest.RecipientId())
-			assert.Equal(t, price, transactionRequest.Amount())
+			transaction := e.Data.(financeDomain.TransactionAddedEvent)
+			assert.Equal(t, payerId, transaction.Transaction.SenderId)
+			assert.Equal(t, ownerId, transaction.Transaction.RecipientId)
+			assert.Equal(t, price, transaction.Transaction.Amount)
 			receivedEvents++
 		},
-		Matcher: string(eventing.TRANSACTION_ADDED),
+		Matcher: string(eventing.TRANSACTION_REQUEST),
 	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{1000, 200, 300, 400, 500, 800}}
 	property := NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
 	property.OwnerId = ownerId
 
-	property.OnPlayerEnter(&Player{payerId, 0, 0})
+	property.OnPlayerEnter(&Player{payerId, 0, "Account_Player_1"})
 
 	assert.Equal(t, 1, receivedEvents)
 }

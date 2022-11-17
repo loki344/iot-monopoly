@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
+	financeDomain "iot-monopoly/finance/domain"
 )
 
 var players []boardDomain.Player
@@ -13,10 +14,10 @@ var fields []boardDomain.Field
 
 //TODO use static uuid
 var defaultPlayers = []boardDomain.Player{
-	{"AA-19-F6-5B", 0, 1_000},
-	{"53-C8-A4-28-110001", 0, 1_000},
-	{"53-D8-A6-28-110001", 0, 1_000},
-	{"53-81-A4-28-110001", 0, 1_000},
+	{"Player_1", 0, "Account_Player_1"},
+	{"Player_2", 0, "Account_Player_2"},
+	{"Player_3", 0, "Account_Player_3"},
+	{"Player_4", 0, "Account_Player_4"},
 	//33-A8-8A-10 Card 1
 	//	1304-B6-1A Card 2
 	// 43-F1-E70E Card 3
@@ -44,7 +45,7 @@ var DefaultFields = []boardDomain.Field{
 	boardDomain.NewPropertyField("Property green 1", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Start", func(player *boardDomain.Player) {
 		fmt.Printf("Remove 100 from Bank account of player %s\n", player.Id)
-		player.Balance -= 100
+		//TODO Add transaction
 	}},
 	boardDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails),
 	boardDomain.EventField{uuid.New().String(), "Gehe ins gefaengnis", func(player *boardDomain.Player) {
@@ -105,15 +106,22 @@ func MovePlayer(playerId string, fieldIndex int) error {
 	}
 
 	//TODO get rid of magic numbers 10!!
-	if (player.Position >= 10 && player.Position < 16) && (fieldIndex >= 0 && fieldIndex <= 5) {
+	if (player.Position >= 10 && player.Position < GetFieldsCount()) && (fieldIndex >= 0 && fieldIndex <= 5) {
 		fmt.Println("Player completed a lap, creating lap finished")
 		eventing.FireEvent(eventing.LAP_FINISHED, boardDomain.NewLapFinishedEvent(player.Id))
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldIndex %d\n", player.Id, fieldIndex)
 	player.Position = fieldIndex
-	(*GetField(fieldIndex)).OnPlayerEnter(player)
+	GetFieldByIndex(fieldIndex).OnPlayerEnter(player)
 	return nil
+}
+
+func BuyProperty(propertyId string, buyerId string) {
+
+	transaction := financeDomain.NewTransactionWithCallback("Bank", buyerId, GetFieldById(propertyId).GetPriceToPay(), fmt.Sprintf("http://localhost:3000/fields/%s", propertyId), boardDomain.PropertyField{OwnerId: buyerId})
+
+	eventing.FireEvent(eventing.TRANSACTION_REQUEST, financeDomain.NewTransactionRequest(transaction))
 }
 
 func GetPlayer(playerId string) *boardDomain.Player {
@@ -127,9 +135,19 @@ func GetPlayer(playerId string) *boardDomain.Player {
 	panic(fmt.Sprintf("Player with id %s not found", playerId))
 }
 
-func GetField(fieldIndex int) *boardDomain.Field {
+func GetFieldByIndex(fieldIndex int) boardDomain.Field {
 
-	return &fields[fieldIndex]
+	return fields[fieldIndex]
+}
+
+func GetFieldById(fieldId string) boardDomain.Field {
+
+	for i := 0; i < len(fields); i++ {
+		if fields[i].GetId() == fieldId {
+			return fields[i]
+		}
+	}
+	panic("Field not found")
 }
 
 func GetFieldsCount() int {

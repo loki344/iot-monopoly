@@ -12,8 +12,8 @@ type ChannelName string
 
 const (
 	PROPERTY_BUY_QUESTION ChannelName = "propertyBuyQuestion"
-	TRANSACTION_ADDED     ChannelName = "transactionAdded"
-	TRANSACTION_REQUESTED ChannelName = "transactionRequested"
+	PROPERTY_FEE          ChannelName = "propertyFEE"
+	TRANSACTION_REQUEST   ChannelName = "transactionAdded"
 	LAP_FINISHED          ChannelName = "lapFinished"
 )
 
