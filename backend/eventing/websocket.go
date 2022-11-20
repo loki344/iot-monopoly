@@ -6,10 +6,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	"github.com/mustafaturan/bus/v3"
-	"log"
 )
 
-var EXTERNAL_CHANNELS = [2]ChannelName{PROPERTY_BUY_QUESTION, TRANSACTION_REQUEST}
+var EXTERNAL_CHANNELS = []ChannelName{PROPERTY_BUY_QUESTION, TRANSACTION_REQUEST, TRANSACTION_RESOLVED}
 
 func StartWebsocket(app *fiber.App) {
 
@@ -31,9 +30,12 @@ func registerWebsocket(app *fiber.App) fiber.Router {
 
 		for i := range EXTERNAL_CHANNELS {
 
-			//TODO we have an issue that crashes when we refresh the browser and then send events
 			RegisterEventHandler(bus.Handler{
 				Handle: func(ctx context.Context, e bus.Event) {
+					// TODO this is a workaround, it would be better to deregsiter the eventhandler when the websocket connection is closed
+					if c.Conn == nil {
+						return
+					}
 					err := c.WriteJSON(e.Data)
 					if err != nil {
 						fmt.Println(err)
@@ -43,18 +45,5 @@ func registerWebsocket(app *fiber.App) fiber.Router {
 				Matcher: string(EXTERNAL_CHANNELS[i]),
 			})
 		}
-
-		var (
-			msg []byte
-			err error
-		)
-		for {
-			if _, msg, err = c.ReadMessage(); err != nil {
-				log.Println("read:", err)
-				break
-			}
-			log.Printf("recv: %s", msg)
-		}
-
 	}))
 }
