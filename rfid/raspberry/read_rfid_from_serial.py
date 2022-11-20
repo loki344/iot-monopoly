@@ -40,7 +40,7 @@ while True: # Run forever
             field_index = map_message_to_field_index(message["deviceId"], message["fieldId"])
             player_id = map_tag_id_to_player_id(message["playerId"])
             try:
-                requests.patch("http://localhost:3000/players/" + message["playerId"], data={"position": field_index})
+                requests.patch("http://localhost:3000/players/" + player_id, data={"position": field_index})
             except Exception:
                 print("Request failed")
                 
