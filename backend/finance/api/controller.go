@@ -24,7 +24,7 @@ func Routes(app *fiber.App) {
 		return c.Status(200).JSON(account)
 	})
 
-	app.Patch("/transactions/:id", func(c *fiber.Ctx) error {
+	app.Patch("/transactions/latest", func(c *fiber.Ctx) error {
 
 		transactionToPatch := new(TransactionAcceptedPatch)
 
@@ -33,14 +33,16 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		if transactionToPatch.Accepted {
-			finance.ResolveTransaction(c.Params("id"))
+		if transactionToPatch.Accepted && transactionToPatch.SenderId != "" {
+			return c.Status(200).JSON(finance.ResolveLatestTransaction(transactionToPatch.SenderId))
 		}
-		return c.Status(200).JSON(finance.GetTransaction(c.Params("id")))
+
+		return c.SendStatus(400)
 	})
 
 }
 
 type TransactionAcceptedPatch struct {
-	Accepted bool `json:"accepted"`
+	Accepted bool   `json:"accepted"`
+	SenderId string `json:"senderId"`
 }

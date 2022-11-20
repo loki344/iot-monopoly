@@ -88,10 +88,21 @@ func validateTransaction(transaction *financeDomain.Transaction) error {
 	return nil
 }
 
-func ResolveTransaction(id string) {
-	transaction := GetTransaction(id)
+func ResolveLatestTransaction(senderId string) *financeDomain.Transaction {
+	transaction := *GetLatestTransaction()
 	if !transaction.IsPending() {
 		panic(fmt.Sprintf("Transaction %s is already resolved", transaction.Id))
+	}
+
+	if transaction.SenderId != senderId {
+		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", transaction.SenderId, senderId)
+		transaction.SenderId = senderId
+		err := validateTransaction(&transaction)
+		if err != nil {
+			fmt.Println(err)
+			//TODO improve
+			panic("transaction invalid")
+		}
 	}
 
 	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", transaction.Id, transaction.Amount, transaction.SenderId, transaction.RecipientId)
@@ -99,24 +110,16 @@ func ResolveTransaction(id string) {
 	removeFromAccount(getAccountByPlayerId(transaction.SenderId).Id, transaction.Amount)
 
 	transaction.ExecutionTime = time.Now()
+	transaction.Accepted = true
 	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(transaction.Id))
+	return &transaction
+}
+
+func GetLatestTransaction() *financeDomain.Transaction {
+
+	return &transactions[len(transactions)-1]
 }
 
 func GetAccounts() []financeDomain.Account {
 	return accounts
-}
-
-func GetTransaction(id string) *financeDomain.Transaction {
-
-	for i := range transactions {
-		if transactions[i].Id == id {
-			return &transactions[i]
-		}
-	}
-
-	panic(fmt.Sprintf("no transaction found with id %s", id))
-}
-
-func getPendingTransactions() []financeDomain.Transaction {
-	return transactions
 }
