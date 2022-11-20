@@ -27,6 +27,14 @@ import signal
 
 continue_reading = True
 
+tagIdToAccountIdMap = {"33-A8-8A-10": "Account_Player_1", "1304-B6-1A": "Account_Player_2", "43-F1-E70E": "Account_Player_3", "A3-D9-350F": "Account_Player_4"}
+
+def map_tag_id_to_account_id(tag_id):
+    account_id = tagIdToAccountIdMap[tag_id]
+    print("mapped tagId: "+ tag_id +" to accountId: " + str(account_id))
+    return account_id
+
+
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
     global continue_reading
