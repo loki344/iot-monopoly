@@ -13,7 +13,9 @@ def map_message_to_field_index(device, field_id):
     return field_index
 
 def map_tag_id_to_player_id(tag_id):
-    return tagIdToPlayerIdMap[tag_id]
+    player_id = tagIdToPlayerIdMap[tag_id]
+    print("mapped tagId: "+ tag_id +" to playerId: " + str(player_id))
+    return player_id
 
 deviceCount = 4
 
