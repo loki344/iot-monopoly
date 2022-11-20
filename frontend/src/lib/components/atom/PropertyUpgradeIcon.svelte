@@ -8,9 +8,9 @@
 	export let count = 1;
 </script>
 
-<div class={`flex flex-row justify-center gap-x-2 ${clazz}`}>
+<div class={`flex flex-row justify-center items-center gap-x-2 ${clazz}`}>
 	{#each { length: count } as _}
-		<div class="text-dark w-10">
+		<div class="text-dark w-16">
 			{#if type === 'HOUSE'}
 				<GiHouse />
 			{:else}

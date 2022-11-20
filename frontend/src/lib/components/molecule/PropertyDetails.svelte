@@ -10,49 +10,54 @@
 </script>
 
 <div class={`${clazz} flex flex-col`}>
-	<Title type="medium" class="text-center">{property.Name}</Title>
+	<Title class="text-center !text-dark">{property.Name}</Title>
 	<PriceTag class="text-center" price={property.FinancialDetails.PropertyPrice} />
-	<Title type="small" class="text-center">REVENUE</Title>
-	<div class="grid grid-cols-6 grid-rows-2 gap-x-12">
-		<div />
-		<PropertyUpgradeIcon type="HOUSE" count={1} />
-		<PropertyUpgradeIcon type="HOUSE" count={2} />
-		<PropertyUpgradeIcon type="HOUSE" count={3} />
-		<PropertyUpgradeIcon type="HOUSE" count={4} />
-		<PropertyUpgradeIcon type="HOTEL" count={1} />
 
-		<Title class="text-center text-green" type="small"
-			>{property.FinancialDetails.Revenue.Normal} $</Title
-		>
-		<Title class="text-center text-green" type="small"
-			>{property.FinancialDetails.Revenue.OneHouse} $</Title
-		>
-		<Title class="text-center text-green" type="small"
-			>{property.FinancialDetails.Revenue.TwoHouses} $</Title
-		>
-		<Title class="text-center text-green" type="small"
-			>{property.FinancialDetails.Revenue.ThreeHouses} $</Title
-		>
-		<Title class="text-center  text-green" type="small"
-			>{property.FinancialDetails.Revenue.FourHouses} $</Title
-		>
-		<Title class="text-center text-green" type="small"
-			>{property.FinancialDetails.Revenue.Hotel} $</Title
-		>
-	</div>
+	<div class="flex flex-row my-12 divide-x-4 divide-dark">
+		<div class="w-1/2">
+			<Title type="medium" class="text-center">REVENUE</Title>
+			<div class="grid grid-cols-4 grid-rows-3">
+				<Title type="small" class="text-center !text-dark">Empty</Title>
+				<Title class="text-center !text-green" type="small"
+				>{property.FinancialDetails.Revenue.Normal} $</Title>
+		
+				<PropertyUpgradeIcon type="HOUSE" count={3} />
+				<Title class="text-center !text-green" type="small"
+				>{property.FinancialDetails.Revenue.ThreeHouses} $</Title>
 
-    <Title type="small" class="text-center">COST</Title>
-	<div class="flex flex-row justify-center">
-		<div class="grid grid-cols-2 w-1/2">
-			<PropertyUpgradeIcon type="HOUSE" count={1} />
-			<PropertyUpgradeIcon type="HOTEL" count={1} />
+				<PropertyUpgradeIcon type="HOUSE" count={1} />
+				<Title class="text-center !text-green" type="small"
+				>{property.FinancialDetails.Revenue.OneHouse} $</Title>
+		
+				<PropertyUpgradeIcon type="HOUSE" count={4} />
+				<Title class="text-center  !text-green" type="small"
+					>{property.FinancialDetails.Revenue.FourHouses} $</Title>
+		
+					<PropertyUpgradeIcon type="HOUSE" count={2} />
+					<Title class="text-center !text-green" type="small">{property.FinancialDetails.Revenue.TwoHouses} $</Title>
 
-			<Title class="text-center text-green" type="small"
-				>{property.FinancialDetails.HousePrice} $</Title
-			>
-			<Title class="text-center text-green" type="small"
-				>{property.FinancialDetails.HotelPrice} $</Title
-			>
+				<PropertyUpgradeIcon type="HOTEL" count={1} />
+				<Title class="text-center !text-green" type="small"
+					>{property.FinancialDetails.Revenue.Hotel} $</Title>
 		</div>
 	</div>
+
+
+	<div class="w-1/2">
+		<Title type="medium" class="text-center !text-primary">COST</Title>
+		<div class="grid grid-cols-4 grid-rows-3">
+			<PropertyUpgradeIcon type="HOUSE" count={1} />
+			<Title class="text-center !text-red" type="small"
+			>{property.FinancialDetails.HousePrice} $</Title
+		>
+			<PropertyUpgradeIcon type="HOTEL" count={1} />
+			<Title class="text-center !text-red" type="small"
+				>{property.FinancialDetails.HotelPrice} $</Title
+			>
+	</div>
+
+	</div>
+
+
+</div>
 </div>

@@ -30,6 +30,11 @@ func RegisterEventHandler(handler bus.Handler) string {
 	return id
 }
 
+func DeregisterEventHandler(handlerId string) {
+	fmt.Printf("Deregistering handler with id: %s \n", handlerId)
+	config.Bus.DeregisterHandler(handlerId)
+}
+
 func FireEvent(channelName ChannelName, event any) {
 
 	fmt.Println("Firing event:")

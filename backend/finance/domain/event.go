@@ -19,5 +19,5 @@ func NewTransactionRequest(transaction *Transaction) TransactionAddedEvent {
 
 func NewTransactionResolvedEvent(transactionId string) TransactionResolvedEvent {
 
-	return TransactionResolvedEvent{BaseEvent: eventingDomain.EventType(&TransactionAddedEvent{}), TransactionId: transactionId}
+	return TransactionResolvedEvent{BaseEvent: eventingDomain.EventType(&TransactionResolvedEvent{}), TransactionId: transactionId}
 }
