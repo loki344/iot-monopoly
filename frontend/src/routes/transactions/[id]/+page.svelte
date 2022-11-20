@@ -2,9 +2,10 @@
 	import ConfirmTransactionDialog from "$lib/components/molecule/ConfirmTransactionDialog.svelte";
     import { page } from '$app/stores';
 	import Title from "$lib/components/atom/Title.svelte";
+	console.log($page)
 </script>
 
 <div class="h-full flex flex-col justify-center text-center">
 <Title type={'medium'}>Transaction</Title>
-<ConfirmTransactionDialog transaction={{senderId: $page.data.senderId, receiverId: $page.data.receiverId, amount: $page.data.amount}}></ConfirmTransactionDialog>
+<ConfirmTransactionDialog transaction={{senderId: $page.data.senderId, recipientId: $page.data.recipientId, amount: $page.data.amount}}></ConfirmTransactionDialog>
 </div>

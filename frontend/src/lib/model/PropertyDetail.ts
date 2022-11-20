@@ -1,8 +1,8 @@
 export type Property = {
-	Id: String;
+	Id?: String;
 	Name: String;
 	FinancialDetails: FinancialDetails;
-	OwnerId: String;
+	OwnerId?: String;
 	Upgrades?: PropertyUpgrades;
 };
 

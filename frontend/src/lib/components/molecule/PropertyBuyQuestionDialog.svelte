@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
 	import { BASE_URL, extractData } from "$lib/http/backendClient";
 	import type { Property } from "$lib/model/PropertyDetail";
 	import Button from "../atom/Button.svelte";
@@ -9,14 +10,14 @@
     export let buyerId:string
 
 	const decline = () => {
-
+		goto("/game")
 	}
 
 	const accept = async () => {
 
-		let response = await fetch(`${BASE_URL}/transactions`, {
-			method: 'POST',
-			body: JSON.stringify({"senderId": buyerId, "recipientId": "bank", "amount": property.FinancialDetails.PropertyPrice}),
+		let response = await fetch(`${BASE_URL}/properties/${property.Id}`, {
+			method: 'PATCH',
+			body: JSON.stringify({"ownerId": buyerId}),
 			headers: {
 				'Content-Type': 'application/json'
 			}

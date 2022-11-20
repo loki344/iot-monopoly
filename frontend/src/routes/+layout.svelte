@@ -3,7 +3,6 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { event } from '$lib/store/event';
 
 	onMount(async () => {
 		const socket = new WebSocket('ws://localhost:3000/ws');
@@ -12,13 +11,18 @@
 			console.log(eventData)
 			switch(eventData.Type.split('.')[1]){
 				case "TransactionAddedEvent":
-				let transaction =eventData.Transaction
-				goto(`transactions/${transaction.id}?recipientId=${transaction.recipientId}&senderId=${transaction.senderId}&amount=${transaction.amount}`)
-				break;
+					let transaction = eventData.Transaction
+					goto(`/transactions/${transaction.id}?recipientId=${transaction.recipientId}&senderId=${transaction.senderId}&amount=${transaction.amount}`)
+					break
+
 				case "PropertyBuyQuestion":
-				let property = eventData.Property
-				goto(`properties/${property.id}`)
-				break
+					let p = eventData.Property
+					let fd = p.FinancialDetails
+					let r = fd.Revenue
+					goto(`/properties/${p.Id}?name=${p.Name}&propertyPrice=${fd.PropertyPrice}&housePrice=${fd.HousePrice}&hotelPrice=${fd.HotelPrice}
+					&revenueNormal=${r.Normal}&revenueOneHouse=${r.OneHouse}&revenueTwoHouses=${r.TwoHouses}&revenueThreeHouses=${r.ThreeHouses}
+					&revenueFourHouses=${r.FourHouses}&revenueHotel=${r.Hotel}&buyerId=${eventData.PlayerId}`)
+					break
 			}
 
 
