@@ -60,9 +60,9 @@ while continue_reading:
 
     # If a card is found
     if status == MIFAREReader.MI_OK:
-    
-    # Get the UID of the card
-    (status,uid) = MIFAREReader.MFRC522_Anticoll()
+
+        # Get the UID of the card
+        (status, uid) = MIFAREReader.MFRC522_Anticoll()
 
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
