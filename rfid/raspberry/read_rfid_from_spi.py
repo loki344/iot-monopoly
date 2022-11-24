@@ -25,10 +25,11 @@ import RPi.GPIO as GPIO
 import mfrc522 as MFRC522
 import signal
 import time
+import requests
 
 continue_reading = True
 
-tagIdToAccountIdMap = {"51-168-138-16": "Account_Player_1", "19-4-182-26": "Account_Player_2", "67-241-231-14": "Account_Player_3", "163-217-53-15": "Account_Player_4"}
+tagIdToAccountIdMap = {"51-168-138-16": "Player_1", "19-4-182-26": "Player_2", "67-241-231-14": "Player_3", "163-217-53-15": "Player_4"}
 
 def map_tag_id_to_account_id(tag_id):
     account_id = tagIdToAccountIdMap[tag_id]
