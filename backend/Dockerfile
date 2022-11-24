@@ -16,7 +16,8 @@ RUN go mod download
 COPY . ./
 
 # Build the binary.
-RUN go build -v -o server
+
+RUN env GOOS=linux GOARCH=arm GOARM=7 go build -v -o server
 
 # Use the official Debian slim image for a lean production container.
 # https://hub.docker.com/_/debian

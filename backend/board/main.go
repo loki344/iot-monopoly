@@ -70,7 +70,7 @@ var properties []boardDomain.PropertyField
 var basicFields []boardDomain.BasicField
 var eventFields []boardDomain.EventField
 
-var pendingPropertyTransfer []boardDomain.PendingPropertyTransaction
+var pendingTransfer boardDomain.PendingPropertyTransaction
 
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
 	eventing.FireEvent(eventing.GAME_STARTED, boardDomain.NewGameStartedEvent(playerCount))
@@ -128,23 +128,19 @@ func BuyProperty(propertyId string, buyerId string) string {
 	transactionId := uuid.NewString()
 	property := *GetPropertyById(propertyId)
 	eventing.FireEvent(eventing.PROPERTY_TRANSACTION_STARTED, boardDomain.NewTransactionRequestWithId(transactionId, "Bank", buyerId, property.GetPropertyFee()))
-	pendingPropertyTransfer = append(pendingPropertyTransfer, boardDomain.PendingPropertyTransaction{TransactionId: transactionId, PropertyId: propertyId, BuyerId: buyerId})
+	pendingTransfer = boardDomain.PendingPropertyTransaction{TransactionId: transactionId, PropertyId: propertyId, BuyerId: buyerId}
 
 	return transactionId
 }
 
 func transferOwnerShip(transactionId string) {
 
-	for i := range pendingPropertyTransfer {
-		pendingTransfer := pendingPropertyTransfer[i]
-		if pendingTransfer.TransactionId == transactionId {
-			fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId, pendingTransfer.BuyerId)
-			property := GetPropertyById(pendingTransfer.PropertyId)
-			property.OwnerId = pendingTransfer.BuyerId
-			return
-		}
+	if pendingTransfer.TransactionId == transactionId {
+		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId, pendingTransfer.BuyerId)
+		property := GetPropertyById(pendingTransfer.PropertyId)
+		property.OwnerId = pendingTransfer.BuyerId
+		return
 	}
-
 }
 
 func GetPlayer(playerId string) *boardDomain.Player {

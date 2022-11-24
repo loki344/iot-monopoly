@@ -104,9 +104,7 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
 		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, NewPropertyBuyQuestion(player.Id, propertyField))
-	} else if propertyField.OwnerId == player.Id {
-		fmt.Println("player owns the property..")
-	} else {
+	} else if propertyField.OwnerId != player.Id {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPropertyFee())
 		eventing.FireEvent(eventing.PROPERTY_FEE, NewTransactionRequest(propertyField.OwnerId, player.Id, propertyField.GetPropertyFee()))
 	}

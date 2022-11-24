@@ -1,4 +1,4 @@
-FROM node:16
+FROM arm32v7/node
 
 WORKDIR iot-monopoly
 
@@ -9,4 +9,4 @@ RUN yarn build
 EXPOSE 8080
 
 ENV PORT=8080
-CMD ["node", "build/server.js"]
+CMD ["node", "build/index.js"]
