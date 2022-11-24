@@ -24,10 +24,11 @@
 import RPi.GPIO as GPIO
 import mfrc522 as MFRC522
 import signal
+import time
 
 continue_reading = True
 
-tagIdToAccountIdMap = {"33-A8-8A-10": "Account_Player_1", "1304-B6-1A": "Account_Player_2", "43-F1-E70E": "Account_Player_3", "A3-D9-350F": "Account_Player_4"}
+tagIdToAccountIdMap = {"51-168-138-16": "Account_Player_1", "19-4-182-26": "Account_Player_2", "67-241-231-14": "Account_Player_3", "163-217-53-15": "Account_Player_4"}
 
 def map_tag_id_to_account_id(tag_id):
     account_id = tagIdToAccountIdMap[tag_id]
@@ -48,13 +49,9 @@ signal.signal(signal.SIGINT, end_read)
 # Create an object of the class MFRC522
 MIFAREReader = MFRC522.MFRC522()
 
-# Welcome message
-print ("Welcome to the MFRC522 data read example")
-print ("Press Ctrl-C to stop.")
-
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while continue_reading:
-    
+
     # Scan for cards    
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
 
@@ -67,21 +64,15 @@ while continue_reading:
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
 
-        # Print UID
-        print ("Card read UID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3]))
+        LED = 18
+        GPIO.setup(LED, GPIO.OUT)
+        GPIO.output(LED, GPIO.HIGH)
+        time.sleep(3)
+        GPIO.output(LED, GPIO.LOW)
+        tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
+        map_tag_id_to_account_id(tagId)
+        try:
+            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "senderId": map_tag_id_to_account_id(tagId)})
+        except Exception:
+            print("Request failed")
     
-        # This is the default key for authentication
-        key = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF]
-        
-        # Select the scanned tag
-        MIFAREReader.MFRC522_SelectTag(uid)
-
-        # Authenticate
-        status = MIFAREReader.MFRC522_Auth(MIFAREReader.PICC_AUTHENT1A, 8, key, uid)
-
-        # Check if authenticated
-        if status == MIFAREReader.MI_OK:
-            MIFAREReader.MFRC522_Read(8)
-            MIFAREReader.MFRC522_StopCrypto1()
-        else:
-            print ("Authentication error")
