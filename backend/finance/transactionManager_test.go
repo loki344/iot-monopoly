@@ -64,27 +64,6 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 	assert.Equal(t, 2_000, getAccountByPlayerId(recipientId).Balance)
 }
 
-func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
-	InitAccounts()
-	config.Init()
-
-	players, _ := board.StartGame(2)
-	recipientId := players[0].Id
-	senderId := players[1].Id
-
-	amount := 1_000
-
-	transaction, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
-	if err != nil {
-		assert.NoError(t, err)
-	}
-	ResolveLatestTransaction(senderId)
-
-	assert.Panics(t, func() {
-		ResolveLatestTransaction(transaction.Id)
-	})
-}
-
 func TestTransactionWithChangedSenderId(t *testing.T) {
 
 	InitAccounts()
@@ -102,12 +81,32 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 	}
 
 	actualSenderId := players[2].Id
-	transaction := ResolveLatestTransaction(actualSenderId)
+	ResolveLatestTransaction(actualSenderId)
 
 	assert.Equal(t, 1_000, getAccountByPlayerId(senderId).Balance)
 	assert.Equal(t, 0, getAccountByPlayerId(actualSenderId).Balance)
 	assert.Equal(t, 2_000, getAccountByPlayerId(recipientId).Balance)
-	assert.Equal(t, false, transaction.IsPending())
-	assert.False(t, transaction.ExecutionTime.IsZero())
+}
 
+func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
+
+	InitAccounts()
+	config.Init()
+
+	players, _ := board.StartGame(3)
+	recipientId := players[0].Id
+	senderId := players[1].Id
+
+	amount := 100
+
+	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
+	if err != nil {
+		assert.NoError(t, err)
+	}
+
+	ResolveLatestTransaction(senderId)
+	ResolveLatestTransaction(senderId)
+
+	assert.Equal(t, 900, getAccountByPlayerId(senderId).Balance)
+	assert.Equal(t, 1100, getAccountByPlayerId(recipientId).Balance)
 }

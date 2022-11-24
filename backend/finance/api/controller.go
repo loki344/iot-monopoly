@@ -34,7 +34,8 @@ func Routes(app *fiber.App) {
 		}
 
 		if transactionToPatch.Accepted && transactionToPatch.SenderId != "" {
-			return c.Status(200).JSON(finance.ResolveLatestTransaction(transactionToPatch.SenderId))
+			finance.ResolveLatestTransaction(transactionToPatch.SenderId)
+			return c.SendStatus(200)
 		}
 
 		return c.SendStatus(400)

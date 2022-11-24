@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"iot-monopoly/eventing"
 	"iot-monopoly/finance/domain"
-	"time"
 )
 
-var transactions []financeDomain.Transaction
+var pendingTransaction *financeDomain.Transaction
 var defaultAccounts = []financeDomain.Account{
 	{"Account_Player_1", "Player_1", 1_000},
 	{"Account_Player_2", "Player_2", 1_000},
@@ -68,8 +67,8 @@ func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Tran
 		return nil, err
 	}
 
-	fmt.Printf("Adding transaction %s to pending transactions\n", transaction.Id)
-	transactions = append(transactions, *transaction)
+	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
+	pendingTransaction = transaction
 
 	eventing.FireEvent(eventing.TRANSACTION_REQUEST, financeDomain.NewTransactionRequest(transaction))
 
@@ -78,8 +77,8 @@ func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Tran
 
 func validateTransaction(transaction *financeDomain.Transaction) error {
 
-	if !transaction.IsPending() {
-		return errors.New(fmt.Sprintf("cannot add non-pending transaction, please add only pending transactions: %s", transaction.Id))
+	if transaction.Accepted {
+		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id))
 	}
 	balance := getAccountByPlayerId(transaction.SenderId).Balance
 	if balance < transaction.Amount {
@@ -88,36 +87,31 @@ func validateTransaction(transaction *financeDomain.Transaction) error {
 	return nil
 }
 
-func ResolveLatestTransaction(senderId string) *financeDomain.Transaction {
-	transaction := *GetLatestTransaction()
-	if !transaction.IsPending() {
-		panic(fmt.Sprintf("Transaction %s is already resolved", transaction.Id))
+func ResolveLatestTransaction(senderId string) {
+
+	if pendingTransaction == nil {
+		fmt.Println("No transaction to resolve....")
+		return
 	}
 
-	if transaction.SenderId != senderId {
-		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", transaction.SenderId, senderId)
-		transaction.SenderId = senderId
-		err := validateTransaction(&transaction)
+	if pendingTransaction.SenderId != senderId {
+		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId, senderId)
+		pendingTransaction.SenderId = senderId
+		err := validateTransaction(pendingTransaction)
 		if err != nil {
 			fmt.Println(err)
 			//TODO improve
-			panic("transaction invalid")
+			panic("pendingTransaction invalid")
 		}
 	}
 
-	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", transaction.Id, transaction.Amount, transaction.SenderId, transaction.RecipientId)
-	addToAccount(getAccountByPlayerId(transaction.RecipientId).Id, transaction.Amount)
-	removeFromAccount(getAccountByPlayerId(transaction.SenderId).Id, transaction.Amount)
+	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
+	addToAccount(getAccountByPlayerId(pendingTransaction.RecipientId).Id, pendingTransaction.Amount)
+	removeFromAccount(getAccountByPlayerId(pendingTransaction.SenderId).Id, pendingTransaction.Amount)
 
-	transaction.ExecutionTime = time.Now()
-	transaction.Accepted = true
-	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(transaction.Id))
-	return &transaction
-}
-
-func GetLatestTransaction() *financeDomain.Transaction {
-
-	return &transactions[len(transactions)-1]
+	pendingTransaction.Accepted = true
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(pendingTransaction.Id))
+	pendingTransaction = nil
 }
 
 func GetAccounts() []financeDomain.Account {
