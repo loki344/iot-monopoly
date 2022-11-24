@@ -29,12 +29,12 @@ import requests
 
 continue_reading = True
 
-tagIdToAccountIdMap = {"51-168-138-16": "Player_1", "19-4-182-26": "Player_2", "67-241-231-14": "Player_3", "163-217-53-15": "Player_4"}
+tagIdToPlayerIdMap = {"51-168-138-16": "Player_1", "19-4-182-26": "Player_2", "67-241-231-14": "Player_3", "163-217-53-15": "Player_4"}
 
 def map_tag_id_to_account_id(tag_id):
-    account_id = tagIdToAccountIdMap[tag_id]
-    print("mapped tagId: "+ tag_id +" to accountId: " + str(account_id))
-    return account_id
+    player_id = tagIdToPlayerIdMap[tag_id]
+    print("mapped tagId: "+ tag_id +" to playerId: " + str(player_id))
+    return player_id
 
 
 # Capture SIGINT for cleanup when the script is aborted
@@ -71,9 +71,8 @@ while continue_reading:
         time.sleep(3)
         GPIO.output(LED, GPIO.LOW)
         tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
-        map_tag_id_to_account_id(tagId)
         try:
-            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "senderId": map_tag_id_to_account_id(tagId)})
+            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "senderId": map_tag_id_to_player_id(tagId)})
         except Exception:
             print("Request failed")
     
