@@ -23,7 +23,7 @@ devices = []
 
 
 for i in range(deviceCount):
-    device = serial.Serial("/dev/ttyACM"+str(i),9600,timeout=1, )
+    device = serial.Serial("/dev/ttyACM"+str(i),9600 )
     device.baudrate=9600
     sio = io.TextIOWrapper(io.BufferedRWPair(device, device))
     devices.append(sio)
