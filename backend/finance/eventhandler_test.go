@@ -52,3 +52,14 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
 	assert.Equal(t, 1, receivedEvents)
 }
+
+func TestPlayerReceivesMoneyWhenCreditAddedEventFired(t *testing.T) {
+
+	config.Init()
+	StartEventListeners()
+
+	players, _ := board.StartGame(1)
+	player := players[0]
+	eventing.FireEvent(eventing.CREDIT, boardDomain.NewCreditAddedEvent(player.AccountId, 200))
+	assert.Equal(t, 1200, getAccountByPlayerId(player.Id).Balance)
+}

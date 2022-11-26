@@ -48,3 +48,33 @@ type GameStartedEvent struct {
 func NewGameStartedEvent(playerCount int) *GameStartedEvent {
 	return &GameStartedEvent{eventingDomain.EventType(&GameStartedEvent{}), playerCount}
 }
+
+type CreditAddedEvent struct {
+	eventingDomain.BaseEvent
+	RecipientAccountId string
+	Amount             int
+}
+
+func NewCreditAddedEvent(recipientAccountId string, amount int) *CreditAddedEvent {
+
+	return &CreditAddedEvent{BaseEvent: eventingDomain.EventType(&CreditAddedEvent{}), RecipientAccountId: recipientAccountId, Amount: amount}
+}
+
+type CardEvent struct {
+	eventingDomain.BaseEvent
+	Title  string
+	Text   string
+	Event  func(player *Player)
+	Player *Player
+}
+
+type CardEventDTO struct {
+	eventingDomain.BaseEvent
+	Title string
+	Text  string
+}
+
+func NewCardEvent(title string, text string, event func(player *Player)) *CardEvent {
+
+	return &CardEvent{BaseEvent: eventingDomain.EventType(&CardEvent{}), Title: title, Text: text, Event: event}
+}

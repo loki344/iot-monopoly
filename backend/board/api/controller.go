@@ -48,6 +48,25 @@ func Routes(app *fiber.App) {
 		return c.Status(200).JSON(transactionId)
 	})
 
+	app.Patch("/card-events/latest", func(c *fiber.Ctx) error {
+
+		confirmedDTO := new(ConfirmedDTO)
+
+		if err := c.BodyParser(confirmedDTO); err != nil {
+			fmt.Println("error = ", err)
+			return fiber.ErrBadRequest
+		}
+
+		if !confirmedDTO.Confirmed {
+			fmt.Println("Not confirmed, not doing anything")
+			return c.SendStatus(400)
+		}
+
+		board.ConfirmCardEvent()
+
+		return c.SendStatus(200)
+	})
+
 	app.Post("/games", func(c *fiber.Ctx) error {
 
 		gameRequest := new(GameRequest)
@@ -73,4 +92,8 @@ type GameRequest struct {
 
 type PropertyPatchRequest struct {
 	OwnerId string `json:"ownerId"`
+}
+
+type ConfirmedDTO struct {
+	Confirmed bool `json:"confirmed"`
 }

@@ -18,6 +18,8 @@ const (
 	TRANSACTION_REQUEST          ChannelName = "transactionAdded"           // player has to pay the amount with his card
 	TRANSACTION_RESOLVED         ChannelName = "transactionResolved"
 	LAP_FINISHED                 ChannelName = "lapFinished"
+	CREDIT                       ChannelName = "credit"
+	DRAW_CARD                    ChannelName = "drawCard"
 )
 
 func RegisterEventHandler(handler bus.Handler) string {

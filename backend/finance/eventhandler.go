@@ -14,6 +14,7 @@ func StartEventListeners() {
 	startLapFinishedEventHandler()
 	startPropertyFeeEventHandler()
 	startGameStartedEventHandler()
+	startCreditAddedEventHandler()
 }
 
 func startLapFinishedEventHandler() {
@@ -45,4 +46,16 @@ func startPropertyFeeEventHandler() {
 		},
 		Matcher: "((^|, )(propertyTransactionStarted|propertyFee))+$",
 	})
+}
+
+func startCreditAddedEventHandler() {
+
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			creditAddedEvent := e.Data.(*boardDomain.CreditAddedEvent)
+			addToAccount(creditAddedEvent.RecipientAccountId, creditAddedEvent.Amount)
+		},
+		Matcher: string(eventing.CREDIT),
+	})
+
 }

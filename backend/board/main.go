@@ -27,8 +27,10 @@ var tempFinancialDetails = &boardDomain.FinancialDetails{100, 100, 100, boardDom
 
 var defaultEventFields = []boardDomain.EventField{
 	{boardDomain.BaseFieldInformation{Id: "4", Name: "Ereignisfeld 1"}, func(player *boardDomain.Player) {
-		fmt.Println("Ereignisfeld")
-		//TODO implement ereignis
+		cardEvent := DrawCard()
+		pendingEvent = cardEvent
+		cardEvent.Player = player
+		eventing.FireEvent(eventing.DRAW_CARD, &boardDomain.CardEventDTO{cardEvent.BaseEvent, cardEvent.Title, cardEvent.Text})
 	}},
 	{boardDomain.BaseFieldInformation{Id: "6", Name: "Ereignisfeld 2"}, func(player *boardDomain.Player) {
 		fmt.Println("Ereignisfeld")
@@ -43,7 +45,7 @@ var defaultEventFields = []boardDomain.EventField{
 		// TODO this field index for prison should not be magic
 		MovePlayer(player.Id, 4)
 	}},
-	{boardDomain.BaseFieldInformation{Id: "15", Name: "Ereignisfeld 3"}, func(player *boardDomain.Player) {
+	{boardDomain.BaseFieldInformation{Id: "15", Name: "Ereignisfeld 4"}, func(player *boardDomain.Player) {
 		//TODO implement ereignis
 		fmt.Println("Ereignisfeld")
 	}},
@@ -71,6 +73,7 @@ var basicFields []boardDomain.BasicField
 var eventFields []boardDomain.EventField
 
 var pendingTransfer *boardDomain.PendingPropertyTransaction
+var pendingEvent *boardDomain.CardEvent
 
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
 	eventing.FireEvent(eventing.GAME_STARTED, boardDomain.NewGameStartedEvent(playerCount))
@@ -121,6 +124,13 @@ func MovePlayer(playerId string, fieldId int) error {
 	player.Position = fieldId
 	GetFieldById(strconv.FormatInt(int64(fieldId), 10)).OnPlayerEnter(player)
 	return nil
+}
+
+func ConfirmCardEvent() {
+
+	fmt.Println("Confirming cardEvent...")
+	pendingEvent.Event(pendingEvent.Player)
+	pendingEvent = nil
 }
 
 func BuyProperty(propertyId string, buyerId string) string {
