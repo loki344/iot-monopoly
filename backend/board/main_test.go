@@ -64,19 +64,3 @@ func TestLapFiresEvent(t *testing.T) {
 
 	assert.Equal(t, 1, receivedEvents)
 }
-
-func TestBuyProperty(t *testing.T) {
-
-	config.Init()
-	StartEventListeners()
-	players, _ := StartGame(1)
-	playerId := players[0].Id
-
-	propertyId := "2"
-	transactionId := BuyProperty(propertyId, playerId)
-
-	transferOwnerShip(transactionId)
-
-	property := *GetPropertyById(propertyId)
-	assert.Equal(t, playerId, property.OwnerId)
-}

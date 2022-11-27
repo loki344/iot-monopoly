@@ -55,7 +55,7 @@ func startCreditAddedEventHandler() {
 			creditAddedEvent := e.Data.(*boardDomain.CreditAddedEvent)
 			addToAccount(creditAddedEvent.RecipientAccountId, creditAddedEvent.Amount)
 		},
-		Matcher: string(eventing.CREDIT),
+		Matcher: string(eventing.PAYMENT),
 	})
 
 }

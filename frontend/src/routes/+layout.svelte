@@ -29,6 +29,9 @@
 				case "TransactionResolvedEvent":
 					goto("/game")
 					break
+				case "CardDrewEvent":
+					goto(`/card-event?title=${eventData.Title}&text=${eventData.Text}`)
+					break
 			}
 
 

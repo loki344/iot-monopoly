@@ -62,7 +62,7 @@ func Routes(app *fiber.App) {
 			return c.SendStatus(400)
 		}
 
-		board.ConfirmCardEvent()
+		board.ConfirmCard()
 
 		return c.SendStatus(200)
 	})

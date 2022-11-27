@@ -11,7 +11,7 @@
 </script>
 
 <Hst.Story title="Example/ConfirmTransactionDialog">
-	<ConfirmTransactionDialog transaction={{senderId:"Player_1", receiverId:"Player_2", amount: 1000}} on:click={(event) => logEvent('click', event)} />
+	<ConfirmTransactionDialog transaction={{senderId:"Player_1", recipientId:"Player_2", amount: 1000}} on:click={(event) => logEvent('click', event)} />
 
 	<svelte:fragment slot="controls">
 		<Hst.Checkbox bind:value={disabled} title="Disabled" />

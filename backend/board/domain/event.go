@@ -60,21 +60,34 @@ func NewCreditAddedEvent(recipientAccountId string, amount int) *CreditAddedEven
 	return &CreditAddedEvent{BaseEvent: eventingDomain.EventType(&CreditAddedEvent{}), RecipientAccountId: recipientAccountId, Amount: amount}
 }
 
-type CardEvent struct {
-	eventingDomain.BaseEvent
-	Title  string
-	Text   string
-	Event  func(player *Player)
-	Player *Player
-}
-
-type CardEventDTO struct {
+type CardDrewEvent struct {
 	eventingDomain.BaseEvent
 	Title string
 	Text  string
 }
 
-func NewCardEvent(title string, text string, event func(player *Player)) *CardEvent {
+func NewCardDrewEvent(title string, text string) *CardDrewEvent {
+	return &CardDrewEvent{BaseEvent: eventingDomain.EventType(&CardDrewEvent{}), Title: title, Text: text}
+}
 
-	return &CardEvent{BaseEvent: eventingDomain.EventType(&CardEvent{}), Title: title, Text: text, Event: event}
+type Card struct {
+	Title  string
+	Text   string
+	Action func(player *Player)
+	Player *Player
+}
+
+func (card Card) TriggerAction() {
+	card.Action(card.Player)
+}
+
+type CardDTO struct {
+	eventingDomain.BaseEvent
+	Title string
+	Text  string
+}
+
+func NewCard(title string, text string, action func(player *Player)) *Card {
+
+	return &Card{Title: title, Text: text, Action: action}
 }
