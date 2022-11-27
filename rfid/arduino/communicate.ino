@@ -93,30 +93,34 @@ void loop() {
     delay(100);
     // Looking for new cards
     if (mfrc522[reader].PICC_IsNewCardPresent() && mfrc522[reader].PICC_ReadCardSerial()) {
-      
-        digitalWrite(ledPins[reader], HIGH);
 
-        printHex(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size, reader);
 
-        // Halt PICC
-        mfrc522[reader].PICC_HaltA();
-        // Stop encryption on PCD
-        mfrc522[reader].PCD_StopCrypto1();
-  
-        delay(500);
-        digitalWrite(ledPins[reader], LOW);
-        delay(100);
-        digitalWrite(ledPins[reader], HIGH);
-        delay(100);
-        digitalWrite(ledPins[reader], LOW);
-        delay(100);
-        digitalWrite(ledPins[reader], HIGH);
-        delay(100);
-        digitalWrite(ledPins[reader], LOW);
-    
+        delay(2000);
+        if (mfrc522[reader].PICC_ReadCardSerial()) {
+            digitalWrite(ledPins[reader], HIGH);
+
+            printHex(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size, reader);
+
+            // Halt PICC
+            mfrc522[reader].PICC_HaltA();
+            // Stop encryption on PCD
+            mfrc522[reader].PCD_StopCrypto1();
+
+            delay(500);
+            digitalWrite(ledPins[reader], LOW);
+            delay(100);
+            digitalWrite(ledPins[reader], HIGH);
+            delay(100);
+            digitalWrite(ledPins[reader], LOW);
+            delay(100);
+            digitalWrite(ledPins[reader], HIGH);
+            delay(100);
+            digitalWrite(ledPins[reader], LOW);
+        }
     }
   }
 }
+
 void printHex(byte *buffer, byte bufferSize, uint8_t reader) {
 
   Serial.print("{\"deviceId\":2,\"fieldId\":");
