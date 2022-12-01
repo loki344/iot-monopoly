@@ -9,7 +9,8 @@
 		
 		socket.onmessage = (backendEvent: MessageEvent<any>) => {
 			const eventData = JSON.parse(backendEvent.data);
-			console.log(eventData)
+			console.log(eventData);
+			
 
 			switch(eventData.Type.split('.')[1]){
 

@@ -64,3 +64,25 @@ func TestLapFiresEvent(t *testing.T) {
 
 	assert.Equal(t, 1, receivedEvents)
 }
+
+func TestPlayerTurn(t *testing.T) {
+
+	config.Init()
+	players, _ := StartGame(4)
+
+	assert.Equal(t, players[0].Id, currentPlayer.Id)
+	MovePlayer(players[0].Id, 2)
+
+	assert.Equal(t, players[1].Id, currentPlayer.Id)
+	MovePlayer(players[1].Id, 2)
+
+	assert.Equal(t, players[2].Id, currentPlayer.Id)
+	MovePlayer(players[2].Id, 2)
+
+	assert.Equal(t, players[3].Id, currentPlayer.Id)
+	MovePlayer(players[3].Id, 2)
+
+	assert.Equal(t, players[0].Id, currentPlayer.Id)
+	MovePlayer(players[0].Id, 2)
+
+}

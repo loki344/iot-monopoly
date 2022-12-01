@@ -60,6 +60,6 @@ func TestPlayerReceivesMoneyWhenPaymentEventFired(t *testing.T) {
 
 	players, _ := board.StartGame(1)
 	player := players[0]
-	eventing.FireEvent(eventing.PAYMENT, boardDomain.NewCreditAddedEvent(player.AccountId, 200))
+	eventing.FireEvent(eventing.PAYOUT_REQUESTED, boardDomain.NewCreditAddedEvent(player.AccountId, 200))
 	assert.Equal(t, 1200, getAccountByPlayerId(player.Id).Balance)
 }

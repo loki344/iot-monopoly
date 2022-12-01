@@ -6,7 +6,7 @@
 
 <div
 	class={`flex flex-col ${
-		active ? 'bg-primary border-8 border-red' : 'bg-gray border-8 border-gray'
+		active ? 'bg-primary border-8 border-green' : 'bg-gray border-8 border-gray'
 	} py-10 px-5 rounded-lg   ${clazz}`}
 >
 	<slot />

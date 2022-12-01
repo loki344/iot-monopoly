@@ -12,7 +12,7 @@ import (
 func StartEventListeners() {
 
 	startLapFinishedEventHandler()
-	startPropertyFeeEventHandler()
+	startTransactionEventHandler()
 	startGameStartedEventHandler()
 	startCreditAddedEventHandler()
 }
@@ -37,14 +37,14 @@ func startGameStartedEventHandler() {
 		Matcher: string(eventing.GAME_STARTED),
 	})
 }
-func startPropertyFeeEventHandler() {
+func startTransactionEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionRequest := e.Data.(*boardDomain.TransactionRequest)
 			AddTransaction(financeDomain.NewTransactionWithId(transactionRequest.TransactionId, transactionRequest.ReceiverId, transactionRequest.SenderId, transactionRequest.Price))
 		},
-		Matcher: "((^|, )(propertyTransactionStarted|propertyFee))+$",
+		Matcher: "((^|, )(propertyTransactionStarted|paymentRequested))+$",
 	})
 }
 
@@ -55,7 +55,7 @@ func startCreditAddedEventHandler() {
 			creditAddedEvent := e.Data.(*boardDomain.CreditAddedEvent)
 			addToAccount(creditAddedEvent.RecipientAccountId, creditAddedEvent.Amount)
 		},
-		Matcher: string(eventing.PAYMENT),
+		Matcher: string(eventing.PAYOUT_REQUESTED),
 	})
 
 }

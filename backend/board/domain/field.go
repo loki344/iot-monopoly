@@ -106,6 +106,6 @@ func (propertyField PropertyField) OnPlayerEnter(player *Player) {
 		eventing.FireEvent(eventing.PROPERTY_BUY_QUESTION, NewPropertyBuyQuestion(player.Id, propertyField))
 	} else if propertyField.OwnerId != player.Id {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPropertyFee())
-		eventing.FireEvent(eventing.PROPERTY_FEE, NewTransactionRequest(propertyField.OwnerId, player.Id, propertyField.GetPropertyFee()))
+		eventing.FireEvent(eventing.PAYMENT_REQUESTED, NewTransactionRequest(propertyField.OwnerId, player.Id, propertyField.GetPropertyFee()))
 	}
 }

@@ -22,6 +22,9 @@ var defaultPlayers = []boardDomain.Player{
 	// A3-D9-350F Card 4
 }
 
+var currentPlayer *boardDomain.Player
+var currentPlayerIndex = 0
+
 func StartGame(playerCount int) ([]boardDomain.Player, error) {
 	eventing.FireEvent(eventing.GAME_STARTED, boardDomain.NewGameStartedEvent(playerCount))
 	players = nil
@@ -38,6 +41,7 @@ func StartGame(playerCount int) ([]boardDomain.Player, error) {
 
 	copy(newPlayers, defaultPlayers)
 	players = newPlayers
+	currentPlayer = &newPlayers[0]
 
 	return players, nil
 }
@@ -64,6 +68,13 @@ func MovePlayer(playerId string, fieldId int) error {
 	fmt.Printf("MovePlayer player %s to fieldId %d\n", player.Id, fieldId)
 	player.Position = fieldId
 	GetFieldById(strconv.FormatInt(int64(fieldId), 10)).OnPlayerEnter(player)
+
+	if currentPlayerIndex == len(players)-1 {
+		currentPlayerIndex = 0
+	} else {
+		currentPlayerIndex++
+	}
+	currentPlayer = &players[currentPlayerIndex]
 	return nil
 }
 
@@ -76,6 +87,10 @@ func GetPlayer(playerId string) *boardDomain.Player {
 	}
 
 	panic(fmt.Sprintf("Player with id %s not found", playerId))
+}
+
+func GetCurrentPlayer() *boardDomain.Player {
+	return currentPlayer
 }
 
 func GetPlayers() []boardDomain.Player {
