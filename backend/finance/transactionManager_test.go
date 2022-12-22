@@ -3,7 +3,7 @@ package finance
 import (
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
-	"iot-monopoly/eventing/config"
+	"iot-monopoly/communication/config"
 	"iot-monopoly/finance/domain"
 	"testing"
 )

@@ -1,12 +1,12 @@
-package boardDomain
+package propertyDomain
 
 import (
 	"fmt"
-	"iot-monopoly/eventing"
+	"iot-monopoly/communication"
 )
 
 type Field interface {
-	OnPlayerEnter(player *Player)
+	OnPlayerEnter(playerId string)
 	GetId() string
 }
 
@@ -58,7 +58,7 @@ type FinancialDetails struct {
 
 type EventField struct {
 	BaseFieldInformation
-	Event func(player *Player)
+	Event func(playerId string)
 }
 
 type BasicField struct {
@@ -90,22 +90,22 @@ func (propertyField PropertyField) GetPropertyFee() int {
 	}
 }
 
-func (eventField EventField) OnPlayerEnter(player *Player) {
+func (eventField EventField) OnPlayerEnter(playerId string) {
 
-	eventField.Event(player)
+	eventField.Event(playerId)
 }
 
-func (_ BasicField) OnPlayerEnter(_ *Player) {
+func (_ BasicField) OnPlayerEnter(_ string) {
 	// do nothing
 }
 
-func (propertyField PropertyField) OnPlayerEnter(player *Player) {
+func (propertyField PropertyField) OnPlayerEnter(playerId string) {
 
 	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
-		eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(player.Id, propertyField))
-	} else if propertyField.OwnerId != player.Id {
-		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, player.Id, propertyField.GetPropertyFee())
-		eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(player.Id, propertyField))
+		communication.FireEvent(communication.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, propertyField))
+	} else if propertyField.OwnerId != playerId {
+		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, playerId, propertyField.GetPropertyFee())
+		communication.FireEvent(communication.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(playerId, propertyField))
 	}
 }

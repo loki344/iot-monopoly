@@ -5,18 +5,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"iot-monopoly/board"
 	"iot-monopoly/board/api"
-	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/config"
+	"iot-monopoly/communication"
+	"iot-monopoly/communication/config"
 	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
+	"iot-monopoly/property"
+	propertyApi "iot-monopoly/property/api"
 )
 
 func Init() {
 	config.Init()
 	finance.StartEventListeners()
-	board.StartEventListeners()
+	property.StartEventListeners()
 }
 
 //start with CompileDaemon -command="./iot-monopoly"
@@ -28,9 +29,10 @@ func main() {
 	app.Use(cors.New())
 	app.Use(logger.New())
 
-	eventing.StartWebsocket(app)
+	communication.StartWebsocket(app)
 	financeApi.Routes(app)
-	movementApi.Routes(app)
+	boardApi.Routes(app)
+	propertyApi.Routes(app)
 
 	err := app.Listen(":3000")
 	if err != nil {

@@ -1,8 +1,9 @@
-package board
+package property
 
 import (
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/eventing/config"
+	"iot-monopoly/board"
+	"iot-monopoly/communication/config"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestBuyProperty(t *testing.T) {
 
 	config.Init()
 	StartEventListeners()
-	players, _ := StartGame(1)
+	players, _ := board.StartGame(1)
 	playerId := players[0].Id
 
 	propertyId := "2"

@@ -7,9 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/board"
 	boardDomain "iot-monopoly/board/domain"
-	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/config"
+	"iot-monopoly/communication"
+	"iot-monopoly/communication/config"
 	financeDomain "iot-monopoly/finance/domain"
+	"iot-monopoly/property/domain"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
 	players, _ := board.StartGame(1)
 	id := players[0].Id
-	eventing.FireEvent(eventing.LAP_FINISHED, &boardDomain.LapFinishedEvent{PlayerId: id})
+	communication.FireEvent(communication.LAP_FINISHED, &boardDomain.LapFinishedEvent{PlayerId: id})
 	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance)
 }
 
@@ -33,7 +34,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
 	var receivedEvents = 0
 	const price = 1000
-	eventing.RegisterEventHandler(bus.Handler{
+	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transaction := e.Data.(financeDomain.TransactionCreatedEvent)
 			assert.Equal(t, payerId, transaction.Transaction.SenderId)
@@ -41,25 +42,25 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 			assert.Equal(t, price, transaction.Transaction.Amount)
 			receivedEvents++
 		},
-		Matcher: string(eventing.TRANSACTION_CREATED),
+		Matcher: string(communication.TRANSACTION_CREATED),
 	})
 
-	var tempFinancialDetails = &boardDomain.FinancialDetails{100, 100, 100, boardDomain.Revenue{1000, 200, 300, 400, 500, 800}}
-	property := boardDomain.NewPropertyField(boardDomain.BaseFieldInformation{"Property green 2", uuid.NewString()}, tempFinancialDetails)
+	var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{1000, 200, 300, 400, 500, 800}}
+	property := propertyDomain.NewPropertyField(propertyDomain.BaseFieldInformation{"Property green 2", uuid.NewString()}, tempFinancialDetails)
 	property.OwnerId = ownerId
 
-	property.OnPlayerEnter(&boardDomain.Player{payerId, 0, "Account_Player_1"})
+	property.OnPlayerEnter(payerId)
 
 	assert.Equal(t, 1, receivedEvents)
 }
 
-func TestPlayerReceivesMoneyWhenPaymentEventFired(t *testing.T) {
+func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 
 	config.Init()
 	StartEventListeners()
 
 	players, _ := board.StartGame(1)
 	player := players[0]
-	eventing.FireEvent(eventing.PAYOUT_REQUESTED, boardDomain.NewCreditAddedEvent(player.AccountId, 200))
+	communication.FireEvent(communication.CARD_WITH_PAYOUT_DREW, boardDomain.NewCardWithPayoutDrewEvent(player.Id, 200))
 	assert.Equal(t, 1200, getAccountByPlayerId(player.Id).Balance)
 }

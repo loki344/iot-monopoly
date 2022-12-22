@@ -5,8 +5,8 @@ import (
 	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
 	boardDomain "iot-monopoly/board/domain"
-	"iot-monopoly/eventing"
-	"iot-monopoly/eventing/config"
+	"iot-monopoly/communication"
+	"iot-monopoly/communication/config"
 	"testing"
 )
 
@@ -16,7 +16,8 @@ func TestPlayerCanMoveAround(t *testing.T) {
 	players, _ := StartGame(1)
 	playerId := players[0].Id
 	player := GetPlayer(playerId)
-	for i := 1; i < GetFieldsCount(); i++ {
+	// TODO get total number count 16
+	for i := 1; i < 16; i++ {
 		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
 		if i == 13 {
@@ -38,7 +39,7 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
 	player := GetPlayer(id)
 
-	errorUpperBound := MovePlayer(id, GetFieldsCount()+1)
+	errorUpperBound := MovePlayer(id, 17)
 	assert.Error(t, errorUpperBound)
 	assert.Equal(t, 0, player.Position)
 }
@@ -50,13 +51,13 @@ func TestLapFiresEvent(t *testing.T) {
 	id := players[0].Id
 
 	var receivedEvents = 0
-	eventing.RegisterEventHandler(bus.Handler{
+	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		Matcher: string(eventing.LAP_FINISHED),
+		Matcher: string(communication.LAP_FINISHED),
 	})
 
 	MovePlayer(id, 15)

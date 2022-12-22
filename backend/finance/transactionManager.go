@@ -3,7 +3,7 @@ package finance
 import (
 	"errors"
 	"fmt"
-	"iot-monopoly/eventing"
+	"iot-monopoly/communication"
 	"iot-monopoly/finance/domain"
 )
 
@@ -70,7 +70,7 @@ func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Tran
 	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
 	pendingTransaction = transaction
 
-	eventing.FireEvent(eventing.TRANSACTION_CREATED, financeDomain.NewTransactionCreatedEvent(transaction))
+	communication.FireEvent(communication.TRANSACTION_CREATED, financeDomain.NewTransactionCreatedEvent(transaction))
 
 	return transaction, nil
 }
@@ -110,7 +110,7 @@ func ResolveLatestTransaction(senderId string) {
 	removeFromAccount(getAccountByPlayerId(pendingTransaction.SenderId).Id, pendingTransaction.Amount)
 
 	pendingTransaction.Accepted = true
-	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(pendingTransaction.Id))
+	communication.FireEvent(communication.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(pendingTransaction.Id))
 	pendingTransaction = nil
 }
 

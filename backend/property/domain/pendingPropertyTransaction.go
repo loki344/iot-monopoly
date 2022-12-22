@@ -1,4 +1,4 @@
-package boardDomain
+package propertyDomain
 
 type PendingPropertyTransaction struct {
 	TransactionId string

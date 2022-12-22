@@ -1,41 +1,8 @@
 package boardDomain
 
 import (
-	eventingDomain "iot-monopoly/eventing/domain"
+	eventingDomain "iot-monopoly/communication/domain"
 )
-
-type PlayerOnFieldEvent struct {
-	eventingDomain.BaseEvent
-	PlayerId string
-	Property PropertyField
-}
-
-func NewPlayerOnUnownedFieldEvent(playerId string, property PropertyField) *PlayerOnFieldEvent {
-	return &PlayerOnFieldEvent{eventingDomain.EventType(&PlayerOnFieldEvent{}), playerId, property}
-}
-
-type PlayerOnOwnedFieldEvent struct {
-	eventingDomain.BaseEvent
-	PlayerId string
-	OwnerId  string
-	Fee      int
-}
-
-func NewPlayerOnOwnedFieldEvent(playerId string, property PropertyField) *PlayerOnOwnedFieldEvent {
-	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.OwnerId, property.GetPropertyFee()}
-}
-
-type PropertyTransferCreatedEvent struct {
-	eventingDomain.BaseEvent
-	TransactionId string
-	ReceiverId    string
-	SenderId      string
-	Price         int
-}
-
-func NewPropertyTransferCreatedEvent(id string, receiverId string, senderId string, price int) *PropertyTransferCreatedEvent {
-	return &PropertyTransferCreatedEvent{eventingDomain.EventType(&PropertyTransferCreatedEvent{}), id, receiverId, senderId, price}
-}
 
 type LapFinishedEvent struct {
 	eventingDomain.BaseEvent
@@ -55,15 +22,37 @@ func NewGameStartedEvent(playerCount int) *GameStartedEvent {
 	return &GameStartedEvent{eventingDomain.EventType(&GameStartedEvent{}), playerCount}
 }
 
-type CreditAddedEvent struct {
+type PlayerMovedEvent struct {
 	eventingDomain.BaseEvent
-	RecipientAccountId string
-	Amount             int
+	PlayerId   string
+	FieldIndex int
 }
 
-func NewCreditAddedEvent(recipientAccountId string, amount int) *CreditAddedEvent {
+func NewPlayerMovedEvent(playerId string, fieldIndex int) *PlayerMovedEvent {
+	return &PlayerMovedEvent{eventingDomain.EventType(&PlayerMovedEvent{}), playerId, fieldIndex}
+}
 
-	return &CreditAddedEvent{BaseEvent: eventingDomain.EventType(&CreditAddedEvent{}), RecipientAccountId: recipientAccountId, Amount: amount}
+type CardWithPayoutEvent struct {
+	eventingDomain.BaseEvent
+	PlayerId string
+	Amount   int
+}
+
+func NewCardWithPayoutDrewEvent(playerId string, amount int) *CardWithPayoutEvent {
+
+	return &CardWithPayoutEvent{BaseEvent: eventingDomain.EventType(&CardWithPayoutEvent{}), PlayerId: playerId, Amount: amount}
+}
+
+type CardWithFeeEvent struct {
+	eventingDomain.BaseEvent
+	PlayerId    string
+	RecipientId string
+	Fee         int
+}
+
+func NewCardWithFeeDrewEvent(recipientId string, playerId string, fee int) *CardWithFeeEvent {
+
+	return &CardWithFeeEvent{BaseEvent: eventingDomain.EventType(&CardWithFeeEvent{}), RecipientId: recipientId, PlayerId: playerId, Fee: fee}
 }
 
 type CardDrewEvent struct {
@@ -77,14 +66,14 @@ func NewCardDrewEvent(title string, text string) *CardDrewEvent {
 }
 
 type Card struct {
-	Title  string
-	Text   string
-	Action func(player *Player)
-	Player *Player
+	Title    string
+	Text     string
+	Action   func(playerId string)
+	PlayerId string
 }
 
 func (card Card) TriggerAction() {
-	card.Action(card.Player)
+	card.Action(card.PlayerId)
 }
 
 type CardDTO struct {
@@ -93,7 +82,7 @@ type CardDTO struct {
 	Text  string
 }
 
-func NewCard(title string, text string, action func(player *Player)) *Card {
+func NewCard(title string, text string, action func(playerId string)) *Card {
 
 	return &Card{Title: title, Text: text, Action: action}
 }
