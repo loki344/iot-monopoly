@@ -15,7 +15,7 @@ func NewPropertyBuyQuestion(playerId string, property PropertyField) *PropertyBu
 	return &PropertyBuyQuestion{eventingDomain.EventType(&PropertyBuyQuestion{}), playerId, property}
 }
 
-type TransactionRequest struct {
+type TransactionInformation struct {
 	eventingDomain.BaseEvent
 	TransactionId string
 	ReceiverId    string
@@ -23,12 +23,12 @@ type TransactionRequest struct {
 	Price         int
 }
 
-func NewTransactionRequestWithId(id string, receiverId string, senderId string, price int) *TransactionRequest {
-	return &TransactionRequest{eventingDomain.EventType(&TransactionRequest{}), id, receiverId, senderId, price}
+func NewPropertyTransferCreatedEvent(id string, receiverId string, senderId string, price int) *TransactionInformation {
+	return &TransactionInformation{eventingDomain.EventType(&TransactionInformation{}), id, receiverId, senderId, price}
 }
 
-func NewTransactionRequest(receiverId string, senderId string, price int) *TransactionRequest {
-	return NewTransactionRequestWithId(uuid.NewString(), receiverId, senderId, price)
+func NewTransactionRequest(receiverId string, senderId string, price int) *TransactionInformation {
+	return NewPropertyTransferCreatedEvent(uuid.NewString(), receiverId, senderId, price)
 }
 
 type LapFinishedEvent struct {

@@ -66,10 +66,10 @@ func initFields() {
 
 func BuyProperty(propertyId string, buyerId string) string {
 
-	transactionId := uuid.NewString()
 	property := *GetPropertyById(propertyId)
-	eventing.FireEvent(eventing.PROPERTY_TRANSACTION_STARTED, boardDomain.NewTransactionRequestWithId(transactionId, "Bank", buyerId, property.GetPropertyFee()))
+	transactionId := uuid.NewString()
 	pendingTransfer = &boardDomain.PendingPropertyTransaction{TransactionId: transactionId, PropertyId: propertyId, BuyerId: buyerId}
+	eventing.FireEvent(eventing.PROPERTY_TRANSFER_CREATED, boardDomain.NewPropertyTransferCreatedEvent(transactionId, "Bank", buyerId, property.GetPropertyFee()))
 
 	return transactionId
 }

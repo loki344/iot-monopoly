@@ -41,10 +41,10 @@ func startTransactionEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionRequest := e.Data.(*boardDomain.TransactionRequest)
-			AddTransaction(financeDomain.NewTransactionWithId(transactionRequest.TransactionId, transactionRequest.ReceiverId, transactionRequest.SenderId, transactionRequest.Price))
+			transactionInformation := e.Data.(*boardDomain.TransactionInformation)
+			AddTransaction(financeDomain.NewTransactionWithId(transactionInformation.TransactionId, transactionInformation.ReceiverId, transactionInformation.SenderId, transactionInformation.Price))
 		},
-		Matcher: "((^|, )(propertyTransactionStarted|paymentRequested))+$",
+		Matcher: "((^|, )(propertyTransferCreated|paymentRequested))+$",
 	})
 }
 
