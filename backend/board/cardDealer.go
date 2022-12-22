@@ -27,7 +27,7 @@ var cardStack = []boardDomain.Card{
 		eventing.FireEvent(eventing.PAYOUT_REQUESTED, boardDomain.NewCreditAddedEvent(player.AccountId, 100))
 	}),
 	*boardDomain.NewCard("Tax bill", "You received a bill for the federal taxes of 200 $", func(player *boardDomain.Player) {
-		eventing.FireEvent(eventing.PAYMENT_REQUESTED, boardDomain.NewTransactionRequest("Bank", player.Id, 200))
+		eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, boardDomain.NewTransactionRequest("Bank", player.Id, 200))
 	}),
 }
 

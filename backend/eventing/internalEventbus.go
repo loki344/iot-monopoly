@@ -12,10 +12,10 @@ type ChannelName string
 
 const (
 	GAME_STARTED              ChannelName = "gameStarted"
-	PROPERTY_BUY_QUESTION     ChannelName = "propertyBuyQuestion"     // player lands on field and can buy it
+	PLAYER_ON_UNOWNED_FIELD   ChannelName = "playerOnUnownedField"    // player lands on field and can buy it
+	PLAYER_ON_OWNED_FIELD     ChannelName = "playerOnOwnedField"      // player lands on owned field and has to pay
 	PROPERTY_TRANSFER_CREATED ChannelName = "propertyTransferCreated" // player is willing to buy a property, transaction process initiated
-	TRANSACTION_REQUEST       ChannelName = "transactionAdded"        // player has to pay the amount with his card
-	PAYMENT_REQUESTED         ChannelName = "paymentRequested"        // player lands on owned field and has to pay
+	TRANSACTION_CREATED       ChannelName = "transactionAdded"        // player has to pay the amount with his card
 	TRANSACTION_RESOLVED      ChannelName = "transactionResolved"     // transaction is finished and all money is moved
 	LAP_FINISHED              ChannelName = "lapFinished"             // player has finished a lap
 	PAYOUT_REQUESTED          ChannelName = "payout"                  // payment request to payout money from bank to player

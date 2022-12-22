@@ -3,6 +3,7 @@ package finance
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/eventing"
@@ -12,7 +13,8 @@ import (
 func StartEventListeners() {
 
 	startLapFinishedEventHandler()
-	startTransactionEventHandler()
+	startPlayerOnOwnedFieldEventHandler()
+	startPropertyTransferCreatedEventHandler()
 	startGameStartedEventHandler()
 	startCreditAddedEventHandler()
 }
@@ -37,14 +39,25 @@ func startGameStartedEventHandler() {
 		Matcher: string(eventing.GAME_STARTED),
 	})
 }
-func startTransactionEventHandler() {
+func startPlayerOnOwnedFieldEventHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionInformation := e.Data.(*boardDomain.TransactionInformation)
+			transactionInformation := e.Data.(*boardDomain.PlayerOnOwnedFieldEvent)
+			AddTransaction(financeDomain.NewTransactionWithId(uuid.NewString(), transactionInformation.OwnerId, transactionInformation.PlayerId, transactionInformation.Fee))
+		},
+		Matcher: string(eventing.PLAYER_ON_OWNED_FIELD),
+	})
+}
+
+func startPropertyTransferCreatedEventHandler() {
+
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			transactionInformation := e.Data.(*boardDomain.PropertyTransferCreatedEvent)
 			AddTransaction(financeDomain.NewTransactionWithId(transactionInformation.TransactionId, transactionInformation.ReceiverId, transactionInformation.SenderId, transactionInformation.Price))
 		},
-		Matcher: "((^|, )(propertyTransferCreated|paymentRequested))+$",
+		Matcher: string(eventing.PROPERTY_TRANSFER_CREATED),
 	})
 }
 

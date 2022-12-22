@@ -18,11 +18,11 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			lapFinishedEvent := e.Data.(*PropertyBuyQuestion)
+			lapFinishedEvent := e.Data.(*PlayerOnFieldEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		Matcher: string(eventing.PROPERTY_BUY_QUESTION),
+		Matcher: string(eventing.PLAYER_ON_UNOWNED_FIELD),
 	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}

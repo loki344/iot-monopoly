@@ -1,21 +1,31 @@
 package boardDomain
 
 import (
-	"github.com/google/uuid"
 	eventingDomain "iot-monopoly/eventing/domain"
 )
 
-type PropertyBuyQuestion struct {
+type PlayerOnFieldEvent struct {
 	eventingDomain.BaseEvent
 	PlayerId string
 	Property PropertyField
 }
 
-func NewPropertyBuyQuestion(playerId string, property PropertyField) *PropertyBuyQuestion {
-	return &PropertyBuyQuestion{eventingDomain.EventType(&PropertyBuyQuestion{}), playerId, property}
+func NewPlayerOnUnownedFieldEvent(playerId string, property PropertyField) *PlayerOnFieldEvent {
+	return &PlayerOnFieldEvent{eventingDomain.EventType(&PlayerOnFieldEvent{}), playerId, property}
 }
 
-type TransactionInformation struct {
+type PlayerOnOwnedFieldEvent struct {
+	eventingDomain.BaseEvent
+	PlayerId string
+	OwnerId  string
+	Fee      int
+}
+
+func NewPlayerOnOwnedFieldEvent(playerId string, property PropertyField) *PlayerOnOwnedFieldEvent {
+	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.OwnerId, property.GetPropertyFee()}
+}
+
+type PropertyTransferCreatedEvent struct {
 	eventingDomain.BaseEvent
 	TransactionId string
 	ReceiverId    string
@@ -23,12 +33,8 @@ type TransactionInformation struct {
 	Price         int
 }
 
-func NewPropertyTransferCreatedEvent(id string, receiverId string, senderId string, price int) *TransactionInformation {
-	return &TransactionInformation{eventingDomain.EventType(&TransactionInformation{}), id, receiverId, senderId, price}
-}
-
-func NewTransactionRequest(receiverId string, senderId string, price int) *TransactionInformation {
-	return NewPropertyTransferCreatedEvent(uuid.NewString(), receiverId, senderId, price)
+func NewPropertyTransferCreatedEvent(id string, receiverId string, senderId string, price int) *PropertyTransferCreatedEvent {
+	return &PropertyTransferCreatedEvent{eventingDomain.EventType(&PropertyTransferCreatedEvent{}), id, receiverId, senderId, price}
 }
 
 type LapFinishedEvent struct {

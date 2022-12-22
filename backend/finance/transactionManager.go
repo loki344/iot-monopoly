@@ -70,7 +70,7 @@ func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Tran
 	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
 	pendingTransaction = transaction
 
-	eventing.FireEvent(eventing.TRANSACTION_REQUEST, financeDomain.NewTransactionRequest(transaction))
+	eventing.FireEvent(eventing.TRANSACTION_CREATED, financeDomain.NewTransactionCreatedEvent(transaction))
 
 	return transaction, nil
 }
