@@ -26,18 +26,8 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}
-	property := NewPropertyField(BaseFieldInformation{"Property green 2", "2"}, tempFinancialDetails)
+	property := NewPropertyField("Property green 2", "2", tempFinancialDetails)
 	property.OnPlayerEnter(id)
 
 	assert.Equal(t, 1, receivedEvents)
-}
-
-func TestPlayerOnEventFieldTriggersEvent(t *testing.T) {
-
-	var eventTriggered = false
-	field := EventField{BaseFieldInformation: BaseFieldInformation{Id: uuid.New().String(), Name: "testField"}, Event: func(playerId string) {
-		eventTriggered = true
-	}}
-	field.OnPlayerEnter(uuid.NewString())
-	assert.Equal(t, true, eventTriggered)
 }

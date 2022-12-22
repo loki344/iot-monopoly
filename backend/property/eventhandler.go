@@ -46,13 +46,19 @@ func startPlayerMovedEventHandler() {
 		Handle: func(ctx context.Context, e bus.Event) {
 			playerMovedEvent := e.Data.(boardDomain.PlayerMovedEvent)
 
-			totalFieldCount := GetFieldsCount()
+			//TODO move this code somewhere where it makes more sense
+			totalFieldCount := 16
 			if playerMovedEvent.FieldIndex > totalFieldCount-1 || playerMovedEvent.FieldIndex < 0 {
 				errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", playerMovedEvent.FieldIndex, totalFieldCount))
 			}
 
-			GetFieldById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10)).OnPlayerEnter(playerMovedEvent.PlayerId)
+			property := GetPropertyById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
+
+			if property != nil {
+				property.OnPlayerEnter(playerMovedEvent.PlayerId)
+
+			}
 		},
-		Matcher: string(communication.TRANSACTION_RESOLVED),
+		Matcher: string(communication.PLAYER_MOVED),
 	})
 }

@@ -5,29 +5,16 @@ import (
 	"iot-monopoly/communication"
 )
 
-type Field interface {
-	OnPlayerEnter(playerId string)
-	GetId() string
-}
-
-type BaseFieldInformation struct {
-	Name string
-	Id   string
-}
-
 type PropertyField struct {
-	BaseFieldInformation
+	Name             string
+	Id               string
 	FinancialDetails *FinancialDetails
 	OwnerId          string
 	Upgrades         PropertyUpgrade
 }
 
-func (propertyField PropertyField) GetId() string {
-	return propertyField.Id
-}
-
-func NewPropertyField(baseInformation BaseFieldInformation, financialDetails *FinancialDetails) *PropertyField {
-	return &PropertyField{BaseFieldInformation: baseInformation, FinancialDetails: financialDetails}
+func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
+	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
 }
 
 type PropertyUpgrade string
@@ -56,23 +43,6 @@ type FinancialDetails struct {
 	Revenue       Revenue
 }
 
-type EventField struct {
-	BaseFieldInformation
-	Event func(playerId string)
-}
-
-type BasicField struct {
-	BaseFieldInformation
-}
-
-func (field BasicField) GetId() string {
-	return field.Id
-}
-
-func (eventField EventField) GetId() string {
-	return eventField.Id
-}
-
 func (propertyField PropertyField) GetPropertyFee() int {
 	switch propertyField.Upgrades {
 	case ONE_HOUSE:
@@ -88,15 +58,6 @@ func (propertyField PropertyField) GetPropertyFee() int {
 	default:
 		return propertyField.FinancialDetails.Revenue.Normal
 	}
-}
-
-func (eventField EventField) OnPlayerEnter(playerId string) {
-
-	eventField.Event(playerId)
-}
-
-func (_ BasicField) OnPlayerEnter(_ string) {
-	// do nothing
 }
 
 func (propertyField PropertyField) OnPlayerEnter(playerId string) {

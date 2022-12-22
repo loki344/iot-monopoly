@@ -10,6 +10,7 @@ import (
 	"iot-monopoly/communication/config"
 	"iot-monopoly/finance"
 	financeApi "iot-monopoly/finance/api"
+	gameEventsApi "iot-monopoly/gameEvents/api"
 	"iot-monopoly/property"
 	propertyApi "iot-monopoly/property/api"
 )
@@ -30,6 +31,7 @@ func main() {
 	app.Use(logger.New())
 
 	communication.StartWebsocket(app)
+	gameEventsApi.Routes(app)
 	financeApi.Routes(app)
 	boardApi.Routes(app)
 	propertyApi.Routes(app)

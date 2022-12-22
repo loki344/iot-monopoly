@@ -10,6 +10,7 @@ import (
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
 	financeDomain "iot-monopoly/finance/domain"
+	gameEventsDomain "iot-monopoly/gameEvents/domain"
 	"iot-monopoly/property/domain"
 	"testing"
 )
@@ -46,7 +47,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	})
 
 	var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{1000, 200, 300, 400, 500, 800}}
-	property := propertyDomain.NewPropertyField(propertyDomain.BaseFieldInformation{"Property green 2", uuid.NewString()}, tempFinancialDetails)
+	property := propertyDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
 	property.OwnerId = ownerId
 
 	property.OnPlayerEnter(payerId)
@@ -61,6 +62,6 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 
 	players, _ := board.StartGame(1)
 	player := players[0]
-	communication.FireEvent(communication.CARD_WITH_PAYOUT_DREW, boardDomain.NewCardWithPayoutDrewEvent(player.Id, 200))
+	communication.FireEvent(communication.CARD_WITH_PAYOUT_DREW, gameEventsDomain.NewCardWithPayoutDrewEvent(player.Id, 200))
 	assert.Equal(t, 1200, getAccountByPlayerId(player.Id).Balance)
 }

@@ -8,6 +8,7 @@ import (
 	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/communication"
 	financeDomain "iot-monopoly/finance/domain"
+	gameEventsDomain "iot-monopoly/gameEvents/domain"
 	propertyDomain "iot-monopoly/property/domain"
 )
 
@@ -67,7 +68,7 @@ func startCardWithPayoutDrewEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			payoutInformation := e.Data.(*boardDomain.CardWithPayoutEvent)
+			payoutInformation := e.Data.(*gameEventsDomain.CardWithPayoutEvent)
 			addToAccount(getAccountByPlayerId(payoutInformation.PlayerId).Id, payoutInformation.Amount)
 		},
 		Matcher: string(communication.CARD_WITH_PAYOUT_DREW),
@@ -78,7 +79,7 @@ func startCardWithFeeEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionInformation := e.Data.(*boardDomain.CardWithFeeEvent)
+			transactionInformation := e.Data.(*gameEventsDomain.CardWithFeeEvent)
 			AddTransaction(financeDomain.NewTransactionWithId(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PlayerId, transactionInformation.Fee))
 		},
 		Matcher: string(communication.CARD_WITH_FEE_DREW),
