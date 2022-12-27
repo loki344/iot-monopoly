@@ -1,4 +1,4 @@
-package boardDomain
+package playerDomain
 
 import (
 	"fmt"
@@ -24,6 +24,11 @@ func (p *Player) SetPosition(position int) {
 	if p.Position() == position {
 		fmt.Println(fmt.Errorf("player already at position %d", position))
 		return
+	}
+
+	if p.Position() > position && position < 5 {
+		fmt.Println("Player completed a lap, creating lap finished")
+		communication.FireEvent(communication.LAP_FINISHED, NewLapFinishedEvent(p.Id))
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldId %d\n", p.Id, position)

@@ -3,7 +3,6 @@ package property
 import (
 	"fmt"
 	"github.com/google/uuid"
-	"iot-monopoly/communication"
 	"iot-monopoly/property/domain"
 )
 
@@ -19,14 +18,14 @@ var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, prope
 //}
 
 var defaultProperties = []*propertyDomain.PropertyField{
-	propertyDomain.NewPropertyField("2", "Property purple 1", tempFinancialDetails),
-	propertyDomain.NewPropertyField("3", "Property purple 2", tempFinancialDetails),
-	propertyDomain.NewPropertyField("7", "Property orange 1", tempFinancialDetails),
-	propertyDomain.NewPropertyField("8", "Property orange 2", tempFinancialDetails),
-	propertyDomain.NewPropertyField("10", "Property green 1", tempFinancialDetails),
-	propertyDomain.NewPropertyField("12", "Property green 2", tempFinancialDetails),
-	propertyDomain.NewPropertyField("14", "Property blue 1", tempFinancialDetails),
-	propertyDomain.NewPropertyField("16", "Property blue 2", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property purple 1", "2", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property purple 2", "3", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property orange 1", "7", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property orange 2", "8", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property green 1", "10", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property green 2", "12", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property blue 1", "14", tempFinancialDetails),
+	propertyDomain.NewPropertyField("Property blue 2", "16", tempFinancialDetails),
 }
 
 func initFields() {
@@ -36,10 +35,9 @@ func initFields() {
 
 func BuyProperty(propertyId string, buyerId string) string {
 
-	property := *GetPropertyById(propertyId)
+	property := getPropertyById(propertyId)
 	transactionId := uuid.NewString()
-	pendingTransfer = &propertyDomain.PendingPropertyTransaction{TransactionId: transactionId, PropertyId: propertyId, BuyerId: buyerId}
-	communication.FireEvent(communication.PROPERTY_TRANSFER_CREATED, propertyDomain.NewPropertyTransferCreatedEvent(transactionId, "Bank", buyerId, property.GetPropertyFee()))
+	pendingTransfer = propertyDomain.NewPendingPropertyTransaction(transactionId, propertyId, buyerId, property.FinancialDetails.PropertyPrice)
 
 	return transactionId
 }
@@ -52,13 +50,13 @@ func transferOwnerShip(transactionId string) {
 
 	if pendingTransfer.TransactionId == transactionId {
 		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId, pendingTransfer.BuyerId)
-		property := GetPropertyById(pendingTransfer.PropertyId)
+		property := getPropertyById(pendingTransfer.PropertyId)
 		property.OwnerId = pendingTransfer.BuyerId
 		pendingTransfer = nil
 	}
 }
 
-func GetPropertyById(fieldId string) *propertyDomain.PropertyField {
+func getPropertyById(fieldId string) *propertyDomain.PropertyField {
 
 	for i := 0; i < len(properties); i++ {
 		if properties[i].Id == fieldId {

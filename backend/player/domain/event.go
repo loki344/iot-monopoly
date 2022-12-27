@@ -1,4 +1,4 @@
-package boardDomain
+package playerDomain
 
 import (
 	eventingDomain "iot-monopoly/communication/domain"
@@ -11,15 +11,6 @@ type LapFinishedEvent struct {
 
 func NewLapFinishedEvent(playerId string) *LapFinishedEvent {
 	return &LapFinishedEvent{eventingDomain.EventType(&LapFinishedEvent{}), playerId}
-}
-
-type GameStartedEvent struct {
-	eventingDomain.BaseEvent
-	PlayerCount int
-}
-
-func NewGameStartedEvent(playerCount int) *GameStartedEvent {
-	return &GameStartedEvent{eventingDomain.EventType(&GameStartedEvent{}), playerCount}
 }
 
 type PlayerMovedEvent struct {

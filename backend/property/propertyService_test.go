@@ -2,8 +2,8 @@ package property
 
 import (
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/board"
 	"iot-monopoly/communication/config"
+	"iot-monopoly/player"
 	"testing"
 )
 
@@ -11,7 +11,8 @@ func TestBuyProperty(t *testing.T) {
 
 	config.Init()
 	StartEventListeners()
-	players, _ := board.StartGame(1)
+	initFields()
+	players, _ := player.Init(1)
 	playerId := players[0].Id
 
 	propertyId := "2"
@@ -19,6 +20,6 @@ func TestBuyProperty(t *testing.T) {
 
 	transferOwnerShip(transactionId)
 
-	property := *GetPropertyById(propertyId)
+	property := *getPropertyById(propertyId)
 	assert.Equal(t, playerId, property.OwnerId)
 }

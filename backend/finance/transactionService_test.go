@@ -1,23 +1,25 @@
 package finance
 
 import (
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/board"
 	"iot-monopoly/communication/config"
-	"iot-monopoly/finance/domain"
+	"iot-monopoly/player"
 	"testing"
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
 	config.Init()
-	InitAccounts()
-	players, _ := board.StartGame(2)
+	initAccounts()
+	players, _ := player.Init(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	amount := 1_000
 
-	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
+	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
+
+	err := ResolveLatestTransaction(senderId)
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -25,18 +27,15 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 
 func TestValidTransaction(t *testing.T) {
 	config.Init()
-	InitAccounts()
+	initAccounts()
 
-	players, _ := board.StartGame(2)
+	players, _ := player.Init(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	amount := 1_000
 
-	transaction, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
-	if err != nil {
-		assert.NoError(t, err)
-	}
+	transaction := AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
 	assert.Equal(t, recipientId, transaction.RecipientId)
 	assert.Equal(t, senderId, transaction.SenderId)
@@ -45,18 +44,15 @@ func TestValidTransaction(t *testing.T) {
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
 	config.Init()
-	InitAccounts()
+	initAccounts()
 
-	players, _ := board.StartGame(2)
+	players, _ := player.Init(2)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	amount := 1_000
 
-	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
-	if err != nil {
-		assert.NoError(t, err)
-	}
+	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
 	ResolveLatestTransaction(senderId)
 
@@ -66,19 +62,16 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 func TestTransactionWithChangedSenderId(t *testing.T) {
 
-	InitAccounts()
+	initAccounts()
 	config.Init()
 
-	players, _ := board.StartGame(3)
+	players, _ := player.Init(3)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	amount := 1_000
 
-	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
-	if err != nil {
-		assert.NoError(t, err)
-	}
+	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
 	actualSenderId := players[2].Id
 	ResolveLatestTransaction(actualSenderId)
@@ -90,19 +83,16 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 
 func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 
-	InitAccounts()
+	initAccounts()
 	config.Init()
 
-	players, _ := board.StartGame(3)
+	players, _ := player.Init(3)
 	recipientId := players[0].Id
 	senderId := players[1].Id
 
 	amount := 100
 
-	_, err := AddTransaction(financeDomain.NewTransaction(recipientId, senderId, amount))
-	if err != nil {
-		assert.NoError(t, err)
-	}
+	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
 	ResolveLatestTransaction(senderId)
 	ResolveLatestTransaction(senderId)

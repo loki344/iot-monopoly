@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mustafaturan/bus/v3"
-	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/communication"
 	financeDomain "iot-monopoly/finance/domain"
+	boardDomain "iot-monopoly/player/domain"
 	"strconv"
 )
 
@@ -52,7 +52,7 @@ func startPlayerMovedEventHandler() {
 				errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", playerMovedEvent.FieldIndex, totalFieldCount))
 			}
 
-			property := GetPropertyById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
+			property := getPropertyById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
 
 			if property != nil {
 				property.OnPlayerEnter(playerMovedEvent.PlayerId)

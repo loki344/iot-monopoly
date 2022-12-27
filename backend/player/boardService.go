@@ -1,10 +1,9 @@
-package board
+package player
 
 import (
 	"errors"
 	"fmt"
-	boardDomain "iot-monopoly/board/domain"
-	"iot-monopoly/communication"
+	boardDomain "iot-monopoly/player/domain"
 )
 
 var players []*boardDomain.Player
@@ -24,8 +23,7 @@ var defaultPlayers = []*boardDomain.Player{
 var currentPlayer *boardDomain.Player
 var currentPlayerIndex = 0
 
-func StartGame(playerCount int) ([]*boardDomain.Player, error) {
-	communication.FireEvent(communication.GAME_STARTED, boardDomain.NewGameStartedEvent(playerCount))
+func Init(playerCount int) ([]*boardDomain.Player, error) {
 	players = nil
 
 	if playerCount < 1 || playerCount > 4 {
@@ -47,13 +45,6 @@ func StartGame(playerCount int) ([]*boardDomain.Player, error) {
 func MovePlayer(playerId string, fieldId int) error {
 
 	player := GetPlayer(playerId)
-
-	//TODO get rid of magic numbers 10!!
-	if (player.Position() >= 10) && (fieldId >= 0 && fieldId <= 5) {
-		fmt.Println("Player completed a lap, creating lap finished")
-		communication.FireEvent(communication.LAP_FINISHED, boardDomain.NewLapFinishedEvent(player.Id))
-	}
-
 	player.SetPosition(fieldId)
 
 	if currentPlayerIndex == len(players)-1 {

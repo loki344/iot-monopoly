@@ -3,8 +3,8 @@ package gameEvents
 import (
 	"context"
 	"github.com/mustafaturan/bus/v3"
-	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/communication"
+	boardDomain "iot-monopoly/player/domain"
 	"strconv"
 )
 
@@ -34,7 +34,6 @@ func startPlayerMovedEventHandler() {
 
 			if eventField != nil {
 				eventField.OnPlayerEnter(playerMovedEvent.PlayerId)
-
 			}
 		},
 		Matcher: string(communication.PLAYER_MOVED),

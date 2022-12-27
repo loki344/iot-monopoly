@@ -1,7 +1,7 @@
 package financeDomain
 
 import (
-	"github.com/google/uuid"
+	"iot-monopoly/communication"
 )
 
 type Transaction struct {
@@ -9,15 +9,23 @@ type Transaction struct {
 	RecipientId string `json:"recipientId"`
 	SenderId    string `json:"senderId"`
 	Amount      int    `json:"amount"`
-	Accepted    bool   `json:"accepted"`
+	accepted    bool
 }
 
-func NewTransaction(recipientId string, senderId string, amount int) *Transaction {
-
-	return NewTransactionWithId(uuid.NewString(), recipientId, senderId, amount)
+func (t *Transaction) IsAccepted() bool {
+	return t.accepted
 }
 
-func NewTransactionWithId(id string, recipientId string, senderId string, amount int) *Transaction {
+func (t Transaction) Accept() {
 
-	return &Transaction{Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount}
+	t.accepted = true
+	communication.FireEvent(communication.TRANSACTION_RESOLVED, NewTransactionResolvedEvent(t.Id))
+}
+
+func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
+
+	transaction := &Transaction{Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount}
+	communication.FireEvent(communication.TRANSACTION_CREATED, NewTransactionCreatedEvent(transaction))
+
+	return transaction
 }

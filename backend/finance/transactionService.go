@@ -3,7 +3,6 @@ package finance
 import (
 	"errors"
 	"fmt"
-	"iot-monopoly/communication"
 	"iot-monopoly/finance/domain"
 )
 
@@ -17,7 +16,7 @@ var defaultAccounts = []financeDomain.Account{
 }
 var accounts = defaultAccounts
 
-func InitAccounts() {
+func initAccounts() {
 	accounts = []financeDomain.Account{
 		{"Account_Player_1", "Player_1", 1_000},
 		{"Account_Player_2", "Player_2", 1_000},
@@ -46,38 +45,19 @@ func getAccountByPlayerId(playerId string) *financeDomain.Account {
 	panic(fmt.Sprintf("No account for playerId %s found", playerId))
 }
 
-func addToAccount(accountId string, amount int) {
-	fmt.Printf("Adding %d to account %s\n", amount, accountId)
-	account, _ := GetAccountById(accountId)
-	account.Balance += amount
-}
+func AddTransaction(id string, receiverId string, senderId string, amount int) *financeDomain.Transaction {
 
-func removeFromAccount(accountId string, amount int) {
-	fmt.Printf("Removing %d from account %s\n", amount, accountId)
-	account, _ := GetAccountById(accountId)
-	account.Balance -= amount
-
-}
-
-func AddTransaction(transaction *financeDomain.Transaction) (*financeDomain.Transaction, error) {
-
-	err := validateTransaction(transaction)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
+	transaction := financeDomain.NewTransaction(id, receiverId, senderId, amount)
 
 	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
 	pendingTransaction = transaction
 
-	communication.FireEvent(communication.TRANSACTION_CREATED, financeDomain.NewTransactionCreatedEvent(transaction))
-
-	return transaction, nil
+	return transaction
 }
 
 func validateTransaction(transaction *financeDomain.Transaction) error {
 
-	if transaction.Accepted {
+	if transaction.IsAccepted() {
 		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id))
 	}
 	balance := getAccountByPlayerId(transaction.SenderId).Balance
@@ -87,31 +67,30 @@ func validateTransaction(transaction *financeDomain.Transaction) error {
 	return nil
 }
 
-func ResolveLatestTransaction(senderId string) {
+func ResolveLatestTransaction(senderId string) error {
 
 	if pendingTransaction == nil {
 		fmt.Println("No transaction to resolve....")
-		return
+		return nil
 	}
 
 	if pendingTransaction.SenderId != senderId {
 		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId, senderId)
 		pendingTransaction.SenderId = senderId
-		err := validateTransaction(pendingTransaction)
-		if err != nil {
-			fmt.Println(err)
-			//TODO improve
-			panic("pendingTransaction invalid")
-		}
+	}
+
+	err := validateTransaction(pendingTransaction)
+	if err != nil {
+		return err
 	}
 
 	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
-	addToAccount(getAccountByPlayerId(pendingTransaction.RecipientId).Id, pendingTransaction.Amount)
-	removeFromAccount(getAccountByPlayerId(pendingTransaction.SenderId).Id, pendingTransaction.Amount)
+	getAccountByPlayerId(pendingTransaction.RecipientId).Add(pendingTransaction.Amount)
+	getAccountByPlayerId(pendingTransaction.SenderId).Subtract(pendingTransaction.Amount)
 
-	pendingTransaction.Accepted = true
-	communication.FireEvent(communication.TRANSACTION_RESOLVED, financeDomain.NewTransactionResolvedEvent(pendingTransaction.Id))
+	pendingTransaction.Accept()
 	pendingTransaction = nil
+	return nil
 }
 
 func GetAccounts() []financeDomain.Account {

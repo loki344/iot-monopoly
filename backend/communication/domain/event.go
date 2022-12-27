@@ -2,11 +2,6 @@ package eventingDomain
 
 import "reflect"
 
-type SensorEvent struct {
-	PlayerId   string
-	FieldIndex int
-}
-
 type BaseEvent struct {
 	Type string
 }

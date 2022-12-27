@@ -1,19 +1,19 @@
-package board
+package player
 
 import (
 	"context"
 	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	boardDomain "iot-monopoly/board/domain"
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
+	boardDomain "iot-monopoly/player/domain"
 	"testing"
 )
 
 func TestPlayerCanMoveAround(t *testing.T) {
 
 	config.Init()
-	players, _ := StartGame(1)
+	players, _ := Init(1)
 	playerId := players[0].Id
 	player := GetPlayer(playerId)
 	// TODO get total number count 16
@@ -34,7 +34,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 
 func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
-	players, _ := StartGame(1)
+	players, _ := Init(1)
 	id := players[0].Id
 
 	player := GetPlayer(id)
@@ -47,7 +47,7 @@ func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 func TestLapFiresEvent(t *testing.T) {
 
 	config.Init()
-	players, _ := StartGame(1)
+	players, _ := Init(1)
 	id := players[0].Id
 
 	var receivedEvents = 0
@@ -69,7 +69,7 @@ func TestLapFiresEvent(t *testing.T) {
 func TestPlayerTurn(t *testing.T) {
 
 	config.Init()
-	players, _ := StartGame(4)
+	players, _ := Init(4)
 
 	assert.Equal(t, players[0].Id, currentPlayer.Id)
 	MovePlayer(players[0].Id, 2)

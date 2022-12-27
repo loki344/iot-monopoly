@@ -2,8 +2,8 @@ package gameEvents
 
 import (
 	"fmt"
-	"iot-monopoly/board"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
+	"iot-monopoly/player"
 )
 
 var eventFields []*gameEventsDomain.EventField
@@ -21,7 +21,7 @@ var defaultEventFields = []*gameEventsDomain.EventField{
 	{Name: "13", Id: "Gehe ins Gefaegnis", Event: func(playerId string) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
-		board.MovePlayer(playerId, 4)
+		player.MovePlayer(playerId, 4)
 	}},
 	{Name: "15", Id: "Ereignisfeld 4", Event: func(playerId string) {
 		DrawCard(playerId)
@@ -41,4 +41,18 @@ func GetFieldById(fieldId string) *gameEventsDomain.EventField {
 		}
 	}
 	return nil
+}
+
+var currentCard *gameEventsDomain.Card
+
+func DrawCard(playerId string) {
+
+	fmt.Println("Drawing a card..")
+	currentCard = gameEventsDomain.GetNextCard(playerId)
+}
+
+func ConfirmCard() {
+
+	currentCard.TriggerAction()
+	currentCard = nil
 }
