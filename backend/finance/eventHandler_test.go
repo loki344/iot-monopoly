@@ -63,6 +63,6 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	players, _ := player.Init(1)
 	initAccounts()
 	currentPlayer := players[0]
-	communication.FireEvent(communication.CARD_WITH_PAYOUT_DREW, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id, 200))
+	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id, 200))
 	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id).Balance)
 }

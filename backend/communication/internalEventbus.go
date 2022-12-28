@@ -19,8 +19,8 @@ const (
 	TRANSACTION_CREATED       ChannelName = "transactionAdded"        // player has to pay the amount with his card
 	TRANSACTION_RESOLVED      ChannelName = "transactionResolved"     // transaction is finished and all money is moved
 	LAP_FINISHED              ChannelName = "lapFinished"             // player has finished a lap
-	CARD_WITH_PAYOUT_DREW     ChannelName = "cardWithPayoutDrew"      // payment request to payout money from bank to player
-	CARD_WITH_FEE_DREW        ChannelName = "cardWithFeeDrew"         // payment request to payout money from bank to player
+	CARD_WITH_PAYOUT_ACCEPTED ChannelName = "cardWithPayoutAccepted"  // payment request to payout money from bank to player
+	CARD_WITH_FEE_ACCEPTED    ChannelName = "cardWithFeeAccepted"     // payment request to payout money from bank to player
 	CARD_DREW                 ChannelName = "cardDrew"                // event card is drew
 )
 

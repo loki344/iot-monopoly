@@ -1,6 +1,7 @@
 package playerDomain
 
 import (
+	"errors"
 	"fmt"
 	"iot-monopoly/communication"
 )
@@ -20,6 +21,12 @@ func (p *Player) Position() int {
 }
 
 func (p *Player) SetPosition(position int) {
+
+	//TODO move this code somewhere where it makes more sense
+	totalFieldCount := 16
+	if position > totalFieldCount-1 || position < 0 {
+		errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", position, totalFieldCount))
+	}
 
 	if p.Position() == position {
 		fmt.Println(fmt.Errorf("player already at position %d", position))

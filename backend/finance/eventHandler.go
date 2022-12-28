@@ -70,7 +70,7 @@ func startCardWithPayoutDrewEventHandler() {
 			payoutInformation := e.Data.(*gameEventsDomain.CardWithPayoutEvent)
 			getAccountByPlayerId(payoutInformation.PlayerId).Add(payoutInformation.Amount)
 		},
-		Matcher: string(communication.CARD_WITH_PAYOUT_DREW),
+		Matcher: string(communication.CARD_WITH_PAYOUT_ACCEPTED),
 	})
 
 }
@@ -81,7 +81,7 @@ func startCardWithFeeEventHandler() {
 			transactionInformation := e.Data.(*gameEventsDomain.CardWithFeeEvent)
 			AddTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PlayerId, transactionInformation.Fee)
 		},
-		Matcher: string(communication.CARD_WITH_FEE_DREW),
+		Matcher: string(communication.CARD_WITH_FEE_ACCEPTED),
 	})
 
 }

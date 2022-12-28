@@ -2,7 +2,6 @@ package property
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/mustafaturan/bus/v3"
 	"iot-monopoly/communication"
@@ -45,12 +44,6 @@ func startPlayerMovedEventHandler() {
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			playerMovedEvent := e.Data.(boardDomain.PlayerMovedEvent)
-
-			//TODO move this code somewhere where it makes more sense
-			totalFieldCount := 16
-			if playerMovedEvent.FieldIndex > totalFieldCount-1 || playerMovedEvent.FieldIndex < 0 {
-				errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", playerMovedEvent.FieldIndex, totalFieldCount))
-			}
 
 			property := getPropertyById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
 
