@@ -1,9 +1,5 @@
 package gameEventsDomain
 
-import (
-	eventingDomain "iot-monopoly/communication/domain"
-)
-
 type Card struct {
 	Title    string
 	Text     string
@@ -13,12 +9,6 @@ type Card struct {
 
 func (card Card) TriggerAction() {
 	card.Action(card.PlayerId)
-}
-
-type CardDTO struct {
-	eventingDomain.BaseEvent
-	Title string
-	Text  string
 }
 
 func NewCard(title string, text string, action func(playerId string)) *Card {
