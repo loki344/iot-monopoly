@@ -22,7 +22,7 @@ type PlayerOnOwnedFieldEvent struct {
 }
 
 func NewPlayerOnOwnedFieldEvent(playerId string, property PropertyField) *PlayerOnOwnedFieldEvent {
-	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.OwnerId, property.GetPropertyFee()}
+	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.ownerId, property.GetPropertyFee()}
 }
 
 type PropertyTransferCreatedEvent struct {

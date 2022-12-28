@@ -9,7 +9,7 @@ import (
 func TestPlayerOnEventFieldTriggersEvent(t *testing.T) {
 
 	var eventTriggered = false
-	field := EventField{Id: uuid.New().String(), Name: "testField", Event: func(playerId string) {
+	field := EventField{id: uuid.New().String(), name: "testField", event: func(playerId string) {
 		eventTriggered = true
 	}}
 	field.OnPlayerEnter(uuid.NewString())

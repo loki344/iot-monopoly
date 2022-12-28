@@ -12,9 +12,9 @@ var pendingTransfer *propertyDomain.PendingPropertyTransaction
 var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{100, 200, 300, 400, 500, 800}}
 
 //var defaultBasicFields = []propertyDomain.BasicField{
-//	{propertyDomain.BaseFieldInformation{Id: "1", Name: "Start"}},
-//	{propertyDomain.BaseFieldInformation{Id: "5", Name: "Gefaengnis"}},
-//	{propertyDomain.BaseFieldInformation{Id: "9", Name: "Frei parken"}},
+//	{propertyDomain.BaseFieldInformation{id: "1", name: "Start"}},
+//	{propertyDomain.BaseFieldInformation{id: "5", name: "Gefaengnis"}},
+//	{propertyDomain.BaseFieldInformation{id: "9", name: "Frei parken"}},
 //}
 
 var defaultProperties = []*propertyDomain.PropertyField{
@@ -37,7 +37,7 @@ func BuyProperty(propertyId string, buyerId string) string {
 
 	property := getPropertyById(propertyId)
 	transactionId := uuid.NewString()
-	pendingTransfer = propertyDomain.NewPendingPropertyTransaction(transactionId, propertyId, buyerId, property.FinancialDetails.PropertyPrice)
+	pendingTransfer = propertyDomain.NewPendingPropertyTransaction(transactionId, propertyId, buyerId, property.FinancialDetails().PropertyPrice)
 
 	return transactionId
 }
@@ -48,10 +48,10 @@ func transferOwnerShip(transactionId string) {
 		return
 	}
 
-	if pendingTransfer.TransactionId == transactionId {
-		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId, pendingTransfer.BuyerId)
-		property := getPropertyById(pendingTransfer.PropertyId)
-		property.OwnerId = pendingTransfer.BuyerId
+	if pendingTransfer.Id() == transactionId {
+		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyId(), pendingTransfer.BuyerId())
+		property := getPropertyById(pendingTransfer.PropertyId())
+		property.SetOwnerId(pendingTransfer.BuyerId())
 		pendingTransfer = nil
 	}
 }
@@ -59,7 +59,7 @@ func transferOwnerShip(transactionId string) {
 func getPropertyById(fieldId string) *propertyDomain.PropertyField {
 
 	for i := 0; i < len(properties); i++ {
-		if properties[i].Id == fieldId {
+		if properties[i].Id() == fieldId {
 			return properties[i]
 		}
 	}

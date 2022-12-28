@@ -12,8 +12,8 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 	config.Init()
 	initAccounts()
 	players, _ := player.Init(2)
-	recipientId := players[0].Id
-	senderId := players[1].Id
+	recipientId := players[0].Id()
+	senderId := players[1].Id()
 
 	amount := 1_000
 
@@ -30,16 +30,16 @@ func TestValidTransaction(t *testing.T) {
 	initAccounts()
 
 	players, _ := player.Init(2)
-	recipientId := players[0].Id
-	senderId := players[1].Id
+	recipientId := players[0].Id()
+	senderId := players[1].Id()
 
 	amount := 1_000
 
 	transaction := AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	assert.Equal(t, recipientId, transaction.RecipientId)
-	assert.Equal(t, senderId, transaction.SenderId)
-	assert.Equal(t, amount, transaction.Amount)
+	assert.Equal(t, recipientId, transaction.RecipientId())
+	assert.Equal(t, senderId, transaction.SenderId())
+	assert.Equal(t, amount, transaction.Amount())
 }
 
 func TestResolveTransactionChangesBalance(t *testing.T) {
@@ -47,8 +47,8 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 	initAccounts()
 
 	players, _ := player.Init(2)
-	recipientId := players[0].Id
-	senderId := players[1].Id
+	recipientId := players[0].Id()
+	senderId := players[1].Id()
 
 	amount := 1_000
 
@@ -66,14 +66,14 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 	config.Init()
 
 	players, _ := player.Init(3)
-	recipientId := players[0].Id
-	senderId := players[1].Id
+	recipientId := players[0].Id()
+	senderId := players[1].Id()
 
 	amount := 1_000
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	actualSenderId := players[2].Id
+	actualSenderId := players[2].Id()
 	ResolveLatestTransaction(actualSenderId)
 
 	assert.Equal(t, 1_000, getAccountByPlayerId(senderId).Balance)
@@ -87,8 +87,8 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 	config.Init()
 
 	players, _ := player.Init(3)
-	recipientId := players[0].Id
-	senderId := players[1].Id
+	recipientId := players[0].Id()
+	senderId := players[1].Id()
 
 	amount := 100
 

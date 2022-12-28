@@ -38,9 +38,9 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transaction := e.Data.(financeDomain.TransactionCreatedEvent)
-			assert.Equal(t, payerId, transaction.Transaction.SenderId)
-			assert.Equal(t, ownerId, transaction.Transaction.RecipientId)
-			assert.Equal(t, price, transaction.Transaction.Amount)
+			assert.Equal(t, payerId, transaction.Transaction.senderId)
+			assert.Equal(t, ownerId, transaction.Transaction.recipientId)
+			assert.Equal(t, price, transaction.Transaction.amount)
 			receivedEvents++
 		},
 		Matcher: string(communication.TRANSACTION_CREATED),
@@ -48,7 +48,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
 	var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{1000, 200, 300, 400, 500, 800}}
 	property := propertyDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
-	property.OwnerId = ownerId
+	property.ownerId = ownerId
 
 	property.OnPlayerEnter(payerId)
 

@@ -3,18 +3,34 @@ package financeDomain
 import "fmt"
 
 type Account struct {
-	Id       string `json:"id"`
-	PlayerId string `json:"playerId"`
-	Balance  int    `json:"balance"`
+	id       string
+	playerId string
+	balance  int
+}
+
+func NewAccount(id string, playerId string, balance int) *Account {
+	return &Account{id: id, playerId: playerId, balance: balance}
+}
+
+func (a *Account) Id() string {
+	return a.id
+}
+
+func (a *Account) PlayerId() string {
+	return a.playerId
+}
+
+func (a *Account) Balance() int {
+	return a.balance
 }
 
 func (a *Account) Add(amount int) {
-	fmt.Printf("Add %d to account %s\n", amount, a.Id)
+	fmt.Printf("Add %d to account %s\n", amount, a.id)
 
-	a.Balance += amount
+	a.balance += amount
 }
 
 func (a *Account) Subtract(amount int) {
-	fmt.Printf("Removing %d from account %s\n", amount, a.Id)
-	a.Balance -= amount
+	fmt.Printf("Removing %d from account %s\n", amount, a.id)
+	a.balance -= amount
 }

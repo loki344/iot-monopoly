@@ -9,23 +9,23 @@ import (
 var eventFields []*gameEventsDomain.EventField
 
 var defaultEventFields = []*gameEventsDomain.EventField{
-	{Name: "4", Id: "Ereignisfeld 1", Event: func(playerId string) {
+	gameEventsDomain.NewEventField("Ereignisfeld 1", "4", func(playerId string) {
 		DrawCard(playerId)
-	}},
-	{Name: "6", Id: "Ereignisfeld 2", Event: func(playerId string) {
+	}),
+	gameEventsDomain.NewEventField("Ereignisfeld 2", "6", func(playerId string) {
 		DrawCard(playerId)
-	}},
-	{Name: "11", Id: "Ereignisfeld 3", Event: func(playerId string) {
+	}),
+	gameEventsDomain.NewEventField("Ereignisfeld 3", "11", func(playerId string) {
 		DrawCard(playerId)
-	}},
-	{Name: "13", Id: "Gehe ins Gefaegnis", Event: func(playerId string) {
+	}),
+	gameEventsDomain.NewEventField("Gehe ins Gefaengnis", "13", func(playerId string) {
 		fmt.Println("Player has to go to prison")
 		// TODO this field index for prison should not be magic
 		player.MovePlayer(playerId, 4)
-	}},
-	{Name: "15", Id: "Ereignisfeld 4", Event: func(playerId string) {
+	}),
+	gameEventsDomain.NewEventField("Ereignisfeld 4", "15", func(playerId string) {
 		DrawCard(playerId)
-	}},
+	}),
 }
 
 func initFields() {
@@ -36,7 +36,7 @@ func initFields() {
 func GetFieldById(fieldId string) *gameEventsDomain.EventField {
 
 	for i := 0; i < len(eventFields); i++ {
-		if eventFields[i].Id == fieldId {
+		if eventFields[i].Id() == fieldId {
 			return eventFields[i]
 		}
 	}

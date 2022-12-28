@@ -20,9 +20,9 @@ func GetNextCard(playerId string) *Card {
 
 	rand.Seed(time.Now().UnixNano())
 	card := &CardStack[rand.Intn(len(CardStack))]
-	card.PlayerId = playerId
+	card.playerId = playerId
 
-	communication.FireEvent(communication.CARD_DREW, NewCardDrewEvent(card.Title, card.Text))
+	communication.FireEvent(communication.CARD_DREW, NewCardDrewEvent(card.title, card.text))
 
 	return card
 }

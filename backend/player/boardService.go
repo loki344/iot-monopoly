@@ -59,7 +59,7 @@ func MovePlayer(playerId string, fieldId int) error {
 func GetPlayer(playerId string) *boardDomain.Player {
 
 	for i := range players {
-		if players[i].Id == playerId {
+		if players[i].Id() == playerId {
 			return players[i]
 		}
 	}

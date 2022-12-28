@@ -1,17 +1,29 @@
 package gameEventsDomain
 
 type Card struct {
-	Title    string
-	Text     string
-	Action   func(playerId string)
-	PlayerId string
+	title    string
+	text     string
+	action   func(playerId string)
+	playerId string
+}
+
+func (card Card) Title() string {
+	return card.title
+}
+
+func (card Card) Text() string {
+	return card.text
+}
+
+func (card Card) PlayerId() string {
+	return card.playerId
 }
 
 func (card Card) TriggerAction() {
-	card.Action(card.PlayerId)
+	card.action(card.playerId)
 }
 
 func NewCard(title string, text string, action func(playerId string)) *Card {
 
-	return &Card{Title: title, Text: text, Action: action}
+	return &Card{title: title, text: text, action: action}
 }

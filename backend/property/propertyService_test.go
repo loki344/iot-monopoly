@@ -13,7 +13,7 @@ func TestBuyProperty(t *testing.T) {
 	StartEventListeners()
 	initFields()
 	players, _ := player.Init(1)
-	playerId := players[0].Id
+	playerId := players[0].Id()
 
 	propertyId := "2"
 	transactionId := BuyProperty(propertyId, playerId)
@@ -21,5 +21,5 @@ func TestBuyProperty(t *testing.T) {
 	transferOwnerShip(transactionId)
 
 	property := *getPropertyById(propertyId)
-	assert.Equal(t, playerId, property.OwnerId)
+	assert.Equal(t, playerId, property.OwnerId())
 }

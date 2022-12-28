@@ -7,13 +7,21 @@ import (
 )
 
 type Player struct {
-	Id        string `json:"id"`
+	id        string
 	position  int
-	AccountId string `json:"accountId"`
+	accountId string
+}
+
+func (p *Player) Id() string {
+	return p.id
+}
+
+func (p *Player) AccountId() string {
+	return p.accountId
 }
 
 func NewPlayer(id string, position int, accountId string) *Player {
-	return &Player{Id: id, position: position, AccountId: accountId}
+	return &Player{id: id, position: position, accountId: accountId}
 }
 
 func (p *Player) Position() int {
@@ -35,10 +43,10 @@ func (p *Player) SetPosition(position int) {
 
 	if p.Position() > position && position < 5 {
 		fmt.Println("Player completed a lap, creating lap finished")
-		communication.FireEvent(communication.LAP_FINISHED, NewLapFinishedEvent(p.Id))
+		communication.FireEvent(communication.LAP_FINISHED, NewLapFinishedEvent(p.id))
 	}
 
-	fmt.Printf("MovePlayer player %s to fieldId %d\n", p.Id, position)
+	fmt.Printf("MovePlayer player %s to fieldId %d\n", p.id, position)
 	p.position = position
-	communication.FireEvent(communication.PLAYER_MOVED, NewPlayerMovedEvent(p.Id, position))
+	communication.FireEvent(communication.PLAYER_MOVED, NewPlayerMovedEvent(p.id, position))
 }
