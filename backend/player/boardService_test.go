@@ -14,7 +14,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 
 	config.Init()
 	players, _ := Init(1)
-	playerId := players[0].Id
+	playerId := players[0].Id()
 	player := GetPlayer(playerId)
 	// TODO get total number count 16
 	for i := 1; i < 16; i++ {
@@ -35,7 +35,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
 
 	players, _ := Init(1)
-	id := players[0].Id
+	id := players[0].Id()
 
 	player := GetPlayer(id)
 
@@ -48,7 +48,7 @@ func TestLapFiresEvent(t *testing.T) {
 
 	config.Init()
 	players, _ := Init(1)
-	id := players[0].Id
+	id := players[0].Id()
 
 	var receivedEvents = 0
 	communication.RegisterEventHandler(bus.Handler{
@@ -71,19 +71,19 @@ func TestPlayerTurn(t *testing.T) {
 	config.Init()
 	players, _ := Init(4)
 
-	assert.Equal(t, players[0].Id, currentPlayer.Id)
-	MovePlayer(players[0].Id, 2)
+	assert.Equal(t, players[0].Id(), currentPlayer.Id())
+	MovePlayer(players[0].Id(), 2)
 
-	assert.Equal(t, players[1].Id, currentPlayer.Id)
-	MovePlayer(players[1].Id, 2)
+	assert.Equal(t, players[1].Id(), currentPlayer.Id())
+	MovePlayer(players[1].Id(), 2)
 
-	assert.Equal(t, players[2].Id, currentPlayer.Id)
-	MovePlayer(players[2].Id, 2)
+	assert.Equal(t, players[2].Id(), currentPlayer.Id())
+	MovePlayer(players[2].Id(), 2)
 
-	assert.Equal(t, players[3].Id, currentPlayer.Id)
-	MovePlayer(players[3].Id, 2)
+	assert.Equal(t, players[3].Id(), currentPlayer.Id())
+	MovePlayer(players[3].Id(), 2)
 
-	assert.Equal(t, players[0].Id, currentPlayer.Id)
-	MovePlayer(players[0].Id, 2)
+	assert.Equal(t, players[0].Id(), currentPlayer.Id())
+	MovePlayer(players[0].Id(), 2)
 
 }

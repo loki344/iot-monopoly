@@ -21,7 +21,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	StartEventListeners()
 
 	players, _ := player.Init(1)
-	id := players[0].Id
+	id := players[0].Id()
 	communication.FireEvent(communication.LAP_FINISHED, &boardDomain.LapFinishedEvent{PlayerId: id})
 	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance)
 }
@@ -38,9 +38,9 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transaction := e.Data.(financeDomain.TransactionCreatedEvent)
-			assert.Equal(t, payerId, transaction.Transaction.senderId)
-			assert.Equal(t, ownerId, transaction.Transaction.recipientId)
-			assert.Equal(t, price, transaction.Transaction.amount)
+			assert.Equal(t, payerId, transaction.Transaction.SenderId())
+			assert.Equal(t, ownerId, transaction.Transaction.RecipientId())
+			assert.Equal(t, price, transaction.Transaction.Amount())
 			receivedEvents++
 		},
 		Matcher: string(communication.TRANSACTION_CREATED),
@@ -48,7 +48,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
 	var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{1000, 200, 300, 400, 500, 800}}
 	property := propertyDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
-	property.ownerId = ownerId
+	property.SetOwnerId(ownerId)
 
 	property.OnPlayerEnter(payerId)
 
@@ -63,6 +63,6 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	players, _ := player.Init(1)
 	initAccounts()
 	currentPlayer := players[0]
-	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id, 200))
-	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id).Balance)
+	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id(), 200))
+	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id()).Balance)
 }

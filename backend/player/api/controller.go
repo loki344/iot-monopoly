@@ -18,7 +18,7 @@ func Routes(app *fiber.App) {
 
 	app.Get("/players", func(c *fiber.Ctx) error {
 
-		return c.Status(200).JSON(PlayerResponse{Players: player.GetPlayers(), CurrentPlayerId: player.GetCurrentPlayer().Id})
+		return c.Status(200).JSON(PlayerResponse{Players: player.GetPlayers(), CurrentPlayerId: player.GetCurrentPlayer().Id()})
 	})
 
 	app.Patch("/players/:id", func(c *fiber.Ctx) error {

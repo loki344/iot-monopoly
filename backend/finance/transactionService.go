@@ -75,7 +75,6 @@ func ResolveLatestTransaction(senderId string) error {
 
 	if pendingTransaction.SenderId() != senderId {
 		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId(), senderId)
-		pendingTransaction.SetSenderId(senderId)
 	}
 
 	err := validateTransaction(pendingTransaction)
@@ -85,7 +84,7 @@ func ResolveLatestTransaction(senderId string) error {
 
 	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id(), pendingTransaction.Amount(), pendingTransaction.SenderId(), pendingTransaction.RecipientId())
 	getAccountByPlayerId(pendingTransaction.RecipientId()).Add(pendingTransaction.Amount())
-	getAccountByPlayerId(pendingTransaction.SenderId()).Subtract(pendingTransaction.Amount())
+	getAccountByPlayerId(senderId).Subtract(pendingTransaction.Amount())
 
 	pendingTransaction.Accept()
 	pendingTransaction = nil
