@@ -14,16 +14,16 @@
 
 			switch(eventData.Type.split('.')[1]){
 
-				case "TransactionAddedEvent":
+				case "TransactionCreatedEvent":
 					let transaction = eventData.Transaction
 					goto(`/transactions/${transaction.id}?recipientId=${transaction.recipientId}&senderId=${transaction.senderId}&amount=${transaction.amount}`)
 					break
 
-				case "PropertyBuyQuestion":
+				case "PlayerOnUnownedFieldEvent":
 					let p = eventData.Property
-					let fd = p.FinancialDetails
+					let fd = p.financialDetails
 					let r = fd.Revenue
-					goto(`/properties/${p.Id}?name=${p.Name}&propertyPrice=${fd.PropertyPrice}&housePrice=${fd.HousePrice}&hotelPrice=${fd.HotelPrice}
+					goto(`/properties/${p.id}?name=${p.name}&propertyPrice=${fd.PropertyPrice}&housePrice=${fd.HousePrice}&hotelPrice=${fd.HotelPrice}
 					&revenueNormal=${r.Normal}&revenueOneHouse=${r.OneHouse}&revenueTwoHouses=${r.TwoHouses}&revenueThreeHouses=${r.ThreeHouses}
 					&revenueFourHouses=${r.FourHouses}&revenueHotel=${r.Hotel}&buyerId=${eventData.PlayerId}`)
 					break

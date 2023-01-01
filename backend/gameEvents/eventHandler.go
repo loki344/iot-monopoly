@@ -28,7 +28,7 @@ func startPlayerMovedEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			playerMovedEvent := e.Data.(playerDomain.PlayerMovedEvent)
+			playerMovedEvent := e.Data.(*playerDomain.PlayerMovedEvent)
 
 			eventField := GetFieldById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
 

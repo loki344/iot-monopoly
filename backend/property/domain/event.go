@@ -4,14 +4,14 @@ import (
 	eventingDomain "iot-monopoly/communication/domain"
 )
 
-type PlayerOnFieldEvent struct {
+type PlayerOnUnownedFieldEvent struct {
 	eventingDomain.BaseEvent
 	PlayerId string
 	Property PropertyField
 }
 
-func NewPlayerOnUnownedFieldEvent(playerId string, property PropertyField) *PlayerOnFieldEvent {
-	return &PlayerOnFieldEvent{eventingDomain.EventType(&PlayerOnFieldEvent{}), playerId, property}
+func NewPlayerOnUnownedFieldEvent(playerId string, property PropertyField) *PlayerOnUnownedFieldEvent {
+	return &PlayerOnUnownedFieldEvent{eventingDomain.EventType(&PlayerOnUnownedFieldEvent{}), playerId, property}
 }
 
 type PlayerOnOwnedFieldEvent struct {
@@ -22,7 +22,7 @@ type PlayerOnOwnedFieldEvent struct {
 }
 
 func NewPlayerOnOwnedFieldEvent(playerId string, property PropertyField) *PlayerOnOwnedFieldEvent {
-	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.ownerId, property.GetPropertyFee()}
+	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, property.OwnerId, property.GetPropertyFee()}
 }
 
 type PropertyTransferCreatedEvent struct {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"iot-monopoly/player"
-	domain "iot-monopoly/player/domain"
 )
 
 func Routes(app *fiber.App) {
@@ -23,7 +22,7 @@ func Routes(app *fiber.App) {
 
 	app.Patch("/players/:id", func(c *fiber.Ctx) error {
 
-		patchedPlayer := new(domain.Player)
+		patchedPlayer := new(player.PlayerDTO)
 
 		if err := c.BodyParser(patchedPlayer); err != nil {
 			fmt.Println("error = ", err)
@@ -31,7 +30,7 @@ func Routes(app *fiber.App) {
 		}
 
 		playerId := c.Params("id")
-		player.MovePlayer(playerId, patchedPlayer.Position())
+		player.MovePlayer(playerId, patchedPlayer.Position)
 
 		return c.Status(201).JSON(player.GetPlayer(playerId))
 	})

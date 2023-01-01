@@ -15,7 +15,7 @@ func TestPlayerCanMoveAround(t *testing.T) {
 	config.Init()
 	players, _ := Init(1)
 	playerId := players[0].Id()
-	player := GetPlayer(playerId)
+	player := getPlayer(playerId)
 	// TODO get total number count 16
 	for i := 1; i < 16; i++ {
 		err := MovePlayer(playerId, i)

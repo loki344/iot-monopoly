@@ -6,39 +6,15 @@ import (
 )
 
 type PropertyField struct {
-	name             string
-	id               string
-	financialDetails *FinancialDetails
-	ownerId          string
-	upgrades         PropertyUpgrade
-}
-
-func (propertyField *PropertyField) SetOwnerId(ownerId string) {
-	propertyField.ownerId = ownerId
-}
-
-func (propertyField PropertyField) Name() string {
-	return propertyField.name
-}
-
-func (propertyField PropertyField) Id() string {
-	return propertyField.id
-}
-
-func (propertyField PropertyField) FinancialDetails() *FinancialDetails {
-	return propertyField.financialDetails
-}
-
-func (propertyField PropertyField) OwnerId() string {
-	return propertyField.ownerId
-}
-
-func (propertyField PropertyField) Upgrades() PropertyUpgrade {
-	return propertyField.upgrades
+	Name             string            `json:"name"`
+	Id               string            `json:"id"`
+	FinancialDetails *FinancialDetails `json:"financialDetails"`
+	OwnerId          string            `json:"ownerId"`
+	Upgrades         PropertyUpgrade   `json:"upgrades"`
 }
 
 func NewPropertyField(name string, id string, financialDetails *FinancialDetails) *PropertyField {
-	return &PropertyField{name: name, id: id, financialDetails: financialDetails}
+	return &PropertyField{Name: name, Id: id, FinancialDetails: financialDetails}
 }
 
 type PropertyUpgrade string
@@ -68,29 +44,29 @@ type FinancialDetails struct {
 }
 
 func (propertyField PropertyField) GetPropertyFee() int {
-	switch propertyField.upgrades {
+	switch propertyField.Upgrades {
 	case ONE_HOUSE:
-		return propertyField.financialDetails.Revenue.OneHouse
+		return propertyField.FinancialDetails.Revenue.OneHouse
 	case TWO_HOUSES:
-		return propertyField.financialDetails.Revenue.TwoHouses
+		return propertyField.FinancialDetails.Revenue.TwoHouses
 	case THREE_HOUSES:
-		return propertyField.financialDetails.Revenue.ThreeHouses
+		return propertyField.FinancialDetails.Revenue.ThreeHouses
 	case FOUR_HOUSES:
-		return propertyField.financialDetails.Revenue.FourHouses
+		return propertyField.FinancialDetails.Revenue.FourHouses
 	case HOTEL:
-		return propertyField.financialDetails.Revenue.Hotel
+		return propertyField.FinancialDetails.Revenue.Hotel
 	default:
-		return propertyField.financialDetails.Revenue.Normal
+		return propertyField.FinancialDetails.Revenue.Normal
 	}
 }
 
 func (propertyField PropertyField) OnPlayerEnter(playerId string) {
 
-	if propertyField.ownerId == "" {
+	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
 		communication.FireEvent(communication.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, propertyField))
-	} else if propertyField.ownerId != playerId {
-		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.ownerId, playerId, propertyField.GetPropertyFee())
+	} else if propertyField.OwnerId != playerId {
+		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, playerId, propertyField.GetPropertyFee())
 		communication.FireEvent(communication.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(playerId, propertyField))
 	}
 }

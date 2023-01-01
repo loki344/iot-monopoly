@@ -10,10 +10,10 @@ var players []domain.Player
 
 //TODO use static uuid
 var defaultPlayers = []domain.Player{
-	*domain.NewPlayer("Player_1", 0, "Account_Player_1"),
-	*domain.NewPlayer("Player_2", 0, "Account_Player_2"),
-	*domain.NewPlayer("Player_3", 0, "Account_Player_3"),
-	*domain.NewPlayer("Player_4", 0, "Account_Player_4"),
+	*domain.NewPlayer("Player_1", 1, "Account_Player_1"),
+	*domain.NewPlayer("Player_2", 1, "Account_Player_2"),
+	*domain.NewPlayer("Player_3", 1, "Account_Player_3"),
+	*domain.NewPlayer("Player_4", 1, "Account_Player_4"),
 	//33-A8-8A-10 Card 1
 	//	1304-B6-1A Card 2
 	// 43-F1-E70E Card 3

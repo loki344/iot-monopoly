@@ -18,7 +18,7 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	var receivedEvents = 0
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			lapFinishedEvent := e.Data.(*PlayerOnFieldEvent)
+			lapFinishedEvent := e.Data.(*PlayerOnUnownedFieldEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},

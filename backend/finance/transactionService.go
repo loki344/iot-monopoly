@@ -22,6 +22,7 @@ func initAccounts() {
 		*domain.NewAccount("Account_Player_2", "Player_2", 1_000),
 		*domain.NewAccount("Account_Player_3", "Player_3", 1_000),
 		*domain.NewAccount("Account_Player_4", "Player_4", 1_000),
+		*domain.NewAccount("Bank", "Bank", 100_000_000),
 	}
 }
 
@@ -48,7 +49,7 @@ func AddTransaction(id string, receiverId string, senderId string, amount int) *
 
 	transaction := domain.NewTransaction(id, receiverId, senderId, amount)
 
-	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id())
+	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
 	pendingTransaction = transaction
 
 	return transaction
@@ -56,12 +57,12 @@ func AddTransaction(id string, receiverId string, senderId string, amount int) *
 
 func validateTransaction(transaction *domain.Transaction) error {
 
-	if transaction.IsAccepted() {
-		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id()))
+	if transaction.Accepted {
+		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id))
 	}
-	balance := getAccountByPlayerId(transaction.SenderId()).Balance()
-	if balance < transaction.Amount() {
-		return errors.New(fmt.Sprintf("Player %s has insufficient balance for transaction %s. Balance: %d, amount: %d", transaction.SenderId(), transaction.Id(), balance, transaction.Amount()))
+	balance := getAccountByPlayerId(transaction.SenderId).Balance()
+	if balance < transaction.Amount {
+		return errors.New(fmt.Sprintf("Player %s has insufficient balance for transaction %s. Balance: %d, amount: %d", transaction.SenderId, transaction.Id, balance, transaction.Amount))
 	}
 	return nil
 }
@@ -73,8 +74,8 @@ func ResolveLatestTransaction(senderId string) error {
 		return nil
 	}
 
-	if pendingTransaction.SenderId() != senderId {
-		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId(), senderId)
+	if pendingTransaction.SenderId != senderId {
+		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId, senderId)
 	}
 
 	err := validateTransaction(pendingTransaction)
@@ -82,9 +83,9 @@ func ResolveLatestTransaction(senderId string) error {
 		return err
 	}
 
-	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id(), pendingTransaction.Amount(), pendingTransaction.SenderId(), pendingTransaction.RecipientId())
-	getAccountByPlayerId(pendingTransaction.RecipientId()).Add(pendingTransaction.Amount())
-	getAccountByPlayerId(senderId).Subtract(pendingTransaction.Amount())
+	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
+	getAccountByPlayerId(pendingTransaction.RecipientId).Add(pendingTransaction.Amount)
+	getAccountByPlayerId(senderId).Subtract(pendingTransaction.Amount)
 
 	pendingTransaction.Accept()
 	pendingTransaction = nil

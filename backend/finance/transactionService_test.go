@@ -37,9 +37,9 @@ func TestValidTransaction(t *testing.T) {
 
 	transaction := AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	assert.Equal(t, recipientId, transaction.RecipientId())
-	assert.Equal(t, senderId, transaction.SenderId())
-	assert.Equal(t, amount, transaction.Amount())
+	assert.Equal(t, recipientId, transaction.RecipientId)
+	assert.Equal(t, senderId, transaction.SenderId)
+	assert.Equal(t, amount, transaction.Amount)
 }
 
 func TestResolveTransactionChangesBalance(t *testing.T) {

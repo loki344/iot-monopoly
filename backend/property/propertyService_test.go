@@ -21,5 +21,5 @@ func TestBuyProperty(t *testing.T) {
 	transferOwnerShip(transactionId)
 
 	property := *getPropertyById(propertyId)
-	assert.Equal(t, playerId, property.OwnerId())
+	assert.Equal(t, playerId, property.OwnerId)
 }
