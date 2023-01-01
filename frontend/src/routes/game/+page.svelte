@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	
+	console.log(data)
 	let players = JSON.parse(data.gameData).players;
 	let currentPlayerId = JSON.parse(data.gameData).currentPlayerId;
 	let accounts = JSON.parse(data.accounts).reduce((map:any, account:any) => (map[account.id] = account.balance, map), {});

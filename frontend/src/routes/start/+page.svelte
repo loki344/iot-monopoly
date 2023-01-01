@@ -4,7 +4,7 @@
 
 	import Title from '$lib/components/atom/Title.svelte';
 	import Tags from '$lib/components/molecule/Tags.svelte';
-	import { BASE_URL, extractData } from '$lib/http/backendClient';
+	import { BASE_URL } from '$lib/http/backendClient';
 
 	async function startGame(playerCount: Number) {
 		let response = await fetch(`${BASE_URL}/games`, {
@@ -15,7 +15,7 @@
 			}
 		});
 
-		return await extractData(response);
+		return await response;
 	}
 
 	let playerCount = '';

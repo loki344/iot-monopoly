@@ -9,6 +9,8 @@ export async function load({ params }) {
 		method: 'GET'
 	});
 
+	console.log(gameDataResponse)
+	console.log(accountResponse)
 	return {
 		gameData: await extractData(gameDataResponse),
 		accounts: await extractData(accountResponse)
