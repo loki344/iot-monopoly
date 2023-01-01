@@ -23,7 +23,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	players, _ := player.Init(1)
 	id := players[0].Id()
 	communication.FireEvent(communication.LAP_FINISHED, &boardDomain.LapFinishedEvent{PlayerId: id})
-	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance)
+	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance())
 }
 
 func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
@@ -64,5 +64,5 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	initAccounts()
 	currentPlayer := players[0]
 	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id(), 200))
-	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id()).Balance)
+	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id()).Balance())
 }

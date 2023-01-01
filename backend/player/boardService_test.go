@@ -23,10 +23,10 @@ func TestPlayerCanMoveAround(t *testing.T) {
 		if i == 13 {
 			assert.NoError(t, err)
 			//TODO resolve prison index differently
-			assert.Equal(t, 4, player.Position)
+			assert.Equal(t, 4, player.Position())
 		} else {
 			assert.NoError(t, err)
-			assert.Equal(t, i, player.Position)
+			assert.Equal(t, i, player.Position())
 
 		}
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/mustafaturan/bus/v3"
 	"iot-monopoly/communication"
-	boardDomain "iot-monopoly/player/domain"
+	playerDomain "iot-monopoly/player/domain"
 	"strconv"
 )
 
@@ -28,7 +28,7 @@ func startPlayerMovedEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			playerMovedEvent := e.Data.(boardDomain.PlayerMovedEvent)
+			playerMovedEvent := e.Data.(playerDomain.PlayerMovedEvent)
 
 			eventField := GetFieldById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
 

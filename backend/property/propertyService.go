@@ -3,7 +3,7 @@ package property
 import (
 	"fmt"
 	"github.com/google/uuid"
-	"iot-monopoly/property/domain"
+	propertyDomain "iot-monopoly/property/domain"
 )
 
 var properties []*propertyDomain.PropertyField
