@@ -21,28 +21,17 @@
 #    along with MFRC522-Python.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import RPi.GPIO as GPIO
 import mfrc522 as MFRC522
 import signal
-import time
 import requests
 
 continue_reading = True
-
-tagIdToPlayerIdMap = {"51-168-138-16": "Player_1", "19-4-182-26": "Player_2", "67-241-231-14": "Player_3", "163-217-53-15": "Player_4"}
-
-def map_tag_id_to_account_id(tag_id):
-    player_id = tagIdToPlayerIdMap[tag_id]
-    print("mapped tagId: "+ tag_id +" to playerId: " + str(player_id))
-    return player_id
-
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
     global continue_reading
     print ("Ctrl+C captured, ending read.")
     continue_reading = False
-    GPIO.cleanup()
 
 # Hook the SIGINT
 signal.signal(signal.SIGINT, end_read)
@@ -65,14 +54,9 @@ while continue_reading:
     # If we have the UID, continue
     if status == MIFAREReader.MI_OK:
 
-        LED = 18
-        GPIO.setup(LED, GPIO.OUT)
-        GPIO.output(LED, GPIO.HIGH)
-        time.sleep(3)
-        GPIO.output(LED, GPIO.LOW)
         tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
         try:
-            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "senderId": map_tag_id_to_player_id(tagId)})
+            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "cardId": tagId})
         except Exception:
             print("Request failed")
     

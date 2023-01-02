@@ -67,15 +67,17 @@ func validateTransaction(transaction *domain.Transaction) error {
 	return nil
 }
 
-func ResolveLatestTransaction(senderId string) error {
+func ResolveLatestTransaction(cardId string) error {
 
 	if pendingTransaction == nil {
 		fmt.Println("No transaction to resolve....")
 		return nil
 	}
 
-	if pendingTransaction.SenderId != senderId {
-		fmt.Printf("Transaction was meant for senderId %s, but received senderId %s", pendingTransaction.SenderId, senderId)
+	payerAccount, _ := GetAccountById(cardId)
+
+	if pendingTransaction.SenderId != payerAccount.PlayerId() {
+		fmt.Printf("Transaction was meant for cardId %s, but received cardId %s", pendingTransaction.SenderId, cardId)
 	}
 
 	err := validateTransaction(pendingTransaction)
@@ -83,9 +85,9 @@ func ResolveLatestTransaction(senderId string) error {
 		return err
 	}
 
-	fmt.Printf("Resolving Transaction %s: Transferring %d from account %s to account %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
+	fmt.Printf("Resolving Transaction %s: Transferring %d from senderAccount %s to recipientAccount %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
 	getAccountByPlayerId(pendingTransaction.RecipientId).Add(pendingTransaction.Amount)
-	getAccountByPlayerId(senderId).Subtract(pendingTransaction.Amount)
+	payerAccount.Subtract(pendingTransaction.Amount)
 
 	pendingTransaction.Accept()
 	pendingTransaction = nil

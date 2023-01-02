@@ -19,7 +19,7 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	err := ResolveLatestTransaction(senderId)
+	err := ResolveLatestTransaction(players[1].AccountId())
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -54,7 +54,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	ResolveLatestTransaction(senderId)
+	ResolveLatestTransaction(players[1].AccountId())
 
 	assert.Equal(t, 0, getAccountByPlayerId(senderId).Balance())
 	assert.Equal(t, 2_000, getAccountByPlayerId(recipientId).Balance())
@@ -73,7 +73,7 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	actualSenderId := players[2].Id()
+	actualSenderId := players[2].AccountId()
 	ResolveLatestTransaction(actualSenderId)
 
 	assert.Equal(t, 1_000, getAccountByPlayerId(senderId).Balance())
@@ -94,8 +94,8 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	ResolveLatestTransaction(senderId)
-	ResolveLatestTransaction(senderId)
+	ResolveLatestTransaction(players[1].AccountId())
+	ResolveLatestTransaction(players[1].AccountId())
 
 	assert.Equal(t, 900, getAccountByPlayerId(senderId).Balance())
 	assert.Equal(t, 1100, getAccountByPlayerId(recipientId).Balance())

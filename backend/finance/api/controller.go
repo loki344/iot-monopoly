@@ -33,8 +33,8 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		if transactionToPatch.Accepted && transactionToPatch.SenderId != "" {
-			err := finance.ResolveLatestTransaction(transactionToPatch.SenderId)
+		if transactionToPatch.Accepted && transactionToPatch.CardId != "" {
+			err := finance.ResolveLatestTransaction(transactionToPatch.CardId)
 			if err != nil {
 				return err
 			}
@@ -48,5 +48,5 @@ func Routes(app *fiber.App) {
 
 type TransactionAcceptedPatch struct {
 	Accepted bool   `json:"accepted"`
-	SenderId string `json:"senderId"`
+	CardId   string `json:"cardId"`
 }
