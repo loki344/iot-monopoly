@@ -23,8 +23,24 @@ func Routes(app *fiber.App) {
 		return c.SendStatus(201)
 	})
 
+	app.Patch("/games/current", func(c *fiber.Ctx) error {
+
+		gameEndRequest := new(GameEndRequest)
+
+		if err := c.BodyParser(gameEndRequest); err != nil {
+			fmt.Println("error = ", err)
+			return fiber.ErrBadRequest
+		}
+
+		game.EndGame(gameEndRequest.Status)
+		return c.SendStatus(200)
+	})
 }
 
 type GameRequest struct {
 	PlayerCount int `json:"playerCount"`
+}
+
+type GameEndRequest struct {
+	Status string `json:"status"`
 }

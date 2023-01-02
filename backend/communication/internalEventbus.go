@@ -12,16 +12,18 @@ type ChannelName string
 
 const (
 	GAME_STARTED              ChannelName = "gameStarted"
+	GAME_ENDED                ChannelName = "gameEnded"
 	PLAYER_MOVED              ChannelName = "playerMoved"
-	PLAYER_ON_UNOWNED_FIELD   ChannelName = "playerOnUnownedField"    // player lands on field and can buy it
-	PLAYER_ON_OWNED_FIELD     ChannelName = "playerOnOwnedField"      // player lands on owned field and has to pay
-	PROPERTY_TRANSFER_CREATED ChannelName = "propertyTransferCreated" // player is willing to buy a property, transaction process initiated
-	TRANSACTION_CREATED       ChannelName = "transactionAdded"        // player has to pay the amount with his card
-	TRANSACTION_RESOLVED      ChannelName = "transactionResolved"     // transaction is finished and all money is moved
-	LAP_FINISHED              ChannelName = "lapFinished"             // player has finished a lap
-	CARD_WITH_PAYOUT_ACCEPTED ChannelName = "cardWithPayoutAccepted"  // payment request to payout money from bank to player
-	CARD_WITH_FEE_ACCEPTED    ChannelName = "cardWithFeeAccepted"     // payment request to payout money from bank to player
-	CARD_DREW                 ChannelName = "cardDrew"                // event card is drew
+	PLAYER_ON_UNOWNED_FIELD   ChannelName = "playerOnUnownedField"
+	PLAYER_ON_OWNED_FIELD     ChannelName = "playerOnOwnedField"
+	PROPERTY_TRANSFER_CREATED ChannelName = "propertyTransferCreated"
+	TRANSACTION_CREATED       ChannelName = "transactionCreated"
+	TRANSACTION_RESOLVED      ChannelName = "transactionResolved"
+	LAP_FINISHED              ChannelName = "lapFinished"
+	CARD_WITH_PAYOUT_ACCEPTED ChannelName = "cardWithPayoutAccepted"
+	CARD_WITH_FEE_ACCEPTED    ChannelName = "cardWithFeeAccepted"
+	CARD_DREW                 ChannelName = "cardDrew"
+	PLAYER_BANKRUPT           ChannelName = "playerMoved"
 )
 
 func RegisterEventHandler(handler bus.Handler) string {
