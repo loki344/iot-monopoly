@@ -53,20 +53,14 @@ void loop() {
     delay(100);
     if (mfrc522[reader].PICC_IsNewCardPresent() && mfrc522[reader].PICC_ReadCardSerial()) {
 
-        delay(1500);
-        mfrc522[reader].PICC_ReadCardSerial();
-        mfrc522[reader].PICC_IsNewCardPresent();
+        digitalWrite(ledPins[reader], HIGH);
+        printHex(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size, reader);
 
-        if (mfrc522[reader].PICC_ReadCardSerial()) {
+        mfrc522[reader].PICC_HaltA();
+        mfrc522[reader].PCD_StopCrypto1();
 
-            digitalWrite(ledPins[reader], HIGH);
-            printHex(mfrc522[reader].uid.uidByte, mfrc522[reader].uid.size, reader);
+        flashLED(reader);
 
-            mfrc522[reader].PICC_HaltA();
-            mfrc522[reader].PCD_StopCrypto1();
-
-            flashLED(reader);
-        }
     }
   }
 }
