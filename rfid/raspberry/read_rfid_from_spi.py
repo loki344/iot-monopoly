@@ -50,10 +50,6 @@ while continue_reading:
 
         # Get the UID of the card
         (status, uid) = MIFAREReader.MFRC522_Anticoll()
-
-    # If we have the UID, continue
-    if status == MIFAREReader.MI_OK:
-
         tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
         try:
             requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "cardId": tagId})
