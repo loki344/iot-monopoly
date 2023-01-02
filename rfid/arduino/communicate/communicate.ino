@@ -65,7 +65,7 @@ void loop() {
             mfrc522[reader].PICC_HaltA();
             mfrc522[reader].PCD_StopCrypto1();
 
-            flashLED();
+            flashLED(reader);
         }
     }
   }
@@ -86,15 +86,15 @@ void printHex(byte *buffer, byte bufferSize, uint8_t reader) {
     Serial.print("\"}");
 }
 
-void flashLED() {
+void flashLED(uint8_t pin) {
     delay(500);
-    digitalWrite(ledPins[reader], LOW);
+    digitalWrite(ledPins[pin], LOW);
     delay(100);
-    digitalWrite(ledPins[reader], HIGH);
+    digitalWrite(ledPins[pin], HIGH);
     delay(100);
-    digitalWrite(ledPins[reader], LOW);
+    digitalWrite(ledPins[pin], LOW);
     delay(100);
-    digitalWrite(ledPins[reader], HIGH);
+    digitalWrite(ledPins[pin], HIGH);
     delay(100);
-    digitalWrite(ledPins[reader], LOW);
+    digitalWrite(ledPins[pin], LOW);
 }
