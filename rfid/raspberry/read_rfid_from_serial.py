@@ -25,8 +25,8 @@ devices = []
 for i in range(deviceCount):
     device = serial.Serial("/dev/ttyACM"+str(i),9600,timeout=0.5, )
     device.baudrate=9600
-    sio = io.TextIOWrapper(io.BufferedRWPair(device, device))
-    devices.append(sio)
+    textWrapper = io.TextIOWrapper(io.BufferedRWPair(device, device))
+    devices.append(textWrapper)
 
 
 while True: # Run forever
