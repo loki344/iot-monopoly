@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
 	"iot-monopoly/communication"
+	"iot-monopoly/finance/adapter/repository"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
 	boardDomain "iot-monopoly/player/domain"
 	propertyDomain "iot-monopoly/property/domain"
@@ -27,7 +28,7 @@ func startLapFinishedEventHandler() {
 		Handle: func(ctx context.Context, e bus.Event) {
 			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
-			getAccountByPlayerId(lapFinishedEvent.PlayerId).Add(100)
+			repository.GetAccountByPlayerId(lapFinishedEvent.PlayerId).Add(100)
 		},
 		Matcher: string(communication.LAP_FINISHED),
 	})
@@ -36,7 +37,7 @@ func startGameStartedEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			initAccounts()
+			repository.InitAccounts()
 		},
 		Matcher: string(communication.GAME_STARTED),
 	})
@@ -68,7 +69,7 @@ func startCardWithPayoutDrewEventHandler() {
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			payoutInformation := e.Data.(*gameEventsDomain.CardWithPayoutEvent)
-			getAccountByPlayerId(payoutInformation.PlayerId).Add(payoutInformation.Amount)
+			repository.GetAccountByPlayerId(payoutInformation.PlayerId).Add(payoutInformation.Amount)
 		},
 		Matcher: string(communication.CARD_WITH_PAYOUT_ACCEPTED),
 	})

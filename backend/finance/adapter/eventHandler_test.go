@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
+	"iot-monopoly/finance/adapter/repository"
 	financeDomain "iot-monopoly/finance/domain"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
 	adapter "iot-monopoly/player/adapter"
@@ -23,7 +24,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	players, _ := adapter.Init(1)
 	id := players[0].Id()
 	communication.FireEvent(communication.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: id})
-	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance())
+	assert.Equal(t, 1100, repository.GetAccountByPlayerId(id).Balance())
 }
 
 func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
@@ -61,8 +62,8 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	StartEventListeners()
 
 	players, _ := adapter.Init(1)
-	initAccounts()
+	repository.InitAccounts()
 	currentPlayer := players[0]
 	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id(), 200))
-	assert.Equal(t, 1200, getAccountByPlayerId(currentPlayer.Id()).Balance())
+	assert.Equal(t, 1200, repository.GetAccountByPlayerId(currentPlayer.Id()).Balance())
 }

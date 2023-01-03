@@ -3,54 +3,19 @@ package financeAdapter
 import (
 	"errors"
 	"fmt"
+	"iot-monopoly/finance/adapter/repository"
 	domain "iot-monopoly/finance/domain"
 )
 
-var pendingTransaction *domain.Transaction
-var defaultAccounts = []domain.Account{
-	*domain.NewAccount("Account_Player_1", "Player_1", 1_000),
-	*domain.NewAccount("Account_Player_2", "Player_2", 1_000),
-	*domain.NewAccount("Account_Player_3", "Player_3", 1_000),
-	*domain.NewAccount("Account_Player_4", "Player_4", 1_000),
-	*domain.NewAccount("Bank", "Bank", 100_000_000),
-}
-var accounts = defaultAccounts
-
-func initAccounts() {
-	accounts = []domain.Account{
-		*domain.NewAccount("Account_Player_1", "Player_1", 1_000),
-		*domain.NewAccount("Account_Player_2", "Player_2", 1_000),
-		*domain.NewAccount("Account_Player_3", "Player_3", 1_000),
-		*domain.NewAccount("Account_Player_4", "Player_4", 1_000),
-		*domain.NewAccount("Bank", "Bank", 100_000_000),
-	}
-}
-
 func GetAccountById(accountId string) (*domain.Account, error) {
 
-	for i := range accounts {
-		if accounts[i].Id() == accountId {
-			return &accounts[i], nil
-		}
-	}
-	return nil, errors.New(fmt.Sprintf("No account with id %s found", accountId))
-}
-
-func getAccountByPlayerId(playerId string) *domain.Account {
-	for i := range accounts {
-		if accounts[i].PlayerId() == playerId {
-			return &accounts[i]
-		}
-	}
-	panic(fmt.Sprintf("No account for playerId %s found", playerId))
+	return repository.FindAccountById(accountId)
 }
 
 func AddTransaction(id string, receiverId string, senderId string, amount int) *domain.Transaction {
 
 	transaction := domain.NewTransaction(id, receiverId, senderId, amount)
-
-	fmt.Printf("Adding transaction %s to pending pendingTransaction\n", transaction.Id)
-	pendingTransaction = transaction
+	repository.CreateTransaction(transaction)
 
 	return transaction
 }
@@ -60,7 +25,7 @@ func validateTransaction(transaction *domain.Transaction) error {
 	if transaction.Accepted {
 		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id))
 	}
-	balance := getAccountByPlayerId(transaction.SenderId).Balance()
+	balance := repository.GetAccountByPlayerId(transaction.SenderId).Balance()
 	if balance < transaction.Amount {
 		return errors.New(fmt.Sprintf("Player %s has insufficient balance for transaction %s. Balance: %d, amount: %d", transaction.SenderId, transaction.Id, balance, transaction.Amount))
 	}
@@ -69,6 +34,7 @@ func validateTransaction(transaction *domain.Transaction) error {
 
 func ResolveLatestTransaction(cardId string) error {
 
+	pendingTransaction := repository.GetPendingTransaction()
 	if pendingTransaction == nil {
 		fmt.Println("No transaction to resolve....")
 		return nil
@@ -85,16 +51,22 @@ func ResolveLatestTransaction(cardId string) error {
 		return err
 	}
 
-	fmt.Printf("Resolving Transaction %s: Transferring %d from senderAccount %s to recipientAccount %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
-	getAccountByPlayerId(pendingTransaction.RecipientId).Add(pendingTransaction.Amount)
-	payerAccount.Subtract(pendingTransaction.Amount)
-
+	transferFunds(pendingTransaction, payerAccount)
 	pendingTransaction.Accept()
-	pendingTransaction = nil
+	repository.DeleteTransaction(pendingTransaction)
+
 	return nil
 }
 
+func transferFunds(pendingTransaction *domain.Transaction, payerAccount *domain.Account) {
+
+	fmt.Printf("Resolving Transaction %s: Transferring %d from senderAccount %s to recipientAccount %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
+	repository.GetAccountByPlayerId(pendingTransaction.RecipientId).Add(pendingTransaction.Amount)
+	payerAccount.Subtract(pendingTransaction.Amount)
+}
+
 func GetAccounts() []*AccountDTO {
+	accounts := repository.GetAccounts()
 	dtos := make([]*AccountDTO, len(accounts))
 	for i := range accounts {
 		dtos[i] = dtoFromAccount(&accounts[i])
