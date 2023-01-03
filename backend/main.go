@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
 	"iot-monopoly/finance"
@@ -41,6 +42,8 @@ func main() {
 	financeApi.Routes(app)
 	playerApi.Routes(app)
 	propertyApi.Routes(app)
+
+	app.Get("/swagger/*", swagger.HandlerDefault) // default
 
 	err := app.Listen(":3000")
 	if err != nil {

@@ -31,9 +31,6 @@ func Init() {
 		panic(err)
 	}
 
-	// maybe register topics in here
-	b.RegisterTopics("order.created", "order.canceled")
-
 	Bus = b
 	Monoton = m
 }
