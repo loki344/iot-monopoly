@@ -1,4 +1,4 @@
-package propertyDomain
+package domain
 
 import (
 	eventingDomain "iot-monopoly/communication/domain"

@@ -1,4 +1,4 @@
-package propertyAdapter
+package adapter
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"iot-monopoly/communication"
 	financeDomain "iot-monopoly/finance/domain"
 	boardDomain "iot-monopoly/player/domain"
+	"iot-monopoly/property/adapter/repository"
 	"strconv"
 )
 
@@ -21,7 +22,7 @@ func startGameStartedEventHandler() {
 
 	communication.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			initFields()
+			repository.InitFields()
 		},
 		Matcher: string(communication.GAME_STARTED),
 	})

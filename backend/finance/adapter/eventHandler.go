@@ -1,4 +1,4 @@
-package financeAdapter
+package adapter
 
 import (
 	"context"

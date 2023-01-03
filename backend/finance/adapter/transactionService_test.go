@@ -1,11 +1,10 @@
-package financeAdapter
+package adapter
 
 import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/communication/config"
 	"iot-monopoly/finance/adapter/repository"
-	adapter "iot-monopoly/player/adapter"
 	"testing"
 )
 
@@ -13,15 +12,14 @@ func TestTransactionWithInsufficientBalance(t *testing.T) {
 	config.Init()
 	repository.InitAccounts()
 
-	players, _ := adapter.Init(2)
-	recipientId := players[0].Id()
-	senderId := players[1].Id()
+	recipientId := GetAccounts()[0].PlayerId
+	senderId := GetAccounts()[1].PlayerId
 
 	amount := 1_000
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	err := ResolveLatestTransaction(players[1].AccountId())
+	err := ResolveLatestTransaction(GetAccounts()[1].Id)
 	if err != nil {
 		assert.Error(t, err)
 	}
@@ -31,9 +29,8 @@ func TestValidTransaction(t *testing.T) {
 	config.Init()
 	repository.InitAccounts()
 
-	players, _ := adapter.Init(2)
-	recipientId := players[0].Id()
-	senderId := players[1].Id()
+	recipientId := GetAccounts()[0].PlayerId
+	senderId := GetAccounts()[1].PlayerId
 
 	amount := 1_000
 
@@ -48,15 +45,14 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 	config.Init()
 	repository.InitAccounts()
 
-	players, _ := adapter.Init(2)
-	recipientId := players[0].Id()
-	senderId := players[1].Id()
+	recipientId := GetAccounts()[0].PlayerId
+	senderId := GetAccounts()[1].PlayerId
 
 	amount := 1_000
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	ResolveLatestTransaction(players[1].AccountId())
+	ResolveLatestTransaction(GetAccounts()[1].Id)
 
 	assert.Equal(t, 0, repository.GetAccountByPlayerId(senderId).Balance())
 	assert.Equal(t, 2_000, repository.GetAccountByPlayerId(recipientId).Balance())
@@ -67,19 +63,18 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 	config.Init()
 	repository.InitAccounts()
 
-	players, _ := adapter.Init(3)
-	recipientId := players[0].Id()
-	senderId := players[1].Id()
+	recipientId := GetAccounts()[0].PlayerId
+	senderId := GetAccounts()[1].PlayerId
 
 	amount := 1_000
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	actualSenderId := players[2].AccountId()
+	actualSenderId := GetAccounts()[2].Id
 	ResolveLatestTransaction(actualSenderId)
 
 	assert.Equal(t, 1_000, repository.GetAccountByPlayerId(senderId).Balance())
-	assert.Equal(t, 0, repository.GetAccountByPlayerId(players[2].Id()).Balance())
+	assert.Equal(t, 0, repository.GetAccountByPlayerId(GetAccounts()[2].PlayerId).Balance())
 	assert.Equal(t, 2_000, repository.GetAccountByPlayerId(recipientId).Balance())
 }
 
@@ -88,16 +83,15 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 	repository.InitAccounts()
 	config.Init()
 
-	players, _ := adapter.Init(3)
-	recipientId := players[0].Id()
-	senderId := players[1].Id()
+	recipientId := GetAccounts()[0].PlayerId
+	senderId := GetAccounts()[1].PlayerId
 
 	amount := 100
 
 	AddTransaction(uuid.NewString(), recipientId, senderId, amount)
 
-	ResolveLatestTransaction(players[1].AccountId())
-	ResolveLatestTransaction(players[1].AccountId())
+	ResolveLatestTransaction(GetAccounts()[1].Id)
+	ResolveLatestTransaction(GetAccounts()[1].Id)
 
 	assert.Equal(t, 900, repository.GetAccountByPlayerId(senderId).Balance())
 	assert.Equal(t, 1100, repository.GetAccountByPlayerId(recipientId).Balance())

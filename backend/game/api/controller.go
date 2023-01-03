@@ -1,9 +1,9 @@
-package gameApi
+package api
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	adapter "iot-monopoly/game/adapter"
+	service "iot-monopoly/game/adapter"
 )
 
 func Routes(app *fiber.App) {
@@ -19,7 +19,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		adapter.StartGame(gameRequest.PlayerCount)
+		service.StartGame(gameRequest.PlayerCount)
 		return c.SendStatus(201)
 	})
 
@@ -32,7 +32,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		adapter.EndGame(gameEndRequest.Status)
+		service.EndGame(gameEndRequest.Status)
 		return c.SendStatus(200)
 	})
 }

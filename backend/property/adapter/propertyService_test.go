@@ -1,9 +1,10 @@
-package propertyAdapter
+package adapter
 
 import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/communication/config"
+	"iot-monopoly/property/adapter/repository"
 	"testing"
 )
 
@@ -11,7 +12,7 @@ func TestBuyProperty(t *testing.T) {
 
 	config.Init()
 	StartEventListeners()
-	initFields()
+	repository.InitFields()
 	playerId := uuid.NewString()
 
 	propertyId := "2"

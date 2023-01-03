@@ -1,9 +1,9 @@
-package propertyApi
+package api
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	adapter "iot-monopoly/property/adapter"
+	service "iot-monopoly/property/adapter"
 )
 
 func Routes(app *fiber.App) {
@@ -21,7 +21,7 @@ func Routes(app *fiber.App) {
 
 		propertyId := c.Params("id")
 
-		transactionId := adapter.BuyProperty(propertyId, patchRequest.OwnerId)
+		transactionId := service.BuyProperty(propertyId, patchRequest.OwnerId)
 
 		return c.Status(200).JSON(transactionId)
 	})

@@ -14,7 +14,7 @@ import (
 	gameEventsAdapter "iot-monopoly/gameEvents/adapter"
 	gameEventsApi "iot-monopoly/gameEvents/api"
 	playerAdapter "iot-monopoly/player/adapter"
-	"iot-monopoly/player/api"
+	playerApi "iot-monopoly/player/api"
 	propertyAdapter "iot-monopoly/property/adapter"
 	propertyApi "iot-monopoly/property/api"
 )

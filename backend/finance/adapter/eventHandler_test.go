@@ -1,4 +1,4 @@
-package financeAdapter
+package adapter
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"iot-monopoly/finance/adapter/repository"
 	financeDomain "iot-monopoly/finance/domain"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
-	adapter "iot-monopoly/player/adapter"
 	playerDomain "iot-monopoly/player/domain"
 	"iot-monopoly/property/domain"
 	"testing"
@@ -20,11 +19,10 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 
 	config.Init()
 	StartEventListeners()
+	repository.InitAccounts()
 
-	players, _ := adapter.Init(1)
-	id := players[0].Id()
-	communication.FireEvent(communication.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: id})
-	assert.Equal(t, 1100, repository.GetAccountByPlayerId(id).Balance())
+	communication.FireEvent(communication.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: GetAccounts()[0].PlayerId})
+	assert.Equal(t, 1100, repository.GetAccountByPlayerId(GetAccounts()[0].PlayerId).Balance())
 }
 
 func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
@@ -47,8 +45,8 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 		Matcher: string(communication.TRANSACTION_CREATED),
 	})
 
-	var tempFinancialDetails = &propertyDomain.FinancialDetails{100, 100, 100, propertyDomain.Revenue{1000, 200, 300, 400, 500, 800}}
-	property := propertyDomain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
+	var tempFinancialDetails = &domain.FinancialDetails{100, 100, 100, domain.Revenue{1000, 200, 300, 400, 500, 800}}
+	property := domain.NewPropertyField("Property green 2", uuid.NewString(), tempFinancialDetails)
 	property.OwnerId = ownerId
 
 	property.OnPlayerEnter(payerId)
@@ -61,9 +59,7 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	config.Init()
 	StartEventListeners()
 
-	players, _ := adapter.Init(1)
 	repository.InitAccounts()
-	currentPlayer := players[0]
-	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id(), 200))
-	assert.Equal(t, 1200, repository.GetAccountByPlayerId(currentPlayer.Id()).Balance())
+	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(GetAccounts()[0].PlayerId, 200))
+	assert.Equal(t, 1200, repository.GetAccountByPlayerId(GetAccounts()[0].PlayerId).Balance())
 }

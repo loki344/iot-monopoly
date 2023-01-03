@@ -1,4 +1,4 @@
-package playerAdapter
+package adapter
 
 import (
 	"context"

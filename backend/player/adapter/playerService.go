@@ -1,4 +1,4 @@
-package playerAdapter
+package adapter
 
 import (
 	"iot-monopoly/player/adapter/repository"
