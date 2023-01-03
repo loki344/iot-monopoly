@@ -12,7 +12,7 @@ func Routes(app *fiber.App) {
 
 	app.Patch("/properties/:id", func(c *fiber.Ctx) error {
 
-		patchRequest := new(PropertyPatchRequest)
+		patchRequest := new(PropertyPatchRequestDTO)
 
 		if err := c.BodyParser(patchRequest); err != nil {
 			fmt.Println("error = ", err)
@@ -28,6 +28,6 @@ func Routes(app *fiber.App) {
 
 }
 
-type PropertyPatchRequest struct {
+type PropertyPatchRequestDTO struct {
 	OwnerId string `json:"ownerId"`
 }

@@ -10,14 +10,14 @@ func Routes(app *fiber.App) {
 
 	//TODO look at how to organize routes https://github.com/gofiber/recipes/blob/2317ef83e51c79def9b5cb6adbfef5136f706f98/gorm-postgres/routes/routes.go
 
-	type PlayerResponse struct {
+	type PlayerResponseDTO struct {
 		Players         []*adapter.PlayerDTO `json:"players"`
 		CurrentPlayerId string               `json:"currentPlayerId"`
 	}
 
 	app.Get("/players", func(c *fiber.Ctx) error {
 
-		return c.Status(200).JSON(PlayerResponse{Players: adapter.GetPlayers(), CurrentPlayerId: adapter.GetCurrentPlayer().Id})
+		return c.Status(200).JSON(PlayerResponseDTO{Players: adapter.GetPlayers(), CurrentPlayerId: adapter.GetCurrentPlayer().Id})
 	})
 
 	app.Patch("/players/:id", func(c *fiber.Ctx) error {
