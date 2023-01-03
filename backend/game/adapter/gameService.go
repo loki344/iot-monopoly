@@ -1,4 +1,4 @@
-package game
+package gameAdapter
 
 import (
 	"iot-monopoly/communication"

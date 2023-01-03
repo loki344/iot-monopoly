@@ -1,4 +1,4 @@
-package gameEvents
+package gameEventsAdapter
 
 import (
 	"context"

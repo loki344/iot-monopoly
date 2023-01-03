@@ -1,4 +1,4 @@
-package finance
+package financeAdapter
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"iot-monopoly/communication/config"
 	financeDomain "iot-monopoly/finance/domain"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
-	"iot-monopoly/player"
-	boardDomain "iot-monopoly/player/domain"
+	adapter "iot-monopoly/player/adapter"
+	playerDomain "iot-monopoly/player/domain"
 	"iot-monopoly/property/domain"
 	"testing"
 )
@@ -20,9 +20,9 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	config.Init()
 	StartEventListeners()
 
-	players, _ := player.Init(1)
+	players, _ := adapter.Init(1)
 	id := players[0].Id()
-	communication.FireEvent(communication.LAP_FINISHED, &boardDomain.LapFinishedEvent{PlayerId: id})
+	communication.FireEvent(communication.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: id})
 	assert.Equal(t, 1100, getAccountByPlayerId(id).Balance())
 }
 
@@ -60,7 +60,7 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	config.Init()
 	StartEventListeners()
 
-	players, _ := player.Init(1)
+	players, _ := adapter.Init(1)
 	initAccounts()
 	currentPlayer := players[0]
 	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(currentPlayer.Id(), 200))

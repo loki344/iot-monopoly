@@ -1,4 +1,4 @@
-package finance
+package financeAdapter
 
 import (
 	"errors"

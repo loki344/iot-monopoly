@@ -1,9 +1,8 @@
-package gameEvents
+package gameEventsAdapter
 
 import (
 	"fmt"
 	domain "iot-monopoly/gameEvents/domain"
-	"iot-monopoly/player"
 )
 
 var eventFields []*domain.EventField
@@ -20,8 +19,7 @@ var defaultEventFields = []*domain.EventField{
 	}),
 	domain.NewEventField("Gehe ins Gefaengnis", "13", func(playerId string) {
 		fmt.Println("Player has to go to prison")
-		// TODO this field index for prison should not be magic
-		player.MovePlayer(playerId, 4)
+		// TODO implement
 	}),
 	domain.NewEventField("Ereignisfeld 4", "15", func(playerId string) {
 		DrawCard(playerId)

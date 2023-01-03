@@ -3,7 +3,7 @@ package playerApi
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"iot-monopoly/player"
+	adapter "iot-monopoly/player/adapter"
 )
 
 func Routes(app *fiber.App) {
@@ -11,18 +11,18 @@ func Routes(app *fiber.App) {
 	//TODO look at how to organize routes https://github.com/gofiber/recipes/blob/2317ef83e51c79def9b5cb6adbfef5136f706f98/gorm-postgres/routes/routes.go
 
 	type PlayerResponse struct {
-		Players         []*player.PlayerDTO `json:"players"`
-		CurrentPlayerId string              `json:"currentPlayerId"`
+		Players         []*adapter.PlayerDTO `json:"players"`
+		CurrentPlayerId string               `json:"currentPlayerId"`
 	}
 
 	app.Get("/players", func(c *fiber.Ctx) error {
 
-		return c.Status(200).JSON(PlayerResponse{Players: player.GetPlayers(), CurrentPlayerId: player.GetCurrentPlayer().Id})
+		return c.Status(200).JSON(PlayerResponse{Players: adapter.GetPlayers(), CurrentPlayerId: adapter.GetCurrentPlayer().Id})
 	})
 
 	app.Patch("/players/:id", func(c *fiber.Ctx) error {
 
-		patchedPlayer := new(player.PlayerDTO)
+		patchedPlayer := new(adapter.PlayerDTO)
 
 		if err := c.BodyParser(patchedPlayer); err != nil {
 			fmt.Println("error = ", err)
@@ -30,9 +30,9 @@ func Routes(app *fiber.App) {
 		}
 
 		playerId := c.Params("id")
-		player.MovePlayer(playerId, patchedPlayer.Position)
+		adapter.MovePlayer(playerId, patchedPlayer.Position)
 
-		return c.Status(201).JSON(player.GetPlayer(playerId))
+		return c.Status(201).JSON(adapter.GetPlayer(playerId))
 	})
 
 }

@@ -3,19 +3,19 @@ package financeApi
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"iot-monopoly/finance"
+	service "iot-monopoly/finance/adapter"
 )
 
 func Routes(app *fiber.App) {
 
 	app.Get("/accounts", func(c *fiber.Ctx) error {
 
-		return c.Status(200).JSON(finance.GetAccounts())
+		return c.Status(200).JSON(service.GetAccounts())
 	})
 
 	app.Get("/accounts/:id", func(c *fiber.Ctx) error {
 
-		account, err := finance.GetAccountById(c.Params("id"))
+		account, err := service.GetAccountById(c.Params("id"))
 
 		if err != nil {
 			return c.Status(404).JSON(err)
@@ -34,7 +34,7 @@ func Routes(app *fiber.App) {
 		}
 
 		if transactionToPatch.Accepted && transactionToPatch.CardId != "" {
-			err := finance.ResolveLatestTransaction(transactionToPatch.CardId)
+			err := service.ResolveLatestTransaction(transactionToPatch.CardId)
 			if err != nil {
 				return err
 			}

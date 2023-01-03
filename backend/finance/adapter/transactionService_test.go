@@ -1,17 +1,17 @@
-package finance
+package financeAdapter
 
 import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/communication/config"
-	"iot-monopoly/player"
+	adapter "iot-monopoly/player/adapter"
 	"testing"
 )
 
 func TestTransactionWithInsufficientBalance(t *testing.T) {
 	config.Init()
 	initAccounts()
-	players, _ := player.Init(2)
+	players, _ := adapter.Init(2)
 	recipientId := players[0].Id()
 	senderId := players[1].Id()
 
@@ -29,7 +29,7 @@ func TestValidTransaction(t *testing.T) {
 	config.Init()
 	initAccounts()
 
-	players, _ := player.Init(2)
+	players, _ := adapter.Init(2)
 	recipientId := players[0].Id()
 	senderId := players[1].Id()
 
@@ -46,7 +46,7 @@ func TestResolveTransactionChangesBalance(t *testing.T) {
 	config.Init()
 	initAccounts()
 
-	players, _ := player.Init(2)
+	players, _ := adapter.Init(2)
 	recipientId := players[0].Id()
 	senderId := players[1].Id()
 
@@ -65,7 +65,7 @@ func TestTransactionWithChangedSenderId(t *testing.T) {
 	initAccounts()
 	config.Init()
 
-	players, _ := player.Init(3)
+	players, _ := adapter.Init(3)
 	recipientId := players[0].Id()
 	senderId := players[1].Id()
 
@@ -86,7 +86,7 @@ func TestTransactionCanOnlyBeResolvedOnce(t *testing.T) {
 	initAccounts()
 	config.Init()
 
-	players, _ := player.Init(3)
+	players, _ := adapter.Init(3)
 	recipientId := players[0].Id()
 	senderId := players[1].Id()
 

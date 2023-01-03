@@ -8,23 +8,23 @@ import (
 	"github.com/gofiber/swagger"
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
-	"iot-monopoly/finance"
+	financeAdapter "iot-monopoly/finance/adapter"
 	financeApi "iot-monopoly/finance/api"
 	gameApi "iot-monopoly/game/api"
-	"iot-monopoly/gameEvents"
+	gameEventsAdapter "iot-monopoly/gameEvents/adapter"
 	gameEventsApi "iot-monopoly/gameEvents/api"
-	"iot-monopoly/player"
+	playerAdapter "iot-monopoly/player/adapter"
 	"iot-monopoly/player/api"
-	"iot-monopoly/property"
+	propertyAdapter "iot-monopoly/property/adapter"
 	propertyApi "iot-monopoly/property/api"
 )
 
 func Init() {
 	config.Init()
-	player.StartEventListeners()
-	finance.StartEventListeners()
-	property.StartEventListeners()
-	gameEvents.StartEventListeners()
+	playerAdapter.StartEventListeners()
+	financeAdapter.StartEventListeners()
+	propertyAdapter.StartEventListeners()
+	gameEventsAdapter.StartEventListeners()
 }
 
 //start with CompileDaemon -command="./iot-monopoly"

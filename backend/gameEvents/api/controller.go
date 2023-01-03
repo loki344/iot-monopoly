@@ -3,7 +3,7 @@ package gameEventsApi
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"iot-monopoly/gameEvents"
+	adapter "iot-monopoly/gameEvents/adapter"
 )
 
 func Routes(app *fiber.App) {
@@ -24,7 +24,7 @@ func Routes(app *fiber.App) {
 			return c.SendStatus(400)
 		}
 
-		gameEvents.ConfirmCard()
+		adapter.ConfirmCard()
 
 		return c.SendStatus(200)
 	})
