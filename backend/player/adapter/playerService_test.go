@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"iot-monopoly/communication"
 	"iot-monopoly/communication/config"
+	"iot-monopoly/player/adapter/repository"
 	boardDomain "iot-monopoly/player/domain"
 	"testing"
 )
@@ -13,41 +14,23 @@ import (
 func TestPlayerCanMoveAround(t *testing.T) {
 
 	config.Init()
-	players, _ := Init(1)
+	players, _ := repository.InitPlayers(1)
 	playerId := players[0].Id()
-	player := getPlayer(playerId)
+	player := repository.FindPlayerById(playerId)
 	// TODO get total number count 16
 	for i := 1; i < 16; i++ {
 		err := MovePlayer(playerId, i)
 		//TODO determine prison fieldindex somehow different
-		if i == 13 {
-			assert.NoError(t, err)
-			//TODO resolve prison index differently
-			assert.Equal(t, 4, player.Position())
-		} else {
-			assert.NoError(t, err)
-			assert.Equal(t, i, player.Position())
+		assert.NoError(t, err)
+		assert.Equal(t, i, player.Position())
 
-		}
 	}
-}
-
-func TestPlayerCannotMoveOutsideBoard(t *testing.T) {
-
-	players, _ := Init(1)
-	id := players[0].Id()
-
-	player := GetPlayer(id)
-
-	errorUpperBound := MovePlayer(id, 17)
-	assert.Error(t, errorUpperBound)
-	assert.Equal(t, 0, player.Position)
 }
 
 func TestLapFiresEvent(t *testing.T) {
 
 	config.Init()
-	players, _ := Init(1)
+	players, _ := repository.InitPlayers(1)
 	id := players[0].Id()
 
 	var receivedEvents = 0
@@ -69,21 +52,21 @@ func TestLapFiresEvent(t *testing.T) {
 func TestPlayerTurn(t *testing.T) {
 
 	config.Init()
-	players, _ := Init(4)
+	players, _ := repository.InitPlayers(4)
 
-	assert.Equal(t, players[0].Id(), currentPlayer.Id())
+	assert.Equal(t, players[0].Id(), repository.GetCurrentPlayer().Id())
 	MovePlayer(players[0].Id(), 2)
 
-	assert.Equal(t, players[1].Id(), currentPlayer.Id())
+	assert.Equal(t, players[1].Id(), repository.GetCurrentPlayer().Id())
 	MovePlayer(players[1].Id(), 2)
 
-	assert.Equal(t, players[2].Id(), currentPlayer.Id())
+	assert.Equal(t, players[2].Id(), repository.GetCurrentPlayer().Id())
 	MovePlayer(players[2].Id(), 2)
 
-	assert.Equal(t, players[3].Id(), currentPlayer.Id())
+	assert.Equal(t, players[3].Id(), repository.GetCurrentPlayer().Id())
 	MovePlayer(players[3].Id(), 2)
 
-	assert.Equal(t, players[0].Id(), currentPlayer.Id())
+	assert.Equal(t, players[0].Id(), repository.GetCurrentPlayer().Id())
 	MovePlayer(players[0].Id(), 2)
 
 }

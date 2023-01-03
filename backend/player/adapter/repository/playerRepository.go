@@ -1,4 +1,4 @@
-package playerAdapter
+package repository
 
 import (
 	"errors"
@@ -23,7 +23,7 @@ var defaultPlayers = []domain.Player{
 var currentPlayer *domain.Player
 var currentPlayerIndex = 0
 
-func Init(playerCount int) ([]domain.Player, error) {
+func InitPlayers(playerCount int) ([]domain.Player, error) {
 	players = nil
 
 	if playerCount < 1 || playerCount > 4 {
@@ -42,21 +42,11 @@ func Init(playerCount int) ([]domain.Player, error) {
 	return players, nil
 }
 
-func MovePlayer(playerId string, fieldId int) error {
-
-	player := getPlayer(playerId)
-	player.SetPosition(fieldId)
-
-	if currentPlayerIndex == len(players)-1 {
-		currentPlayerIndex = 0
-	} else {
-		currentPlayerIndex++
-	}
-	currentPlayer = &players[currentPlayerIndex]
-	return nil
+func GetPlayers() []domain.Player {
+	return players
 }
 
-func getPlayer(playerId string) *domain.Player {
+func FindPlayerById(playerId string) *domain.Player {
 
 	for i := range players {
 		if players[i].Id() == playerId {
@@ -67,29 +57,15 @@ func getPlayer(playerId string) *domain.Player {
 	panic(fmt.Sprintf("Player with id %s not found", playerId))
 }
 
-func GetPlayer(playerId string) *PlayerDTO {
-
-	return dtoFromPlayer(getPlayer(playerId))
+func GetCurrentPlayer() *domain.Player {
+	return currentPlayer
 }
 
-func GetCurrentPlayer() *PlayerDTO {
-	return dtoFromPlayer(currentPlayer)
+func GetCurrentPlayerIndex() int {
+	return currentPlayerIndex
 }
 
-func GetPlayers() []*PlayerDTO {
-	dtos := make([]*PlayerDTO, len(players))
-	for i := range players {
-		dtos[i] = dtoFromPlayer(&players[i])
-	}
-	return dtos
-}
-
-type PlayerDTO struct {
-	Id        string `json:"id"`
-	Position  int    `json:"position"`
-	AccountId string `json:"accountId"`
-}
-
-func dtoFromPlayer(player *domain.Player) *PlayerDTO {
-	return &PlayerDTO{player.Id(), player.Position(), player.AccountId()}
+func SaveCurrentPlayerIndex(index int) {
+	currentPlayerIndex = index
+	currentPlayer = &players[index]
 }
