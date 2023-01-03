@@ -60,6 +60,6 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	StartEventListeners()
 
 	repository.InitAccounts()
-	eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewGameEventWithPayout(GetAccounts()[0].PlayerId, 200))
+	eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewGameEventWithPayoutAcceptedEvent(GetAccounts()[0].PlayerId, 200))
 	assert.Equal(t, 1200, repository.GetAccountByPlayerId(GetAccounts()[0].PlayerId).Balance())
 }

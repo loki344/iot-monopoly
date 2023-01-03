@@ -43,7 +43,7 @@ func startPlayerMovedEventHandler() {
 				//TODO implement
 				break
 			case domain.PAY_TAX:
-				eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, domain.NewGameEventWithFee("Bank", playerMovedEvent.PlayerId, 200))
+				eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, domain.NewGameEventWithFeeAcceptedEvent("Bank", playerMovedEvent.PlayerId, 200))
 				break
 
 			}

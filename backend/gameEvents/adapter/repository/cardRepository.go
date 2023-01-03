@@ -8,10 +8,10 @@ import (
 //make more events
 var cardStack = domain.CardStack{Cards: []domain.Card{
 	*domain.NewCard("You inherited", "You're mentioned in the testament of your aunt. You receive 100 $.", func(playerId string) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, domain.NewGameEventWithPayout(playerId, 100))
+		eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, domain.NewGameEventWithPayoutAcceptedEvent(playerId, 100))
 	}),
 	*domain.NewCard("Tax bill", "You received a bill for the federal taxes of 200 $", func(playerId string) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, domain.NewGameEventWithFee("Bank", playerId, 200))
+		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, domain.NewGameEventWithFeeAcceptedEvent("Bank", playerId, 200))
 	}),
 }}
 

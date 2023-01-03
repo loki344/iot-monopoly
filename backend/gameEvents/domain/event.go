@@ -2,27 +2,27 @@ package gameEventsDomain
 
 import eventingDomain "iot-monopoly/eventing/domain"
 
-type GameEventWithPayout struct {
+type GameEventWithPayoutAcceptedEvent struct {
 	eventingDomain.BaseEvent
 	PlayerId string
 	Amount   int
 }
 
-func NewGameEventWithPayout(playerId string, amount int) *GameEventWithPayout {
+func NewGameEventWithPayoutAcceptedEvent(playerId string, amount int) *GameEventWithPayoutAcceptedEvent {
 
-	return &GameEventWithPayout{BaseEvent: eventingDomain.EventType(&GameEventWithPayout{}), PlayerId: playerId, Amount: amount}
+	return &GameEventWithPayoutAcceptedEvent{BaseEvent: eventingDomain.EventType(&GameEventWithPayoutAcceptedEvent{}), PlayerId: playerId, Amount: amount}
 }
 
-type GameEventWithFee struct {
+type GameEventWithFeeAcceptedEvent struct {
 	eventingDomain.BaseEvent
 	PlayerId    string
 	RecipientId string
 	Fee         int
 }
 
-func NewGameEventWithFee(recipientId string, playerId string, fee int) *GameEventWithFee {
+func NewGameEventWithFeeAcceptedEvent(recipientId string, playerId string, fee int) *GameEventWithFeeAcceptedEvent {
 
-	return &GameEventWithFee{BaseEvent: eventingDomain.EventType(&GameEventWithFee{}), RecipientId: recipientId, PlayerId: playerId, Fee: fee}
+	return &GameEventWithFeeAcceptedEvent{BaseEvent: eventingDomain.EventType(&GameEventWithFeeAcceptedEvent{}), RecipientId: recipientId, PlayerId: playerId, Fee: fee}
 }
 
 type CardDrewEvent struct {

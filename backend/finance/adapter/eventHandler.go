@@ -18,8 +18,8 @@ func StartEventListeners() {
 	startPlayerOnOwnedFieldEventHandler()
 	startPropertyTransferCreatedEventHandler()
 	startGameStartedEventHandler()
-	startCardWithPayoutDrewEventHandler()
-	startCardWithFeeEventHandler()
+	startGameEventWithPayoutAcceptedHandler()
+	startGameEventWithFeeAcceptedHandler()
 }
 
 func startLapFinishedEventHandler() {
@@ -64,22 +64,22 @@ func startPropertyTransferCreatedEventHandler() {
 	})
 }
 
-func startCardWithPayoutDrewEventHandler() {
+func startGameEventWithPayoutAcceptedHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			payoutInformation := e.Data.(*gameEventsDomain.GameEventWithPayout)
+			payoutInformation := e.Data.(*gameEventsDomain.GameEventWithPayoutAcceptedEvent)
 			repository.GetAccountByPlayerId(payoutInformation.PlayerId).Add(payoutInformation.Amount)
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED),
 	})
 
 }
-func startCardWithFeeEventHandler() {
+func startGameEventWithFeeAcceptedHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionInformation := e.Data.(*gameEventsDomain.GameEventWithFee)
+			transactionInformation := e.Data.(*gameEventsDomain.GameEventWithFeeAcceptedEvent)
 			AddTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PlayerId, transactionInformation.Fee)
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_FEE_ACCEPTED),
