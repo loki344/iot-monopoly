@@ -1,6 +1,6 @@
 package gameDomain
 
-import eventingDomain "iot-monopoly/communication/domain"
+import eventingDomain "iot-monopoly/eventing/domain"
 
 type GameStartedEvent struct {
 	eventingDomain.BaseEvent

@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
-	"iot-monopoly/communication"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	financeAdapter "iot-monopoly/finance/adapter"
 	financeApi "iot-monopoly/finance/api"
 	gameApi "iot-monopoly/game/api"
@@ -36,7 +36,7 @@ func main() {
 	app.Use(cors.New())
 	app.Use(logger.New())
 
-	communication.StartWebsocket(app)
+	eventing.StartWebsocket(app)
 	gameApi.Routes(app)
 	gameEventsApi.Routes(app)
 	financeApi.Routes(app)

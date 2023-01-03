@@ -1,7 +1,7 @@
 package domain
 
 import (
-	eventingDomain "iot-monopoly/communication/domain"
+	eventingDomain "iot-monopoly/eventing/domain"
 )
 
 type PlayerOnUnownedFieldEvent struct {

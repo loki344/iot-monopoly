@@ -3,7 +3,7 @@ package adapter
 import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing/config"
 	"iot-monopoly/property/adapter/repository"
 	"testing"
 )

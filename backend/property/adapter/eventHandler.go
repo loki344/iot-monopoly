@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/mustafaturan/bus/v3"
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 	financeDomain "iot-monopoly/finance/domain"
 	boardDomain "iot-monopoly/player/domain"
 	"iot-monopoly/property/adapter/repository"
@@ -20,29 +20,29 @@ func StartEventListeners() {
 
 func startGameStartedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			repository.InitFields()
 		},
-		Matcher: string(communication.GAME_STARTED),
+		Matcher: string(eventing.GAME_STARTED),
 	})
 }
 
 func startTransactionResolvedHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionResolved := e.Data.(financeDomain.TransactionResolvedEvent)
 			fmt.Printf("Transaction %s is resolved, check for pending actions to trigger\n", transactionResolved.TransactionId)
 			transferOwnerShip(transactionResolved.TransactionId)
 		},
-		Matcher: string(communication.TRANSACTION_RESOLVED),
+		Matcher: string(eventing.TRANSACTION_RESOLVED),
 	})
 }
 
 func startPlayerMovedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			playerMovedEvent := e.Data.(*boardDomain.PlayerMovedEvent)
 
@@ -53,6 +53,6 @@ func startPlayerMovedEventHandler() {
 
 			}
 		},
-		Matcher: string(communication.PLAYER_MOVED),
+		Matcher: string(eventing.PLAYER_MOVED),
 	})
 }

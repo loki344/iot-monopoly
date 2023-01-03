@@ -1,28 +1,22 @@
 package gameEventsDomain
 
 import (
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 	"math/rand"
 	"time"
 )
 
-//make more events
-var CardStack = []Card{
-	*NewCard("You inherited", "You're mentioned in the testament of your aunt. You receive 100 $.", func(playerId string) {
-		communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, NewCardWithPayoutDrewEvent(playerId, 100))
-	}),
-	*NewCard("Tax bill", "You received a bill for the federal taxes of 200 $", func(playerId string) {
-		communication.FireEvent(communication.CARD_WITH_FEE_ACCEPTED, NewCardWithFeeDrewEvent("Bank", playerId, 200))
-	}),
+type CardStack struct {
+	Cards []Card
 }
 
-func GetNextCard(playerId string) *Card {
+func (cardStack CardStack) GetNextCard(playerId string) *Card {
 
 	rand.Seed(time.Now().UnixNano())
-	card := &CardStack[rand.Intn(len(CardStack))]
+	card := &cardStack.Cards[rand.Intn(len(cardStack.Cards))]
 	card.playerId = playerId
 
-	communication.FireEvent(communication.CARD_DREW, NewCardDrewEvent(card.title, card.text))
+	eventing.FireEvent(eventing.CARD_DREW, NewCardDrewEvent(card.title, card.text))
 
 	return card
 }

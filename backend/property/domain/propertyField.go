@@ -2,7 +2,7 @@ package domain
 
 import (
 	"fmt"
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 )
 
 type PropertyField struct {
@@ -64,9 +64,9 @@ func (propertyField PropertyField) OnPlayerEnter(playerId string) {
 
 	if propertyField.OwnerId == "" {
 		fmt.Println("property has no owner, is buyable")
-		communication.FireEvent(communication.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, propertyField))
+		eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, propertyField))
 	} else if propertyField.OwnerId != playerId {
 		fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", propertyField.OwnerId, playerId, propertyField.GetPropertyFee())
-		communication.FireEvent(communication.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(playerId, propertyField))
+		eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(playerId, propertyField))
 	}
 }

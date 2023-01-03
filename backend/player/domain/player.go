@@ -3,7 +3,7 @@ package domain
 import (
 	"errors"
 	"fmt"
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 )
 
 type Player struct {
@@ -43,10 +43,10 @@ func (p *Player) SetPosition(position int) {
 
 	if p.Position() > position && position < 5 {
 		fmt.Println("Player completed a lap, creating lap finished")
-		communication.FireEvent(communication.LAP_FINISHED, NewLapFinishedEvent(p.id))
+		eventing.FireEvent(eventing.LAP_FINISHED, NewLapFinishedEvent(p.id))
 	}
 
 	fmt.Printf("MovePlayer player %s to fieldId %d\n", p.id, position)
 	p.position = position
-	communication.FireEvent(communication.PLAYER_MOVED, NewPlayerMovedEvent(p.id, position))
+	eventing.FireEvent(eventing.PLAYER_MOVED, NewPlayerMovedEvent(p.id, position))
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 	"iot-monopoly/finance/adapter/repository"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
 	boardDomain "iot-monopoly/player/domain"
@@ -24,65 +24,65 @@ func StartEventListeners() {
 
 func startLapFinishedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			fmt.Println("Add money to balance due to lap finished")
 			repository.GetAccountByPlayerId(lapFinishedEvent.PlayerId).Add(100)
 		},
-		Matcher: string(communication.LAP_FINISHED),
+		Matcher: string(eventing.LAP_FINISHED),
 	})
 }
 func startGameStartedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			repository.InitAccounts()
 		},
-		Matcher: string(communication.GAME_STARTED),
+		Matcher: string(eventing.GAME_STARTED),
 	})
 }
 func startPlayerOnOwnedFieldEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionInformation := e.Data.(*propertyDomain.PlayerOnOwnedFieldEvent)
 			AddTransaction(uuid.NewString(), transactionInformation.OwnerId, transactionInformation.PlayerId, transactionInformation.Fee)
 		},
-		Matcher: string(communication.PLAYER_ON_OWNED_FIELD),
+		Matcher: string(eventing.PLAYER_ON_OWNED_FIELD),
 	})
 }
 
 func startPropertyTransferCreatedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionInformation := e.Data.(*propertyDomain.PropertyTransferCreatedEvent)
 			AddTransaction(transactionInformation.TransactionId, transactionInformation.ReceiverId, transactionInformation.SenderId, transactionInformation.Price)
 		},
-		Matcher: string(communication.PROPERTY_TRANSFER_CREATED),
+		Matcher: string(eventing.PROPERTY_TRANSFER_CREATED),
 	})
 }
 
 func startCardWithPayoutDrewEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			payoutInformation := e.Data.(*gameEventsDomain.CardWithPayoutEvent)
+			payoutInformation := e.Data.(*gameEventsDomain.GameEventWithPayout)
 			repository.GetAccountByPlayerId(payoutInformation.PlayerId).Add(payoutInformation.Amount)
 		},
-		Matcher: string(communication.CARD_WITH_PAYOUT_ACCEPTED),
+		Matcher: string(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED),
 	})
 
 }
 func startCardWithFeeEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionInformation := e.Data.(*gameEventsDomain.CardWithFeeEvent)
+			transactionInformation := e.Data.(*gameEventsDomain.GameEventWithFee)
 			AddTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PlayerId, transactionInformation.Fee)
 		},
-		Matcher: string(communication.CARD_WITH_FEE_ACCEPTED),
+		Matcher: string(eventing.GAME_EVENT_WITH_FEE_ACCEPTED),
 	})
 
 }

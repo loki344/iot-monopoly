@@ -1,4 +1,4 @@
-package communication
+package eventing
 
 import (
 	"context"

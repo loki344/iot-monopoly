@@ -5,8 +5,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/communication"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	"iot-monopoly/finance/adapter/repository"
 	financeDomain "iot-monopoly/finance/domain"
 	gameEventsDomain "iot-monopoly/gameEvents/domain"
@@ -21,7 +21,7 @@ func TestPlayerReceivesMoneyWhenLapFinished(t *testing.T) {
 	StartEventListeners()
 	repository.InitAccounts()
 
-	communication.FireEvent(communication.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: GetAccounts()[0].PlayerId})
+	eventing.FireEvent(eventing.LAP_FINISHED, &playerDomain.LapFinishedEvent{PlayerId: GetAccounts()[0].PlayerId})
 	assert.Equal(t, 1100, repository.GetAccountByPlayerId(GetAccounts()[0].PlayerId).Balance())
 }
 
@@ -34,7 +34,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 
 	var receivedEvents = 0
 	const price = 1000
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transaction := e.Data.(financeDomain.TransactionCreatedEvent)
 			assert.Equal(t, payerId, transaction.Transaction.SenderId)
@@ -42,7 +42,7 @@ func TestPlayerOnOwnedFieldFiresTransactionRequestEvent(t *testing.T) {
 			assert.Equal(t, price, transaction.Transaction.Amount)
 			receivedEvents++
 		},
-		Matcher: string(communication.TRANSACTION_CREATED),
+		Matcher: string(eventing.TRANSACTION_CREATED),
 	})
 
 	var tempFinancialDetails = &domain.FinancialDetails{100, 100, 100, domain.Revenue{1000, 200, 300, 400, 500, 800}}
@@ -60,6 +60,6 @@ func TestPlayerReceivesMoneyWhenCardWithPayoutDrewEventFired(t *testing.T) {
 	StartEventListeners()
 
 	repository.InitAccounts()
-	communication.FireEvent(communication.CARD_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewCardWithPayoutDrewEvent(GetAccounts()[0].PlayerId, 200))
+	eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, gameEventsDomain.NewGameEventWithPayout(GetAccounts()[0].PlayerId, 200))
 	assert.Equal(t, 1200, repository.GetAccountByPlayerId(GetAccounts()[0].PlayerId).Balance())
 }

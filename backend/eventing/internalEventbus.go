@@ -1,29 +1,29 @@
-package communication
+package eventing
 
 import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing/config"
 )
 
 type ChannelName string
 
 const (
-	GAME_STARTED              ChannelName = "gameStarted"
-	GAME_ENDED                ChannelName = "gameEnded"
-	PLAYER_MOVED              ChannelName = "playerMoved"
-	PLAYER_ON_UNOWNED_FIELD   ChannelName = "playerOnUnownedField"
-	PLAYER_ON_OWNED_FIELD     ChannelName = "playerOnOwnedField"
-	PROPERTY_TRANSFER_CREATED ChannelName = "propertyTransferCreated"
-	TRANSACTION_CREATED       ChannelName = "transactionCreated"
-	TRANSACTION_RESOLVED      ChannelName = "transactionResolved"
-	LAP_FINISHED              ChannelName = "lapFinished"
-	CARD_WITH_PAYOUT_ACCEPTED ChannelName = "cardWithPayoutAccepted"
-	CARD_WITH_FEE_ACCEPTED    ChannelName = "cardWithFeeAccepted"
-	CARD_DREW                 ChannelName = "cardDrew"
-	PLAYER_BANKRUPT           ChannelName = "playerMoved"
+	GAME_STARTED                    ChannelName = "gameStarted"
+	GAME_ENDED                      ChannelName = "gameEnded"
+	PLAYER_MOVED                    ChannelName = "playerMoved"
+	PLAYER_ON_UNOWNED_FIELD         ChannelName = "playerOnUnownedField"
+	PLAYER_ON_OWNED_FIELD           ChannelName = "playerOnOwnedField"
+	PROPERTY_TRANSFER_CREATED       ChannelName = "propertyTransferCreated"
+	TRANSACTION_CREATED             ChannelName = "transactionCreated"
+	TRANSACTION_RESOLVED            ChannelName = "transactionResolved"
+	LAP_FINISHED                    ChannelName = "lapFinished"
+	GAME_EVENT_WITH_PAYOUT_ACCEPTED ChannelName = "gameEventWithPayoutAccepted"
+	GAME_EVENT_WITH_FEE_ACCEPTED    ChannelName = "gameEventWithFeeAccepted"
+	CARD_DREW                       ChannelName = "cardDrew"
+	PLAYER_BANKRUPT                 ChannelName = "playerMoved"
 )
 
 func RegisterEventHandler(handler bus.Handler) string {

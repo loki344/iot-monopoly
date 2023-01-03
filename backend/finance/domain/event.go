@@ -1,6 +1,6 @@
 package financeDomain
 
-import eventingDomain "iot-monopoly/communication/domain"
+import eventingDomain "iot-monopoly/eventing/domain"
 
 type TransactionCreatedEvent struct {
 	eventingDomain.BaseEvent

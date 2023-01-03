@@ -1,7 +1,7 @@
 package financeDomain
 
 import (
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
 )
 
 type Transaction struct {
@@ -15,13 +15,13 @@ type Transaction struct {
 func (t Transaction) Accept() {
 
 	t.Accepted = true
-	communication.FireEvent(communication.TRANSACTION_RESOLVED, NewTransactionResolvedEvent(t.Id))
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, NewTransactionResolvedEvent(t.Id))
 }
 
 func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
 
 	transaction := &Transaction{Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount}
-	communication.FireEvent(communication.TRANSACTION_CREATED, NewTransactionCreatedEvent(transaction))
+	eventing.FireEvent(eventing.TRANSACTION_CREATED, NewTransactionCreatedEvent(transaction))
 
 	return transaction
 }

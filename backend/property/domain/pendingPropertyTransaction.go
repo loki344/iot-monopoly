@@ -1,6 +1,6 @@
 package domain
 
-import "iot-monopoly/communication"
+import "iot-monopoly/eventing"
 
 type PendingPropertyTransaction struct {
 	id         string
@@ -21,6 +21,6 @@ func (p PendingPropertyTransaction) BuyerId() string {
 }
 
 func NewPendingPropertyTransaction(transactionId string, propertyId string, buyerId string, price int) *PendingPropertyTransaction {
-	communication.FireEvent(communication.PROPERTY_TRANSFER_CREATED, NewPropertyTransferCreatedEvent(transactionId, "Bank", buyerId, price))
+	eventing.FireEvent(eventing.PROPERTY_TRANSFER_CREATED, NewPropertyTransferCreatedEvent(transactionId, "Bank", buyerId, price))
 	return &PendingPropertyTransaction{id: transactionId, propertyId: propertyId, buyerId: buyerId}
 }

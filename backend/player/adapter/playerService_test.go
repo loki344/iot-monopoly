@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/communication"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	"iot-monopoly/player/adapter/repository"
 	boardDomain "iot-monopoly/player/domain"
 	"testing"
@@ -34,13 +34,13 @@ func TestLapFiresEvent(t *testing.T) {
 	id := players[0].Id()
 
 	var receivedEvents = 0
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			lapFinishedEvent := e.Data.(*boardDomain.LapFinishedEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		Matcher: string(communication.LAP_FINISHED),
+		Matcher: string(eventing.LAP_FINISHED),
 	})
 
 	MovePlayer(id, 15)

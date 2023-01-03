@@ -3,7 +3,9 @@ package gameEventsAdapter
 import (
 	"context"
 	"github.com/mustafaturan/bus/v3"
-	"iot-monopoly/communication"
+	"iot-monopoly/eventing"
+	"iot-monopoly/gameEvents/adapter/repository"
+	domain "iot-monopoly/gameEvents/domain"
 	playerDomain "iot-monopoly/player/domain"
 	"strconv"
 )
@@ -16,26 +18,36 @@ func StartEventListeners() {
 
 func startGameStartedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			initFields()
+			repository.InitFields()
 		},
-		Matcher: string(communication.GAME_STARTED),
+		Matcher: string(eventing.GAME_STARTED),
 	})
 }
 
 func startPlayerMovedEventHandler() {
 
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			playerMovedEvent := e.Data.(*playerDomain.PlayerMovedEvent)
 
-			eventField := GetFieldById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
+			eventField := repository.GetFieldById(strconv.FormatInt(int64(playerMovedEvent.FieldIndex), 10))
 
-			if eventField != nil {
-				eventField.OnPlayerEnter(playerMovedEvent.PlayerId)
+			switch eventField.Type() {
+
+			case domain.DRAW_CARD:
+				DrawCard(playerMovedEvent.PlayerId)
+				break
+			case domain.GOTO_PRISON:
+				//TODO implement
+				break
+			case domain.PAY_TAX:
+				eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, domain.NewGameEventWithFee("Bank", playerMovedEvent.PlayerId, 200))
+				break
+
 			}
 		},
-		Matcher: string(communication.PLAYER_MOVED),
+		Matcher: string(eventing.PLAYER_MOVED),
 	})
 }

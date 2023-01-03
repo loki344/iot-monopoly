@@ -5,8 +5,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
 	"github.com/stretchr/testify/assert"
-	"iot-monopoly/communication"
-	"iot-monopoly/communication/config"
+	"iot-monopoly/eventing"
+	"iot-monopoly/eventing/config"
 	"testing"
 )
 
@@ -16,13 +16,13 @@ func TestPlayerOnOwnerlessFieldFiresBuyQuestionEvent(t *testing.T) {
 	id := uuid.New().String()
 
 	var receivedEvents = 0
-	communication.RegisterEventHandler(bus.Handler{
+	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			lapFinishedEvent := e.Data.(*PlayerOnUnownedFieldEvent)
 			assert.Equal(t, id, lapFinishedEvent.PlayerId)
 			receivedEvents++
 		},
-		Matcher: string(communication.PLAYER_ON_UNOWNED_FIELD),
+		Matcher: string(eventing.PLAYER_ON_UNOWNED_FIELD),
 	})
 
 	var tempFinancialDetails = &FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}

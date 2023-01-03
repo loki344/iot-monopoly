@@ -1,13 +1,25 @@
 package gameEventsDomain
 
 type EventField struct {
-	name  string
-	id    string
-	event func(playerId string)
+	name      string
+	id        string
+	eventType EventType
 }
 
-func NewEventField(name string, id string, event func(playerId string)) *EventField {
-	return &EventField{name: name, id: id, event: event}
+type EventType string
+
+const (
+	DRAW_CARD   = "DRAW_CARD"
+	GOTO_PRISON = "GOTO_PRISON"
+	PAY_TAX     = "PAY_TAX"
+)
+
+func NewEventField(name string, id string, eventType EventType) *EventField {
+	return &EventField{name: name, id: id, eventType: eventType}
+}
+
+func (eventField EventField) Type() EventType {
+	return eventField.eventType
 }
 
 func (eventField EventField) Name() string {
@@ -16,9 +28,4 @@ func (eventField EventField) Name() string {
 
 func (eventField EventField) Id() string {
 	return eventField.id
-}
-
-func (eventField EventField) OnPlayerEnter(playerId string) {
-
-	eventField.event(playerId)
 }

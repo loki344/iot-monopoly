@@ -1,4 +1,4 @@
-package eventingDomain
+package domain
 
 import "reflect"
 
