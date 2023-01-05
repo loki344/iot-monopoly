@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"iot-monopoly/eventing"
-	"iot-monopoly/game/domain/events"
 	"math/rand"
 	"time"
 )
@@ -50,7 +49,7 @@ func NewGame(playerCount int) *Game {
 
 	newPlayers = append(newPlayers, *CreateBank())
 
-	eventing.FireEvent(eventing.GAME_STARTED, events.NewGameStartedEvent(playerCount))
+	eventing.FireEvent(eventing.GAME_STARTED, NewGameStartedEvent(playerCount))
 	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields, standardFields, NewPrison()), cards: defaultCardStack}
 }
 
@@ -70,7 +69,7 @@ func (game *Game) TransferOwnership(transactionId string) {
 }
 
 func (game *Game) End(winnerId string) {
-	eventing.FireEvent(eventing.GAME_ENDED, events.NewGameEndedEvent(winnerId))
+	eventing.FireEvent(eventing.GAME_ENDED, NewGameEndedEvent(winnerId))
 }
 
 func (game *Game) MovePlayer(playerId string, position int) {
@@ -94,17 +93,18 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 		property := game.board.GetPropertyByIndex(position)
 		if property.ownerId == "" {
 			fmt.Println("property has no owner, is buyable")
-			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, events.NewPlayerOnUnownedFieldEvent(playerId, property))
+			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, property))
 		} else if property.ownerId != playerId {
 			fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", property.ownerId, playerId, property.GetPropertyFee())
-			// Create transaction
+			senderAccountId := game.GetPlayerById(playerId).Account().Id()
+			recipientAccountId := game.GetPlayerById(property.ownerId).Account().Id()
+			eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(senderAccountId, recipientAccountId, property.GetPropertyFee()))
 		}
 	}
 
 	if game.board.GetEventFieldByIndex(position) != nil {
 		eventField := game.board.GetEventFieldByIndex(position)
 		switch eventField.Type() {
-
 		case DRAW_CARD:
 			game.drawCard(playerId)
 			break
@@ -112,7 +112,7 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 			game.goToPrison(playerId)
 			break
 		case PAY_TAX:
-			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, events.NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
+			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
 			break
 		}
 	}
@@ -124,13 +124,13 @@ func (game *Game) drawCard(playerId string) {
 	card.SetPlayer(*game.GetPlayerById(playerId))
 
 	game.pendingCard = &card
-	eventing.FireEvent(eventing.CARD_DREW, events.NewCardDrewEvent(card.title, card.text))
+	eventing.FireEvent(eventing.CARD_DREW, NewCardDrewEvent(card.title, card.text))
 }
 
 func (game *Game) checkIfLapFinished(playerId string, position int, player *Player) {
 	if player.Position() > position && position < 5 {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, events.NewLapFinishedEvent(playerId))
+		eventing.FireEvent(eventing.LAP_FINISHED, NewLapFinishedEvent(playerId))
 		player.Account().Deposit(100)
 	}
 }

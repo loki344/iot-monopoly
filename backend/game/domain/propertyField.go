@@ -8,6 +8,10 @@ type PropertyField struct {
 	upgrades         PropertyUpgrade
 }
 
+func (propertyField PropertyField) OwnerId() string {
+	return propertyField.ownerId
+}
+
 func (propertyField PropertyField) Name() string {
 	return propertyField.name
 }

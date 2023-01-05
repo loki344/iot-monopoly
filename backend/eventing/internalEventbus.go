@@ -14,6 +14,7 @@ const (
 	GAME_STARTED                    ChannelName = "gameStarted"
 	GAME_ENDED                      ChannelName = "gameEnded"
 	PLAYER_ON_UNOWNED_FIELD         ChannelName = "playerOnUnownedField"
+	PLAYER_ON_OWNED_FIELD           ChannelName = "playerOnOwnedField"
 	TRANSACTION_CREATED             ChannelName = "transactionCreated"
 	TRANSACTION_RESOLVED            ChannelName = "transactionResolved"
 	LAP_FINISHED                    ChannelName = "lapFinished"

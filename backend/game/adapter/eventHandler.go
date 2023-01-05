@@ -8,7 +8,6 @@ import (
 	"iot-monopoly/eventing"
 	"iot-monopoly/game/adapter/repository"
 	"iot-monopoly/game/domain"
-	"iot-monopoly/game/domain/events"
 )
 
 func StartEventListeners() {
@@ -16,13 +15,14 @@ func StartEventListeners() {
 	startTransactionResolvedHandler()
 	startGameEventWithPayoutAcceptedHandler()
 	startGameEventWithFeeAcceptedHandler()
+	startPlayerOnOwnedFieldEvent()
 }
 
 func startTransactionResolvedHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionResolved := e.Data.(events.TransactionResolvedEvent)
+			transactionResolved := e.Data.(domain.TransactionResolvedEvent)
 			fmt.Printf("Transaction %s is resolved, check for pending actions to trigger\n", transactionResolved.TransactionId)
 			GetCurrentGame().TransferOwnership(transactionResolved.TransactionId)
 		},
@@ -34,7 +34,7 @@ func startGameEventWithPayoutAcceptedHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			payoutInformation := e.Data.(*events.GameEventWithPayoutAcceptedEvent)
+			payoutInformation := e.Data.(*domain.GameEventWithPayoutAcceptedEvent)
 			repository.FindAccountById(payoutInformation.RecipientId).Deposit(payoutInformation.Amount)
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED),
@@ -45,9 +45,20 @@ func startGameEventWithFeeAcceptedHandler() {
 
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
-			transactionInformation := e.Data.(*events.GameEventWithFeeAcceptedEvent)
+			transactionInformation := e.Data.(*domain.GameEventWithFeeAcceptedEvent)
 			domain.NewTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PayerId, transactionInformation.Fee)
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_FEE_ACCEPTED),
+	})
+}
+
+func startPlayerOnOwnedFieldEvent() {
+
+	eventing.RegisterEventHandler(bus.Handler{
+		Handle: func(ctx context.Context, e bus.Event) {
+			transactionInformation := e.Data.(*domain.PlayerOnOwnedFieldEvent)
+			repository.CreateTransaction(domain.NewTransaction(uuid.NewString(), transactionInformation.OwnerId, transactionInformation.PlayerId, transactionInformation.Fee))
+		},
+		Matcher: string(eventing.PLAYER_ON_OWNED_FIELD),
 	})
 }

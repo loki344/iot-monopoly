@@ -25,8 +25,8 @@ func ResolveCurrentTransaction(cardId string) (*domain.Transaction, error) {
 	pendingTransaction := repository.GetPendingTransaction()
 	payerAccount := repository.FindAccountById(cardId)
 
-	if pendingTransaction.SenderId() != payerAccount.PlayerId() {
-		fmt.Printf("Transaction was meant for cardId %s, but received cardId %s", pendingTransaction.SenderId, cardId)
+	if pendingTransaction.SenderId() != payerAccount.Id() {
+		fmt.Printf("Transaction was meant for cardId %s, but received cardId %s", pendingTransaction.SenderId(), cardId)
 	}
 
 	err := validateTransaction(pendingTransaction)

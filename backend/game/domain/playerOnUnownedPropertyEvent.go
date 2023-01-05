@@ -1,16 +1,15 @@
-package events
+package domain
 
 import (
 	eventingDomain "iot-monopoly/eventing/domain"
-	"iot-monopoly/game/domain"
 )
 
 type PlayerOnUnownedFieldEvent struct {
 	eventingDomain.BaseEvent
 	PlayerId string
-	Property domain.PropertyField
+	Property PropertyField
 }
 
-func NewPlayerOnUnownedFieldEvent(playerId string, property *domain.PropertyField) *PlayerOnUnownedFieldEvent {
+func NewPlayerOnUnownedFieldEvent(playerId string, property *PropertyField) *PlayerOnUnownedFieldEvent {
 	return &PlayerOnUnownedFieldEvent{eventingDomain.EventType(&PlayerOnUnownedFieldEvent{}), playerId, *property}
 }

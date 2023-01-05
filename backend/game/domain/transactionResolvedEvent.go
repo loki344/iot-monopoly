@@ -1,4 +1,4 @@
-package events
+package domain
 
 import eventingDomain "iot-monopoly/eventing/domain"
 
