@@ -75,24 +75,39 @@ func newPlayerOnOwnedFieldEvent(playerId string, ownerId string, fee int) *Playe
 
 type PlayerOnUnownedFieldEvent struct {
 	eventingDomain.BaseEvent
-	PlayerId string
-	Property PropertyField
+	PlayerId           string
+	PropertyName       string
+	PropertyIndex      int
+	PropertyPrice      int
+	HousePrice         int
+	HotelPrice         int
+	RevenueNormal      int
+	RevenueOneHouse    int
+	RevenueTwoHouses   int
+	RevenueThreeHouses int
+	RevenueFourHouses  int
+	RevenueHotel       int
 }
 
 func newPlayerOnUnownedFieldEvent(playerId string, property *PropertyField) *PlayerOnUnownedFieldEvent {
-	return &PlayerOnUnownedFieldEvent{eventingDomain.EventType(&PlayerOnUnownedFieldEvent{}), playerId, *property}
+	fd := property.FinancialDetails()
+	return &PlayerOnUnownedFieldEvent{BaseEvent: eventingDomain.EventType(&PlayerOnUnownedFieldEvent{}), PlayerId: playerId, PropertyIndex: property.index,
+		PropertyName: property.Name(), PropertyPrice: fd.PropertyPrice(), HousePrice: fd.HousePrice(), HotelPrice: fd.HotelPrice(), RevenueNormal: fd.Revenue().Normal(),
+		RevenueOneHouse: fd.Revenue().OneHouse(), RevenueTwoHouses: fd.Revenue().TwoHouses(), RevenueThreeHouses: fd.Revenue().ThreeHouses(),
+		RevenueFourHouses: fd.Revenue().FourHouses(), RevenueHotel: fd.Revenue().Hotel()}
 }
 
 type TransactionCreatedEvent struct {
 	eventingDomain.BaseEvent
+	Id          string
 	RecipientId string
 	SenderId    string
 	Amount      int
 }
 
-func newTransactionCreatedEvent(recipientId string, senderId string, amount int) TransactionCreatedEvent {
+func newTransactionCreatedEvent(id string, recipientId string, senderId string, amount int) TransactionCreatedEvent {
 
-	return TransactionCreatedEvent{BaseEvent: eventingDomain.EventType(&TransactionCreatedEvent{}), RecipientId: recipientId, SenderId: senderId, Amount: amount}
+	return TransactionCreatedEvent{BaseEvent: eventingDomain.EventType(&TransactionCreatedEvent{}), Id: id, RecipientId: recipientId, SenderId: senderId, Amount: amount}
 }
 
 type TransactionResolvedEvent struct {

@@ -38,7 +38,3 @@ func newPlayer(index int) *Player {
 	id := "Player_" + strconv.Itoa(index)
 	return &Player{id: id, position: 1, account: newAccount(id, index)}
 }
-
-func createBank() *Player {
-	return &Player{id: "Bank", position: 0, account: createUnlimitedAccount("Bank")}
-}

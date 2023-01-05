@@ -15,7 +15,7 @@
 
 	const accept = async () => {
 
-		let response = await fetch(`${BASE_URL}/properties/${property.Id}`, {
+		let response = await fetch(`${BASE_URL}/games/current/properties/${property.Id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({"ownerId": buyerId}),
 			headers: {

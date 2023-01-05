@@ -2,18 +2,13 @@ import { BASE_URL, extractData } from '$lib/http/backendClient';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
-	let gameDataResponse = await fetch(`${BASE_URL}/players`, {
-		method: 'GET'
-	});
-	let accountResponse = await fetch(`${BASE_URL}/accounts`, {
+	let gameResponse = await fetch(`${BASE_URL}/games/current`, {
 		method: 'GET'
 	});
 
-	console.log(gameDataResponse)
-	console.log(accountResponse)
+	console.log(gameResponse)
 	return {
-		gameData: await extractData(gameDataResponse),
-		accounts: await extractData(accountResponse)
+		game: await extractData(gameResponse),
 	};
 }
 

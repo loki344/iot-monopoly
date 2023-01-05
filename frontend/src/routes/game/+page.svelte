@@ -4,11 +4,9 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	console.log(data)
-	let players = JSON.parse(data.gameData).players;
-	let currentPlayerId = JSON.parse(data.gameData).currentPlayerId;
-	let accounts = JSON.parse(data.accounts).reduce((map:any, account:any) => (map[account.id] = account.balance, map), {});
-
+	let game = JSON.parse(data.game)
+	console.log(game);
+	
 	const getClass = (index: Number): String => {
 
 		switch (index) {
@@ -27,9 +25,9 @@
 </script>
 
 <div>
-	{#each players as player, i}
-		<Tile active={currentPlayerId === player.id} class={`absolute ${getClass(i)}`}>
-			<Text>Player {i + 1}</Text><Text class="text-center">{accounts[player.accountId]} $</Text>
+	{#each game.players as player, i}
+		<Tile active={game.currentPlayerIndex === i} class={`absolute ${getClass(i)}`}>
+			<Text>Player {i + 1}</Text><Text class="text-center">{player.account.balance} $</Text>
 		</Tile>
 	{/each}
 </div>

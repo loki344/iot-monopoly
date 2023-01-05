@@ -16,6 +16,11 @@ type Game struct {
 	pendingTransfer    *PendingPropertyTransfer
 	cards              []Card
 	pendingCard        *Card
+	bank               *Bank
+}
+
+func (game *Game) Bank() *Bank {
+	return game.bank
 }
 
 func (game *Game) Board() *Board {
@@ -40,17 +45,15 @@ func (game Game) PlayerCount() int {
 
 func NewGame(playerCount int) *Game {
 
-	fmt.Printf("starting game with %d inmates\n", playerCount)
+	fmt.Printf("starting game with %d players\n", playerCount)
 	newPlayers := make([]Player, playerCount)
 
 	for i := 0; i < playerCount; i++ {
 		newPlayers[i] = *newPlayer(i + 1)
 	}
 
-	newPlayers = append(newPlayers, *createBank())
-
 	eventing.FireEvent(eventing.GAME_STARTED, newGameStartedEvent(playerCount))
-	return &Game{players: newPlayers, currentPlayerIndex: 0, board: newBoard(defaultProperties, defaultEventFields, standardFields, newPrison()), cards: defaultCardStack}
+	return &Game{players: newPlayers, bank: newBank(), currentPlayerIndex: 0, board: newBoard(defaultProperties, defaultEventFields, standardFields, newPrison()), cards: defaultCardStack}
 }
 
 func (game *Game) ResolvePendingPropertyTransfer(transactionId string) {
