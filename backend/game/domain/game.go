@@ -44,10 +44,10 @@ func NewGame(playerCount int) *Game {
 	newPlayers := make([]Player, playerCount)
 
 	for i := 0; i < playerCount; i++ {
-		newPlayers[i] = *NewPlayer(i + 1)
+		newPlayers[i] = *newPlayer(i + 1)
 	}
 
-	newPlayers = append(newPlayers, *CreateBank())
+	newPlayers = append(newPlayers, *createBank())
 
 	eventing.FireEvent(eventing.GAME_STARTED, NewGameStartedEvent(playerCount))
 	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields, standardFields, NewPrison()), cards: defaultCardStack}

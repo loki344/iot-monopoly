@@ -44,6 +44,6 @@ var defaultCardStack = []Card{
 		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, NewGameEventWithFeeAcceptedEvent("Bank", player.Account().Id(), 200))
 	}),
 	*NewCard("Escape from prison", "Keep this card and escape from prison next time", func(player *Player) {
-		player.escapeFromPrisonCardCount = player.escapeFromPrisonCardCount + 1
+		player.IncreasePrisonCardCount()
 	}),
 }

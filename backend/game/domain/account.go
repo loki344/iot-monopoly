@@ -15,12 +15,12 @@ func (a *Account) PlayerId() string {
 	return a.playerId
 }
 
-func NewAccount(playerId string, index int) *Account {
+func newAccount(playerId string, index int) *Account {
 	id := "Account_" + strconv.Itoa(index)
 	return &Account{id: id, balance: 1_000, playerId: playerId}
 }
 
-func CreateUnlimitedAccount(playerId string) *Account {
+func createUnlimitedAccount(playerId string) *Account {
 	return &Account{id: "Bank", balance: 999_999, playerId: playerId}
 }
 
