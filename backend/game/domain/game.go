@@ -19,6 +19,10 @@ type Game struct {
 	pendingCard        *Card
 }
 
+func (game *Game) Board() *Board {
+	return game.board
+}
+
 func (game *Game) Ended() bool {
 	return game.ended
 }
@@ -37,7 +41,7 @@ func (game Game) PlayerCount() int {
 
 func NewGame(playerCount int) *Game {
 
-	fmt.Printf("starting game with %d players\n", playerCount)
+	fmt.Printf("starting game with %d inmates\n", playerCount)
 	newPlayers := make([]Player, playerCount)
 
 	for i := 0; i < playerCount; i++ {
@@ -47,7 +51,7 @@ func NewGame(playerCount int) *Game {
 	newPlayers = append(newPlayers, *CreateBank())
 
 	eventing.FireEvent(eventing.GAME_STARTED, events.NewGameStartedEvent(playerCount))
-	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields), cards: defaultCardStack}
+	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields, standardFields, NewPrison()), cards: defaultCardStack}
 }
 
 func (game *Game) TransferOwnership(transactionId string) {
@@ -77,11 +81,10 @@ func (game *Game) MovePlayer(playerId string, position int) {
 		return
 	}
 
-	game.updateCurrentPlayerIndex()
 	game.checkIfLapFinished(playerId, position, player)
 	player.position = position
-
 	game.triggerFieldAction(playerId, position)
+	game.updateCurrentPlayerIndex()
 }
 
 func (game *Game) triggerFieldAction(playerId string, position int) {
@@ -106,7 +109,7 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 			game.drawCard(playerId)
 			break
 		case GOTO_PRISON:
-			//TODO implement
+			game.goToPrison(playerId)
 			break
 		case PAY_TAX:
 			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, events.NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
@@ -159,4 +162,9 @@ func (game *Game) BuyProperty(propertyIndex int, buyerId string) string {
 
 func (game *Game) ConfirmCurrentCard() {
 	game.pendingCard.TriggerAction()
+}
+
+func (game *Game) goToPrison(playerId string) {
+	game.board.goToPrison(playerId)
+	game.GetPlayerById(playerId).position = game.board.prison.index
 }

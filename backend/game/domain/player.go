@@ -5,9 +5,14 @@ import (
 )
 
 type Player struct {
-	id       string
-	position int
-	account  *Account
+	id                        string
+	position                  int
+	account                   *Account
+	escapeFromPrisonCardCount int
+}
+
+func (p *Player) EscapeFromPrisonCardCount() int {
+	return p.escapeFromPrisonCardCount
 }
 
 func (p *Player) Account() *Account {

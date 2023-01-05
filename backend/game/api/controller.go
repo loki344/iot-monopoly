@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	service "iot-monopoly/game/adapter"
+	"iot-monopoly/game/adapter/repository"
 	"iot-monopoly/game/api/dto"
 	"strconv"
 )
@@ -76,7 +77,7 @@ func Routes(app *fiber.App) {
 
 		service.BuyProperty(propertyIndex, patchRequest.OwnerId)
 
-		return c.Status(200).JSON(dto.PropertyDTOFromProperty(service.GetCurrentGame().GetPropertyByIndex(propertyIndex)))
+		return c.Status(200).JSON(dto.PropertyDTOFromProperty(repository.FindPropertyByIndex(propertyIndex)))
 	})
 
 	app.Patch("games/current/transactions/current", func(c *fiber.Ctx) error {

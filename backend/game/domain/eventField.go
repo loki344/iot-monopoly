@@ -29,3 +29,11 @@ func (eventField EventField) Name() string {
 func (eventField EventField) Index() int {
 	return eventField.index
 }
+
+var defaultEventFields = []EventField{
+	*NewEventField("Ereignisfeld 1", 4, DRAW_CARD),
+	*NewEventField("Ereignisfeld 2", 6, DRAW_CARD),
+	*NewEventField("Einkommenssteuer", 11, PAY_TAX),
+	*NewEventField("Gehe ins Gefaengnis", 13, GOTO_PRISON),
+	*NewEventField("Ereignisfeld 4", 15, DRAW_CARD),
+}

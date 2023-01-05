@@ -1,0 +1,29 @@
+package domain
+
+type Prison struct {
+	name    string
+	index   int
+	inmates []Inmate
+}
+
+type Inmate struct {
+	playerId       string
+	roundsInPrison int
+}
+
+func (p Prison) addInmate(playerId string) {
+	p.inmates = append(p.inmates, Inmate{playerId: playerId})
+}
+
+func (p Prison) isInmate(playerId string) bool {
+	for i := range p.inmates {
+		if p.inmates[i].playerId == playerId {
+			return true
+		}
+	}
+	return false
+}
+
+func NewPrison() *Prison {
+	return &Prison{index: 5}
+}

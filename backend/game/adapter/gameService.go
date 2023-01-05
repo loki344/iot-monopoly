@@ -17,7 +17,7 @@ func GetCurrentGame() *domain.Game {
 
 func BuyProperty(propertyIndex int, buyerId string) {
 	referenceId := repository.GetCurrentGame().BuyProperty(propertyIndex, buyerId)
-	transaction := domain.NewTransaction(referenceId, "Bank", GetCurrentGame().GetPlayerById(buyerId).Account().Id(), repository.GetCurrentGame().GetPropertyByIndex(propertyIndex).GetPrice())
+	transaction := domain.NewTransaction(referenceId, "Bank", GetCurrentGame().GetPlayerById(buyerId).Account().Id(), repository.FindPropertyByIndex(propertyIndex).GetPrice())
 	repository.CreateTransaction(transaction)
 }
 
