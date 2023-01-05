@@ -9,8 +9,6 @@ import (
 	"log"
 )
 
-var EXTERNAL_CHANNELS = []ChannelName{PLAYER_ON_UNOWNED_FIELD, TRANSACTION_CREATED, TRANSACTION_RESOLVED, CARD_DREW, LAP_FINISHED}
-
 func StartWebsocket(app *fiber.App) {
 
 	app.Use("/ws", func(c *fiber.Ctx) error {
@@ -26,12 +24,13 @@ func StartWebsocket(app *fiber.App) {
 	registerWebsocket(app)
 }
 
+var EXTERNAL_CHANNELS = []ChannelName{PLAYER_ON_UNOWNED_FIELD, TRANSACTION_CREATED, TRANSACTION_RESOLVED, CARD_DREW, LAP_FINISHED}
+
 func registerWebsocket(app *fiber.App) fiber.Router {
 	return app.Get("/ws", websocket.New(func(c *websocket.Conn) {
 
 		for i := range EXTERNAL_CHANNELS {
 
-			//TODO we have an issue that crashes when we refresh the browser and then send events
 			RegisterEventHandler(bus.Handler{
 				Handle: func(ctx context.Context, e bus.Event) {
 					err := c.WriteJSON(e.Data)
