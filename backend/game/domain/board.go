@@ -7,7 +7,7 @@ type Board struct {
 	prison         *Prison
 }
 
-func NewBoard(properties []PropertyField, eventFields []EventField, standardFields []StandardField, prison *Prison) *Board {
+func newBoard(properties []PropertyField, eventFields []EventField, standardFields []StandardField, prison *Prison) *Board {
 	return &Board{properties: properties, eventFields: eventFields, standardFields: standardFields, prison: prison}
 }
 

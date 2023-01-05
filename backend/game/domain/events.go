@@ -8,7 +8,7 @@ type CardDrewEvent struct {
 	Text  string
 }
 
-func NewCardDrewEvent(title string, text string) *CardDrewEvent {
+func newCardDrewEvent(title string, text string) *CardDrewEvent {
 	return &CardDrewEvent{BaseEvent: eventingDomain.EventType(&CardDrewEvent{}), Title: title, Text: text}
 }
 
@@ -17,7 +17,7 @@ type GameEndedEvent struct {
 	WinnerId string
 }
 
-func NewGameEndedEvent(winnerId string) *GameEndedEvent {
+func newGameEndedEvent(winnerId string) *GameEndedEvent {
 	return &GameEndedEvent{BaseEvent: eventingDomain.EventType(&GameEndedEvent{}), WinnerId: winnerId}
 }
 
@@ -28,7 +28,7 @@ type GameEventWithFeeAcceptedEvent struct {
 	Fee         int
 }
 
-func NewGameEventWithFeeAcceptedEvent(recipientId string, payerId string, fee int) *GameEventWithFeeAcceptedEvent {
+func newGameEventWithFeeAcceptedEvent(recipientId string, payerId string, fee int) *GameEventWithFeeAcceptedEvent {
 
 	return &GameEventWithFeeAcceptedEvent{BaseEvent: eventingDomain.EventType(&GameEventWithFeeAcceptedEvent{}), RecipientId: recipientId, PayerId: payerId, Fee: fee}
 }
@@ -39,7 +39,7 @@ type GameEventWithPayoutAcceptedEvent struct {
 	Amount      int
 }
 
-func NewGameEventWithPayoutAcceptedEvent(recipientId string, amount int) *GameEventWithPayoutAcceptedEvent {
+func newGameEventWithPayoutAcceptedEvent(recipientId string, amount int) *GameEventWithPayoutAcceptedEvent {
 
 	return &GameEventWithPayoutAcceptedEvent{BaseEvent: eventingDomain.EventType(&GameEventWithPayoutAcceptedEvent{}), RecipientId: recipientId, Amount: amount}
 }
@@ -49,7 +49,7 @@ type GameStartedEvent struct {
 	PlayerCount int
 }
 
-func NewGameStartedEvent(playerCount int) *GameStartedEvent {
+func newGameStartedEvent(playerCount int) *GameStartedEvent {
 	return &GameStartedEvent{eventingDomain.EventType(&GameStartedEvent{}), playerCount}
 }
 
@@ -58,7 +58,7 @@ type LapFinishedEvent struct {
 	PlayerId string
 }
 
-func NewLapFinishedEvent(playerId string) *LapFinishedEvent {
+func newLapFinishedEvent(playerId string) *LapFinishedEvent {
 	return &LapFinishedEvent{eventingDomain.EventType(&LapFinishedEvent{}), playerId}
 }
 
@@ -69,7 +69,7 @@ type PlayerOnOwnedFieldEvent struct {
 	Fee      int
 }
 
-func NewPlayerOnOwnedFieldEvent(playerId string, ownerId string, fee int) *PlayerOnOwnedFieldEvent {
+func newPlayerOnOwnedFieldEvent(playerId string, ownerId string, fee int) *PlayerOnOwnedFieldEvent {
 	return &PlayerOnOwnedFieldEvent{eventingDomain.EventType(&PlayerOnOwnedFieldEvent{}), playerId, ownerId, fee}
 }
 
@@ -79,7 +79,7 @@ type PlayerOnUnownedFieldEvent struct {
 	Property PropertyField
 }
 
-func NewPlayerOnUnownedFieldEvent(playerId string, property *PropertyField) *PlayerOnUnownedFieldEvent {
+func newPlayerOnUnownedFieldEvent(playerId string, property *PropertyField) *PlayerOnUnownedFieldEvent {
 	return &PlayerOnUnownedFieldEvent{eventingDomain.EventType(&PlayerOnUnownedFieldEvent{}), playerId, *property}
 }
 
@@ -90,7 +90,7 @@ type TransactionCreatedEvent struct {
 	Amount      int
 }
 
-func NewTransactionCreatedEvent(recipientId string, senderId string, amount int) TransactionCreatedEvent {
+func newTransactionCreatedEvent(recipientId string, senderId string, amount int) TransactionCreatedEvent {
 
 	return TransactionCreatedEvent{BaseEvent: eventingDomain.EventType(&TransactionCreatedEvent{}), RecipientId: recipientId, SenderId: senderId, Amount: amount}
 }
@@ -100,7 +100,7 @@ type TransactionResolvedEvent struct {
 	TransactionId string
 }
 
-func NewTransactionResolvedEvent(transactionId string) TransactionResolvedEvent {
+func newTransactionResolvedEvent(transactionId string) TransactionResolvedEvent {
 
 	return TransactionResolvedEvent{BaseEvent: eventingDomain.EventType(&TransactionResolvedEvent{}), TransactionId: transactionId}
 }

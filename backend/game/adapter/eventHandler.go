@@ -24,7 +24,7 @@ func startTransactionResolvedHandler() {
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionResolved := e.Data.(domain.TransactionResolvedEvent)
 			fmt.Printf("Transaction %s is resolved, check for pending actions to trigger\n", transactionResolved.TransactionId)
-			GetCurrentGame().TransferOwnership(transactionResolved.TransactionId)
+			GetCurrentGame().ResolvePendingPropertyTransfer(transactionResolved.TransactionId)
 		},
 		Matcher: string(eventing.TRANSACTION_RESOLVED),
 	})

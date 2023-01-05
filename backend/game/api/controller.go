@@ -108,7 +108,7 @@ func Routes(app *fiber.App) {
 			return fiber.ErrBadRequest
 		}
 
-		if !cardDTO.Confirmed {
+		if !cardDTO.Accepted {
 			fmt.Println("Not confirmed, not doing anything")
 			return c.SendStatus(400)
 		}

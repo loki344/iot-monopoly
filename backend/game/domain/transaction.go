@@ -35,13 +35,13 @@ func (t Transaction) Id() string {
 func (t Transaction) Accept() {
 
 	t.accepted = true
-	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, NewTransactionResolvedEvent(t.id))
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, newTransactionResolvedEvent(t.id))
 }
 
 func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
 
 	transaction := &Transaction{id: id, recipientId: recipientId, senderId: senderId, amount: amount}
-	eventing.FireEvent(eventing.TRANSACTION_CREATED, NewTransactionCreatedEvent(transaction.recipientId, transaction.senderId, transaction.amount))
+	eventing.FireEvent(eventing.TRANSACTION_CREATED, newTransactionCreatedEvent(transaction.recipientId, transaction.senderId, transaction.amount))
 
 	return transaction
 }

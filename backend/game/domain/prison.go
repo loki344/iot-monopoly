@@ -1,7 +1,6 @@
 package domain
 
 type Prison struct {
-	name    string
 	index   int
 	inmates []Inmate
 }
@@ -24,6 +23,6 @@ func (p Prison) isInmate(playerId string) bool {
 	return false
 }
 
-func NewPrison() *Prison {
+func newPrison() *Prison {
 	return &Prison{index: 5}
 }

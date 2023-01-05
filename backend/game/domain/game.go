@@ -49,18 +49,18 @@ func NewGame(playerCount int) *Game {
 
 	newPlayers = append(newPlayers, *createBank())
 
-	eventing.FireEvent(eventing.GAME_STARTED, NewGameStartedEvent(playerCount))
-	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields, standardFields, NewPrison()), cards: defaultCardStack}
+	eventing.FireEvent(eventing.GAME_STARTED, newGameStartedEvent(playerCount))
+	return &Game{players: newPlayers, currentPlayerIndex: 0, board: newBoard(defaultProperties, defaultEventFields, standardFields, newPrison()), cards: defaultCardStack}
 }
 
-func (game *Game) TransferOwnership(transactionId string) {
+func (game *Game) ResolvePendingPropertyTransfer(transactionId string) {
 	pendingTransfer := game.pendingTransfer
 
 	if pendingTransfer == nil {
 		return
 	}
 
-	if pendingTransfer.Id() == transactionId {
+	if pendingTransfer.ReferenceTransactionId() == transactionId {
 		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyIndex(), pendingTransfer.BuyerId())
 		property := game.board.GetPropertyByIndex(pendingTransfer.PropertyIndex())
 		property.ownerId = pendingTransfer.BuyerId()
@@ -69,20 +69,20 @@ func (game *Game) TransferOwnership(transactionId string) {
 }
 
 func (game *Game) End(winnerId string) {
-	eventing.FireEvent(eventing.GAME_ENDED, NewGameEndedEvent(winnerId))
+	eventing.FireEvent(eventing.GAME_ENDED, newGameEndedEvent(winnerId))
 }
 
-func (game *Game) MovePlayer(playerId string, position int) {
+func (game *Game) MovePlayer(playerId string, newPosition int) {
 
 	player := game.GetPlayerById(playerId)
-	if player.Position() == position {
-		fmt.Println(fmt.Errorf("player already at position %d", position))
+	if player.Position() == newPosition {
+		fmt.Println(fmt.Errorf("player already at position %d", newPosition))
 		return
 	}
 
-	game.checkIfLapFinished(playerId, position, player)
-	player.position = position
-	game.triggerFieldAction(playerId, position)
+	game.depositMoneyIfLapFinished(newPosition, player)
+	player.position = newPosition
+	game.triggerFieldAction(playerId, newPosition)
 	game.updateCurrentPlayerIndex()
 }
 
@@ -93,12 +93,12 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 		property := game.board.GetPropertyByIndex(position)
 		if property.ownerId == "" {
 			fmt.Println("property has no owner, is buyable")
-			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, property))
+			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, newPlayerOnUnownedFieldEvent(playerId, property))
 		} else if property.ownerId != playerId {
 			fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", property.ownerId, playerId, property.GetPropertyFee())
 			senderAccountId := game.GetPlayerById(playerId).Account().Id()
 			recipientAccountId := game.GetPlayerById(property.ownerId).Account().Id()
-			eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, NewPlayerOnOwnedFieldEvent(senderAccountId, recipientAccountId, property.GetPropertyFee()))
+			eventing.FireEvent(eventing.PLAYER_ON_OWNED_FIELD, newPlayerOnOwnedFieldEvent(senderAccountId, recipientAccountId, property.GetPropertyFee()))
 		}
 	}
 
@@ -112,7 +112,7 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 			game.goToPrison(playerId)
 			break
 		case PAY_TAX:
-			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
+			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, newGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
 			break
 		}
 	}
@@ -124,13 +124,13 @@ func (game *Game) drawCard(playerId string) {
 	card.SetPlayer(*game.GetPlayerById(playerId))
 
 	game.pendingCard = &card
-	eventing.FireEvent(eventing.CARD_DREW, NewCardDrewEvent(card.title, card.text))
+	eventing.FireEvent(eventing.CARD_DREW, newCardDrewEvent(card.title, card.text))
 }
 
-func (game *Game) checkIfLapFinished(playerId string, position int, player *Player) {
+func (game *Game) depositMoneyIfLapFinished(position int, player *Player) {
 	if player.Position() > position && position < 5 {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, NewLapFinishedEvent(playerId))
+		eventing.FireEvent(eventing.LAP_FINISHED, newLapFinishedEvent(player.id))
 		player.Account().Deposit(100)
 	}
 }
@@ -156,8 +156,8 @@ func (game *Game) GetPlayerById(playerId string) *Player {
 
 func (game *Game) BuyProperty(propertyIndex int, buyerId string) string {
 
-	game.pendingTransfer = NewPendingPropertyTransaction(uuid.NewString(), propertyIndex, buyerId)
-	return game.pendingTransfer.id
+	game.pendingTransfer = newPendingPropertyTransaction(uuid.NewString(), propertyIndex, buyerId)
+	return game.pendingTransfer.referenceTransactionId
 }
 
 func (game *Game) ConfirmCurrentCard() {
