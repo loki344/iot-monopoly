@@ -2,6 +2,7 @@ package domain
 
 import (
 	"iot-monopoly/eventing"
+	"iot-monopoly/game/domain/events"
 )
 
 type Transaction struct {
@@ -35,13 +36,13 @@ func (t Transaction) Id() string {
 func (t Transaction) Accept() {
 
 	t.accepted = true
-	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, NewTransactionResolvedEvent(t.id))
+	eventing.FireEvent(eventing.TRANSACTION_RESOLVED, events.NewTransactionResolvedEvent(t.id))
 }
 
 func NewTransaction(id string, recipientId string, senderId string, amount int) *Transaction {
 
 	transaction := &Transaction{id: id, recipientId: recipientId, senderId: senderId, amount: amount}
-	eventing.FireEvent(eventing.TRANSACTION_CREATED, NewTransactionCreatedEvent(transaction))
+	eventing.FireEvent(eventing.TRANSACTION_CREATED, events.NewTransactionCreatedEvent(transaction))
 
 	return transaction
 }

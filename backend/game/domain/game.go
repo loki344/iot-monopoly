@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"iot-monopoly/eventing"
+	"iot-monopoly/game/domain/events"
 	"math/rand"
 	"time"
 )
@@ -60,10 +61,10 @@ var defaultEventFields = []EventField{
 
 var defaultCardStack = []Card{
 	*NewCard("You inherited", "You're mentioned in the testament of your aunt. You receive 100 $.", func(player *Player) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, NewGameEventWithPayoutAcceptedEvent(player.Account().Id(), 100))
+		eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, events.NewGameEventWithPayoutAcceptedEvent(player.Account().Id(), 100))
 	}),
 	*NewCard("Tax bill", "You received a bill for the federal taxes of 200 $", func(player *Player) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, NewGameEventWithFeeAcceptedEvent("Bank", player.Account().Id(), 200))
+		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, events.NewGameEventWithFeeAcceptedEvent("Bank", player.Account().Id(), 200))
 	}),
 }
 
@@ -78,7 +79,7 @@ func NewGame(playerCount int) *Game {
 
 	newPlayers = append(newPlayers, *CreateBank())
 
-	eventing.FireEvent(eventing.GAME_STARTED, NewGameStartedEvent(playerCount))
+	eventing.FireEvent(eventing.GAME_STARTED, events.NewGameStartedEvent(playerCount))
 	return &Game{players: newPlayers, currentPlayerIndex: 0, properties: defaultProperties, eventFields: defaultEventFields, cards: defaultCardStack}
 }
 
@@ -98,7 +99,7 @@ func (game *Game) TransferOwnership(transactionId string) {
 }
 
 func (game *Game) End(winnerId string) {
-	eventing.FireEvent(eventing.GAME_ENDED, NewGameEndedEvent(winnerId))
+	eventing.FireEvent(eventing.GAME_ENDED, events.NewGameEndedEvent(winnerId))
 }
 
 func (game Game) PlayerCount() int {
@@ -108,6 +109,10 @@ func (game Game) PlayerCount() int {
 func (game *Game) MovePlayer(playerId string, position int) error {
 
 	player := game.GetPlayerById(playerId)
+	if player.Position() == position {
+		fmt.Println(fmt.Errorf("player already at position %d", position))
+		return nil
+	}
 
 	//TODO move this code somewhere where it makes more sense
 	totalFieldCount := 16
@@ -117,14 +122,20 @@ func (game *Game) MovePlayer(playerId string, position int) error {
 
 	game.updateCurrentPlayerIndex()
 	game.checkIfLapFinished(playerId, position, player)
-	player.SetPosition(position)
+	player.position = position
 
+	game.triggerFieldAction(playerId, position)
+
+	return nil
+}
+
+func (game *Game) triggerFieldAction(playerId string, position int) {
 	if game.GetPropertyByIndex(position) != nil {
 
 		property := game.GetPropertyByIndex(position)
 		if property.ownerId == "" {
 			fmt.Println("property has no owner, is buyable")
-			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, NewPlayerOnUnownedFieldEvent(playerId, property))
+			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, events.NewPlayerOnUnownedFieldEvent(playerId, property))
 		} else if property.ownerId != playerId {
 			fmt.Printf("Property belongs to player %s, player %s has to pay %d\n", property.ownerId, playerId, property.GetPropertyFee())
 			// Create transaction
@@ -142,12 +153,10 @@ func (game *Game) MovePlayer(playerId string, position int) error {
 			//TODO implement
 			break
 		case PAY_TAX:
-			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
+			eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, events.NewGameEventWithFeeAcceptedEvent("Bank", game.GetPlayerById(playerId).Account().Id(), 200))
 			break
 		}
 	}
-
-	return nil
 }
 
 func (game *Game) drawCard(playerId string) {
@@ -156,13 +165,13 @@ func (game *Game) drawCard(playerId string) {
 	card.SetPlayer(*game.GetPlayerById(playerId))
 
 	game.pendingCard = &card
-	eventing.FireEvent(eventing.CARD_DREW, NewCardDrewEvent(card.title, card.text))
+	eventing.FireEvent(eventing.CARD_DREW, events.NewCardDrewEvent(card.title, card.text))
 }
 
 func (game *Game) checkIfLapFinished(playerId string, position int, player *Player) {
 	if player.Position() > position && position < 5 {
 		fmt.Println("Player completed a lap, creating lap finished")
-		eventing.FireEvent(eventing.LAP_FINISHED, NewLapFinishedEvent(playerId))
+		eventing.FireEvent(eventing.LAP_FINISHED, events.NewLapFinishedEvent(playerId))
 		player.Account().Deposit(100)
 	}
 }

@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -30,13 +29,4 @@ func CreateBank() *Player {
 
 func (p *Player) Position() int {
 	return p.position
-}
-
-func (p *Player) SetPosition(position int) {
-
-	if p.Position() == position {
-		fmt.Println(fmt.Errorf("player already at position %d", position))
-		return
-	}
-	p.position = position
 }

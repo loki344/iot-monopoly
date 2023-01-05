@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"iot-monopoly/game/adapter/repository"
-	domain "iot-monopoly/game/domain"
+	"iot-monopoly/game/domain"
 )
 
 func NewGame(playerCount int) *domain.Game {
