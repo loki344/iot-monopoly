@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	"github.com/mustafaturan/bus/v3"
-	"log"
 )
 
 func StartWebsocket(app *fiber.App) {
@@ -41,18 +40,6 @@ func registerWebsocket(app *fiber.App) fiber.Router {
 				},
 				Matcher: string(EXTERNAL_CHANNELS[i]),
 			})
-		}
-
-		var (
-			msg []byte
-			err error
-		)
-		for {
-			if _, msg, err = c.ReadMessage(); err != nil {
-				log.Println("read:", err)
-				break
-			}
-			log.Printf("recv: %s", msg)
 		}
 
 	}))
