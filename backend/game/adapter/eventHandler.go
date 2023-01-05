@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mustafaturan/bus/v3"
 	"iot-monopoly/eventing"
+	"iot-monopoly/game/adapter/repository"
 	"iot-monopoly/game/domain"
 	"iot-monopoly/game/domain/events"
 )
@@ -34,7 +35,7 @@ func startGameEventWithPayoutAcceptedHandler() {
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			payoutInformation := e.Data.(*events.GameEventWithPayoutAcceptedEvent)
-			GetCurrentGame().FindAccountById(payoutInformation.RecipientId).Deposit(payoutInformation.Amount)
+			repository.FindAccountById(payoutInformation.RecipientId).Deposit(payoutInformation.Amount)
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED),
 	})

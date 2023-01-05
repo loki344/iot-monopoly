@@ -23,7 +23,7 @@ func BuyProperty(propertyIndex int, buyerId string) {
 
 func ResolveCurrentTransaction(cardId string) (*domain.Transaction, error) {
 	pendingTransaction := repository.GetPendingTransaction()
-	payerAccount := GetCurrentGame().FindAccountById(cardId)
+	payerAccount := repository.FindAccountById(cardId)
 
 	if pendingTransaction.SenderId() != payerAccount.PlayerId() {
 		fmt.Printf("Transaction was meant for cardId %s, but received cardId %s", pendingTransaction.SenderId, cardId)
@@ -45,7 +45,7 @@ func validateTransaction(transaction *domain.Transaction) error {
 	if transaction.Accepted() {
 		return errors.New(fmt.Sprintf("cannot add already accepted transaction, please add only pending pendingTransaction: %s", transaction.Id))
 	}
-	balance := GetCurrentGame().FindAccountById(transaction.SenderId()).Balance()
+	balance := repository.FindAccountById(transaction.SenderId()).Balance()
 	if balance < transaction.Amount() {
 		return errors.New(fmt.Sprintf("Player %s has insufficient balance for transaction %s. Balance: %d, amount: %d", transaction.SenderId, transaction.Id, balance, transaction.Amount))
 	}
@@ -55,7 +55,7 @@ func validateTransaction(transaction *domain.Transaction) error {
 func transferFunds(pendingTransaction *domain.Transaction, payerAccount *domain.Account) {
 
 	fmt.Printf("Resolving Transaction %s: Transferring %d from senderAccount %s to recipientAccount %s\n", pendingTransaction.Id, pendingTransaction.Amount, pendingTransaction.SenderId, pendingTransaction.RecipientId)
-	GetCurrentGame().FindAccountById(pendingTransaction.RecipientId()).Deposit(pendingTransaction.Amount())
+	repository.FindAccountById(pendingTransaction.RecipientId()).Deposit(pendingTransaction.Amount())
 	payerAccount.Pay(pendingTransaction.Amount())
 }
 

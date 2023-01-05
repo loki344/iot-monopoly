@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"iot-monopoly/eventing"
@@ -14,8 +13,7 @@ type Game struct {
 	players            []Player
 	currentPlayerIndex int
 	ended              bool
-	properties         []PropertyField
-	eventFields        []EventField
+	board              *Board
 	pendingTransfer    *PendingPropertyTransfer
 	cards              []Card
 	pendingCard        *Card
@@ -33,39 +31,8 @@ func (game *Game) CurrentPlayerIndex() int {
 	return game.currentPlayerIndex
 }
 
-var defaultFinancialDetails = FinancialDetails{100, 100, 100, Revenue{100, 200, 300, 400, 500, 800}}
-
-//var defaultBasicFields = []domain.BasicField{
-//	{domain.BaseFieldInformation{index: "1", name: "Start"}},
-//	{domain.BaseFieldInformation{index: "5", name: "Gefaengnis"}},
-//	{domain.BaseFieldInformation{index: "9", name: "Frei parken"}},
-//}
-
-var defaultProperties = []PropertyField{
-	*NewPropertyField("Property purple 1", 2, defaultFinancialDetails),
-	*NewPropertyField("Property purple 2", 3, defaultFinancialDetails),
-	*NewPropertyField("Property orange 1", 7, defaultFinancialDetails),
-	*NewPropertyField("Property orange 2", 8, defaultFinancialDetails),
-	*NewPropertyField("Property green 1", 10, defaultFinancialDetails),
-	*NewPropertyField("Property green 2", 12, defaultFinancialDetails),
-	*NewPropertyField("Property blue 1", 14, defaultFinancialDetails),
-	*NewPropertyField("Property blue 2", 16, defaultFinancialDetails),
-}
-var defaultEventFields = []EventField{
-	*NewEventField("Ereignisfeld 1", 4, DRAW_CARD),
-	*NewEventField("Ereignisfeld 2", 6, DRAW_CARD),
-	*NewEventField("Einkommenssteuer", 11, PAY_TAX),
-	*NewEventField("Gehe ins Gefaengnis", 13, GOTO_PRISON),
-	*NewEventField("Ereignisfeld 4", 15, DRAW_CARD),
-}
-
-var defaultCardStack = []Card{
-	*NewCard("You inherited", "You're mentioned in the testament of your aunt. You receive 100 $.", func(player *Player) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_PAYOUT_ACCEPTED, events.NewGameEventWithPayoutAcceptedEvent(player.Account().Id(), 100))
-	}),
-	*NewCard("Tax bill", "You received a bill for the federal taxes of 200 $", func(player *Player) {
-		eventing.FireEvent(eventing.GAME_EVENT_WITH_FEE_ACCEPTED, events.NewGameEventWithFeeAcceptedEvent("Bank", player.Account().Id(), 200))
-	}),
+func (game Game) PlayerCount() int {
+	return len(game.players)
 }
 
 func NewGame(playerCount int) *Game {
@@ -80,7 +47,7 @@ func NewGame(playerCount int) *Game {
 	newPlayers = append(newPlayers, *CreateBank())
 
 	eventing.FireEvent(eventing.GAME_STARTED, events.NewGameStartedEvent(playerCount))
-	return &Game{players: newPlayers, currentPlayerIndex: 0, properties: defaultProperties, eventFields: defaultEventFields, cards: defaultCardStack}
+	return &Game{players: newPlayers, currentPlayerIndex: 0, board: NewBoard(defaultProperties, defaultEventFields), cards: defaultCardStack}
 }
 
 func (game *Game) TransferOwnership(transactionId string) {
@@ -92,7 +59,7 @@ func (game *Game) TransferOwnership(transactionId string) {
 
 	if pendingTransfer.Id() == transactionId {
 		fmt.Printf("Transferring ownership for property %s to %s\n", pendingTransfer.PropertyIndex(), pendingTransfer.BuyerId())
-		property := game.GetPropertyByIndex(pendingTransfer.PropertyIndex())
+		property := game.board.GetPropertyByIndex(pendingTransfer.PropertyIndex())
 		property.ownerId = pendingTransfer.BuyerId()
 		game.pendingTransfer = nil
 	}
@@ -102,22 +69,12 @@ func (game *Game) End(winnerId string) {
 	eventing.FireEvent(eventing.GAME_ENDED, events.NewGameEndedEvent(winnerId))
 }
 
-func (game Game) PlayerCount() int {
-	return len(game.players)
-}
-
-func (game *Game) MovePlayer(playerId string, position int) error {
+func (game *Game) MovePlayer(playerId string, position int) {
 
 	player := game.GetPlayerById(playerId)
 	if player.Position() == position {
 		fmt.Println(fmt.Errorf("player already at position %d", position))
-		return nil
-	}
-
-	//TODO move this code somewhere where it makes more sense
-	totalFieldCount := 16
-	if position > totalFieldCount-1 || position < 0 {
-		return errors.New(fmt.Sprintf("Fieldindex %d out of bound for Fieldlength %d", position, totalFieldCount))
+		return
 	}
 
 	game.updateCurrentPlayerIndex()
@@ -125,14 +82,13 @@ func (game *Game) MovePlayer(playerId string, position int) error {
 	player.position = position
 
 	game.triggerFieldAction(playerId, position)
-
-	return nil
 }
 
 func (game *Game) triggerFieldAction(playerId string, position int) {
-	if game.GetPropertyByIndex(position) != nil {
 
-		property := game.GetPropertyByIndex(position)
+	if game.board.GetPropertyByIndex(position) != nil {
+
+		property := game.board.GetPropertyByIndex(position)
 		if property.ownerId == "" {
 			fmt.Println("property has no owner, is buyable")
 			eventing.FireEvent(eventing.PLAYER_ON_UNOWNED_FIELD, events.NewPlayerOnUnownedFieldEvent(playerId, property))
@@ -142,8 +98,8 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 		}
 	}
 
-	if game.GetEventFieldByIndex(position) != nil {
-		eventField := game.GetEventFieldByIndex(position)
+	if game.board.GetEventFieldByIndex(position) != nil {
+		eventField := game.board.GetEventFieldByIndex(position)
 		switch eventField.Type() {
 
 		case DRAW_CARD:
@@ -193,34 +149,6 @@ func (game *Game) GetPlayerById(playerId string) *Player {
 	}
 
 	panic(fmt.Sprintf("Player with index %s not found", playerId))
-}
-
-func (game *Game) GetPropertyByIndex(index int) *PropertyField {
-
-	for i := range game.properties {
-		if game.properties[i].index == index {
-			return &game.properties[i]
-		}
-	}
-	return nil
-}
-func (game *Game) GetEventFieldByIndex(index int) *EventField {
-
-	for i := range game.eventFields {
-		if game.eventFields[i].index == index {
-			return &game.eventFields[i]
-		}
-	}
-	return nil
-}
-func (game *Game) FindAccountById(accountId string) *Account {
-
-	for i := range game.players {
-		if game.players[i].Account().Id() == accountId {
-			return game.players[i].Account()
-		}
-	}
-	return nil
 }
 
 func (game *Game) BuyProperty(propertyIndex int, buyerId string) string {
