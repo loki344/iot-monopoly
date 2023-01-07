@@ -13,12 +13,16 @@
 
 				case "TransactionCreatedEvent":
 					let transaction = eventData
-					goto(`/transactions/${transaction.Id}?recipientId=${transaction.RecipientId}&senderId=${transaction.SenderId}&amount=${transaction.Amount}`)
+					goto(`/transactions/${transaction.Id}?recipientId=${transaction.RecipientId}&
+					senderId=${transaction.SenderId}&amount=${transaction.Amount}`)
 					break
 				case "PlayerOnUnownedFieldEvent":
-					goto(`/properties/${eventData.PropertyIndex}?name=${eventData.PropertyName}&propertyPrice=${eventData.PropertyPrice}&housePrice=${eventData.HousePrice}&hotelPrice=${eventData.HotelPrice}
-					&revenueNormal=${eventData.RevenueNormal}&revenueOneHouse=${eventData.RevenueOneHouse}&revenueTwoHouses=${eventData.RevenueTwoHouses}&revenueThreeHouses=${eventData.RevenueThreeHouses}
-					&revenueFourHouses=${eventData.RevenueFourHouses}&revenueHotel=${eventData.RevenueHotel}&buyerId=${eventData.PlayerId}`)
+					goto(`/properties/${eventData.PropertyIndex}?name=${eventData.PropertyName}
+					&propertyPrice=${eventData.PropertyPrice}&housePrice=${eventData.HousePrice}
+					&hotelPrice=${eventData.HotelPrice}&revenueNormal=${eventData.RevenueNormal}
+					&revenueOneHouse=${eventData.RevenueOneHouse}&revenueTwoHouses=${eventData.RevenueTwoHouses}
+					&revenueThreeHouses=${eventData.RevenueThreeHouses}&revenueFourHouses=${eventData.RevenueFourHouses}
+					&revenueHotel=${eventData.RevenueHotel}&buyerId=${eventData.PlayerId}`)
 					break
 				case "TransactionResolvedEvent":
 					goto("/game")
