@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"iot-monopoly/game/adapter/repository"
+	"iot-monopoly/game/api/dto"
 	"iot-monopoly/game/domain"
 )
 
@@ -21,4 +22,15 @@ func BuyProperty(propertyIndex int, buyerId string) {
 
 func ConfirmCurrentCard() {
 	GetCurrentGame().ConfirmCurrentCard()
+}
+
+func FindPlayerById(playerId string) dto.PlayerDTO {
+	propertyCount := 0
+	for _, property := range GetCurrentGame().Properties() {
+		if property.OwnerId() == playerId {
+			propertyCount++
+		}
+	}
+
+	return dto.PlayerDTOFromPlayer(*GetCurrentGame().GetPlayerById(playerId), propertyCount)
 }

@@ -21,6 +21,8 @@ const (
 	GAME_EVENT_WITH_PAYOUT_ACCEPTED ChannelName = "gameEventWithPayoutAccepted"
 	GAME_EVENT_WITH_FEE_ACCEPTED    ChannelName = "gameEventWithFeeAccepted"
 	CARD_DREW                       ChannelName = "cardDrew"
+	PLAYER_DATA_UPDATED             ChannelName = "playerDataUpdated"
+	ACCOUNT_DATA_UPDATED            ChannelName = "accountDataUpdated"
 )
 
 func RegisterEventHandler(handler bus.Handler) string {

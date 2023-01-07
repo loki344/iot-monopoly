@@ -60,7 +60,7 @@ func Routes(app *fiber.App) {
 		currentGame := service.GetCurrentGame()
 		currentGame.MovePlayer(playerId, patchedPlayer.Position)
 
-		return c.Status(200).JSON(dto.PlayerDTOFromPlayer(*currentGame.GetPlayerById(playerId)))
+		return c.Status(200).JSON(service.FindPlayerById(playerId))
 	})
 
 	app.Patch("/games/current/properties/:index", func(c *fiber.Ctx) error {

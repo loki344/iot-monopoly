@@ -46,7 +46,7 @@ func startGameEventWithFeeAcceptedHandler() {
 	eventing.RegisterEventHandler(bus.Handler{
 		Handle: func(ctx context.Context, e bus.Event) {
 			transactionInformation := e.Data.(*domain.GameEventWithFeeAcceptedEvent)
-			domain.NewTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PayerId, transactionInformation.Fee)
+			repository.CreateTransaction(domain.NewTransaction(uuid.NewString(), transactionInformation.RecipientId, transactionInformation.PayerId, transactionInformation.Fee))
 		},
 		Matcher: string(eventing.GAME_EVENT_WITH_FEE_ACCEPTED),
 	})

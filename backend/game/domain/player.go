@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"iot-monopoly/eventing"
 	"strconv"
 )
 
@@ -29,6 +30,7 @@ func (p *Player) Position() int {
 
 func (p *Player) IncreasePrisonCardCount() {
 	p.prisonCardCount = p.prisonCardCount + 1
+	eventing.FireEvent(eventing.PLAYER_DATA_UPDATED, NewPlayerDataUpdatedEvent())
 }
 func (p *Player) DecreasePrisonCardCount() {
 	p.prisonCardCount = p.prisonCardCount - 1

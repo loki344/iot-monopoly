@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"iot-monopoly/eventing"
 	"strconv"
 )
 
@@ -35,9 +36,11 @@ func (a *Account) Balance() int {
 func (a *Account) Deposit(amount int) {
 	fmt.Printf("Deposit %d to account %s\n", amount, a.id)
 	a.balance += amount
+	eventing.FireEvent(eventing.ACCOUNT_DATA_UPDATED, NewAccountDataUpdatedEvent())
 }
 
 func (a *Account) Pay(amount int) {
 	fmt.Printf("Removing %d from account %s\n", amount, a.id)
 	a.balance -= amount
+	eventing.FireEvent(eventing.ACCOUNT_DATA_UPDATED, NewAccountDataUpdatedEvent())
 }

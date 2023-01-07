@@ -24,7 +24,7 @@ func StartWebsocket(app *fiber.App) {
 	registerWebsocket(app)
 }
 
-var EXTERNAL_CHANNELS = []ChannelName{PLAYER_ON_UNOWNED_FIELD, TRANSACTION_CREATED, TRANSACTION_RESOLVED, CARD_DREW, LAP_FINISHED}
+var EXTERNAL_CHANNELS = []ChannelName{PLAYER_ON_UNOWNED_FIELD, TRANSACTION_CREATED, TRANSACTION_RESOLVED, CARD_DREW, LAP_FINISHED, ACCOUNT_DATA_UPDATED, PLAYER_DATA_UPDATED}
 
 func registerWebsocket(app *fiber.App) fiber.Router {
 	return app.Get("/ws", websocket.New(func(c *websocket.Conn) {

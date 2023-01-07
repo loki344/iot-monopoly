@@ -20,7 +20,7 @@
 					break
 
 				case "PlayerOnUnownedFieldEvent":
-					goto(`/properties/${eventData.PropertyIndex}?name=${eventData.ProertyName}&propertyPrice=${eventData.PropertyPrice}&housePrice=${eventData.HousePrice}&hotelPrice=${eventData.HotelPrice}
+					goto(`/properties/${eventData.PropertyIndex}?name=${eventData.PropertyName}&propertyPrice=${eventData.PropertyPrice}&housePrice=${eventData.HousePrice}&hotelPrice=${eventData.HotelPrice}
 					&revenueNormal=${eventData.RevenueNormal}&revenueOneHouse=${eventData.RevenueOneHouse}&revenueTwoHouses=${eventData.RevenueTwoHouses}&revenueThreeHouses=${eventData.RevenueThreeHouses}
 					&revenueFourHouses=${eventData.RevenueFourHouses}&revenueHotel=${eventData.RevenueHotel}&buyerId=${eventData.PlayerId}`)
 					break
@@ -30,6 +30,11 @@
 				case "CardDrewEvent":
 					goto(`/card-event?title=${eventData.Title}&text=${eventData.Text}`)
 					break
+				case "PlayerDataUpdatedEvent":
+				case "AccountDataUpdatedEvent":
+					goto("/game")
+					break
+
 			}
 
 

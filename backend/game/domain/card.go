@@ -8,10 +8,10 @@ type Card struct {
 	title  string
 	text   string
 	action func(player *Player)
-	player Player
+	player *Player
 }
 
-func (card *Card) SetPlayer(player Player) {
+func (card *Card) SetPlayer(player *Player) {
 	card.player = player
 }
 
@@ -24,7 +24,7 @@ func (card Card) Text() string {
 }
 
 func (card Card) TriggerAction() {
-	card.action(&card.player)
+	card.action(card.player)
 }
 
 func newCard(title string, text string, action func(player *Player)) *Card {

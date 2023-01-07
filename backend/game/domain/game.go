@@ -124,7 +124,7 @@ func (game *Game) triggerFieldAction(playerId string, position int) {
 func (game *Game) drawCard(playerId string) {
 	rand.Seed(time.Now().UnixNano())
 	card := game.cards[rand.Intn(len(game.cards))]
-	card.SetPlayer(*game.GetPlayerById(playerId))
+	card.SetPlayer(game.GetPlayerById(playerId))
 
 	game.pendingCard = &card
 	eventing.FireEvent(eventing.CARD_DREW, newCardDrewEvent(card.title, card.text))
@@ -170,4 +170,8 @@ func (game *Game) ConfirmCurrentCard() {
 func (game *Game) goToPrison(playerId string) {
 	game.board.goToPrison(playerId)
 	game.GetPlayerById(playerId).position = game.board.prison.index
+}
+
+func (game *Game) Properties() []PropertyField {
+	return game.board.properties
 }

@@ -2,6 +2,9 @@
 	import Tile from '$lib/components/wrapper/Tile.svelte';
 	import Text from '$lib/components/atom/Text.svelte';
 	import type { PageData } from './$types';
+	import TiLocation from 'svelte-icons/ti/TiLocation.svelte'
+	import GiCardJoker from 'svelte-icons/gi/GiCardJoker.svelte'
+
 
 	export let data: PageData;
 	let game = JSON.parse(data.game)
@@ -28,6 +31,22 @@
 	{#each game.players as player, i}
 		<Tile active={game.currentPlayerIndex === i} class={`absolute ${getClass(i)}`}>
 			<Text>Player {i + 1}</Text><Text class="text-center">{player.account.balance} $</Text>
+			<div class="flex flex-row justify-around">
+				<div class="flex flex-row">
+					<div class="w-16">
+						<TiLocation></TiLocation>
+					</div>
+				<Text class="inline">{player.propertyCount}</Text>
+
+				</div>
+				<div class="flex flex-row">
+				<div class="w-16">
+					<GiCardJoker></GiCardJoker>
+				</div>
+				<Text class="inline">{player.escapeFromPrisonCardCount}</Text>
+
+				</div>
+			</div>
 		</Tile>
 	{/each}
 </div>

@@ -119,3 +119,19 @@ func newTransactionResolvedEvent(transactionId string) TransactionResolvedEvent 
 
 	return TransactionResolvedEvent{BaseEvent: eventingDomain.EventType(&TransactionResolvedEvent{}), TransactionId: transactionId}
 }
+
+type PlayerDataUpdatedEvent struct {
+	eventingDomain.BaseEvent
+}
+
+func NewPlayerDataUpdatedEvent() *PlayerDataUpdatedEvent {
+	return &PlayerDataUpdatedEvent{BaseEvent: eventingDomain.EventType(&PlayerDataUpdatedEvent{})}
+}
+
+type AccountDataUpdatedEvent struct {
+	eventingDomain.BaseEvent
+}
+
+func NewAccountDataUpdatedEvent() *AccountDataUpdatedEvent {
+	return &AccountDataUpdatedEvent{BaseEvent: eventingDomain.EventType(&AccountDataUpdatedEvent{})}
+}
