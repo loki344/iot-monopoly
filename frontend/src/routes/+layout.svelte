@@ -8,17 +8,13 @@
 		const socket = new WebSocket('ws://localhost:3000/ws');
 		
 		socket.onmessage = (backendEvent: MessageEvent<any>) => {
-			const eventData = JSON.parse(backendEvent.data);
-			console.log(eventData);
-			
-
+			const eventData = JSON.parse(backendEvent.data);		
 			switch(eventData.Type.split('.')[1]){
 
 				case "TransactionCreatedEvent":
 					let transaction = eventData
 					goto(`/transactions/${transaction.Id}?recipientId=${transaction.RecipientId}&senderId=${transaction.SenderId}&amount=${transaction.Amount}`)
 					break
-
 				case "PlayerOnUnownedFieldEvent":
 					goto(`/properties/${eventData.PropertyIndex}?name=${eventData.PropertyName}&propertyPrice=${eventData.PropertyPrice}&housePrice=${eventData.HousePrice}&hotelPrice=${eventData.HotelPrice}
 					&revenueNormal=${eventData.RevenueNormal}&revenueOneHouse=${eventData.RevenueOneHouse}&revenueTwoHouses=${eventData.RevenueTwoHouses}&revenueThreeHouses=${eventData.RevenueThreeHouses}
@@ -34,11 +30,7 @@
 				case "AccountDataUpdatedEvent":
 					goto("/game")
 					break
-
 			}
-
-
-			
 		};
 	});
 </script>
