@@ -3,7 +3,7 @@
 	import Button from '$lib/components/atom/Button.svelte';
 
 	import Title from '$lib/components/atom/Title.svelte';
-	import Tags from '$lib/components/molecule/Tags.svelte';
+	import RoundButtons from '$lib/components/molecule/RoundButtons.svelte';
 	import { BASE_URL } from '$lib/http/backendClient';
 
 	async function startGame(playerCount: Number) {
@@ -23,7 +23,7 @@
 
 <div class="flex flex-col items-center justify-around h-screen">
 	<Title type="medium">HOW MANY ARE PLAYING?</Title>
-	<Tags bind:value={playerCount} items={['1', '2', '3', '4']} />
+	<RoundButtons bind:value={playerCount} items={['1', '2', '3', '4']} />
 	<Button
 		class={!playerCount ? 'invisible' : ''}
 		onClick={async () => {

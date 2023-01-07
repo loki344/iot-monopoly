@@ -37,7 +37,7 @@ func Routes(app *fiber.App) {
 
 		currentGame := service.GetCurrentGame()
 		if game.Ended {
-			currentGame.End("")
+			service.EndGame()
 		}
 		return c.Status(200).JSON(currentGame)
 	})

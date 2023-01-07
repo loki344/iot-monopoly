@@ -9,6 +9,10 @@ func SaveGame(game *domain.Game) *domain.Game {
 	return currentGame
 }
 
+func DeleteGame() {
+	currentGame = nil
+}
+
 func GetCurrentGame() *domain.Game {
 	return currentGame
 }

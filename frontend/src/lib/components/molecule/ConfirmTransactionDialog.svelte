@@ -4,9 +4,10 @@
 	import Arrow from "../atom/Arrow.svelte";
 	import PriceTag from "../atom/PriceTag.svelte";
 	import RfidWaves from "../atom/RfidWaves.svelte";
-	import Tag from "../atom/Tag.svelte";
+	import RoundButton from "../atom/RoundButton.svelte";
     import GiBank from 'svelte-icons/gi/GiBank.svelte'
 	import Title from "../atom/Title.svelte";
+    import Text from "../atom/Text.svelte";
 
     export let transaction: {senderId: string, recipientId: string, amount: number}
     const transformIdToTagText = (id: string) => {
@@ -30,17 +31,17 @@
 <div class={`flex flex-row w-1/3 justify-between align-center items-center self-center ${clazz}`}>
 
     {#if sender === "Bank"}
-    <Tag shadow={false} big={true} active><div class="w-2"><GiBank></GiBank></div></Tag>
+    <RoundButton shadow={false} big={true} active><div class="w-2"><GiBank></GiBank></div></RoundButton>
     {:else}
-    <Tag shadow={false} big={true} active>{sender}</Tag>
+    <RoundButton shadow={false} big={true} active><Text>{sender}</Text></RoundButton>
     {/if}
 
     <Arrow class={'w-80'}></Arrow>
 
     {#if recipient === "Bank"}
-    <Tag shadow={false} big={true} active><div class="w-28"><GiBank></GiBank></div></Tag>
+    <RoundButton shadow={false} big={true} active><div class="w-28"><GiBank></GiBank></div></RoundButton>
     {:else}
-    <Tag shadow={false} big={true} active>{recipient}</Tag>
+    <RoundButton shadow={false} big={true} active>{recipient}</RoundButton>
     {/if}</div>
 <div class="flex justify-center">
     <RfidWaves class={'w-80'}></RfidWaves>

@@ -4,11 +4,12 @@
 	import type { PageData } from './$types';
 	import TiLocation from 'svelte-icons/ti/TiLocation.svelte'
 	import GiCardJoker from 'svelte-icons/gi/GiCardJoker.svelte'
+	import { goto } from '$app/navigation';
+	import Button from '$lib/components/atom/Button.svelte';
 
 
 	export let data: PageData;
 	let game = JSON.parse(data.game)
-	console.log(game);
 	
 	const getClass = (index: Number): String => {
 
@@ -28,6 +29,9 @@
 </script>
 
 <div>
+	<Button class="text-center absolute left-[40%] top-10" onClick={() => goto('/menu')}>
+		menu
+	</Button>
 	{#each game.players as player, i}
 		<Tile active={game.currentPlayerIndex === i} class={`absolute ${getClass(i)}`}>
 			<Text>Player {i + 1}</Text><Text class="text-center">{player.account.balance} $</Text>
@@ -44,7 +48,6 @@
 					<GiCardJoker></GiCardJoker>
 				</div>
 				<Text class="inline">{player.escapeFromPrisonCardCount}</Text>
-
 				</div>
 			</div>
 		</Tile>

@@ -24,6 +24,12 @@ func ConfirmCurrentCard() {
 	GetCurrentGame().ConfirmCurrentCard()
 }
 
+func EndGame() {
+
+	GetCurrentGame().End("")
+	repository.DeleteGame()
+}
+
 func FindPlayerById(playerId string) dto.PlayerDTO {
 	propertyCount := 0
 	for _, property := range GetCurrentGame().Properties() {
