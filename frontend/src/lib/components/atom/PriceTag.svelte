@@ -8,4 +8,4 @@
 </script>
 
 
-<Tag>{price.toLocaleString()} $</Tag>
+<Tag class={clazz}>{price.toLocaleString()} $</Tag>
