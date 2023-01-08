@@ -52,7 +52,7 @@ while continue_reading:
         (status, uid) = MIFAREReader.MFRC522_Anticoll()
         tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
         try:
-            requests.patch("http://localhost:3000/transactions/latest", data={"accepted": True, "cardId": tagId})
+            requests.patch("http://localhost:3000/games/current/transactions/latest", data={"accepted": True, "senderId": tagId})
         except Exception:
             print("Request failed")
     
