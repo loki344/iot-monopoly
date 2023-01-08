@@ -7,12 +7,12 @@ import (
 	"iot-monopoly/game/domain"
 )
 
-func ResolveCurrentTransaction(cardId string) (*domain.Transaction, error) {
+func ResolveCurrentTransaction(accountId string) (*domain.Transaction, error) {
 	pendingTransaction := repository.GetPendingTransaction()
-	payerAccount := repository.FindAccountById(cardId)
+	payerAccount := repository.FindAccountById(accountId)
 
 	if pendingTransaction.SenderId() != payerAccount.Id() {
-		fmt.Printf("Transaction was meant for cardId %s, but received cardId %s", pendingTransaction.SenderId(), cardId)
+		fmt.Printf("Transaction was meant for accountId %s, but received accountId %s", pendingTransaction.SenderId(), accountId)
 	}
 
 	err := validateTransaction(pendingTransaction)

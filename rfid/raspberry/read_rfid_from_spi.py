@@ -26,6 +26,12 @@ import signal
 import requests
 
 continue_reading = True
+tagIdToAccountIdMap = {"33-A8-8A-10": "Account_1", "1304-B6-1A": "Account_2", "43-F1-E70E": "Account_3", "A3-D9-350F": "Account_4"}
+
+def map_tag_id_to_account_id(tag_id):
+    account_id = tagIdToAccountIdMap[tag_id]
+    print("mapped tagId: "+ tag_id +" to accountId: " + str(account_id))
+    return account_id
 
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
@@ -50,9 +56,9 @@ while continue_reading:
 
         # Get the UID of the card
         (status, uid) = MIFAREReader.MFRC522_Anticoll()
-        tagId = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
+        tag_id = "{}-{}-{}-{}".format(uid[0], uid[1], uid[2], uid[3])
         try:
-            requests.patch("http://localhost:3000/games/current/transactions/latest", data={"accepted": True, "senderId": tagId})
+            requests.patch("http://localhost:3000/games/current/transactions/latest", data={"accepted": True, "senderId": map_tag_id_to_account_id(tag_id)})
         except Exception:
             print("Request failed")
     
