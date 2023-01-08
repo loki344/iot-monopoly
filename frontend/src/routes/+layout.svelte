@@ -24,12 +24,10 @@
 					&revenueThreeHouses=${eventData.RevenueThreeHouses}&revenueFourHouses=${eventData.RevenueFourHouses}
 					&revenueHotel=${eventData.RevenueHotel}&buyerId=${eventData.PlayerId}`)
 					break
-				case "TransactionResolvedEvent":
-					goto("/game")
-					break
 				case "CardDrewEvent":
 					goto(`/card-event?title=${eventData.Title}&text=${eventData.Text}`)
 					break
+				case "TransactionResolvedEvent":
 				case "PlayerDataUpdatedEvent":
 				case "AccountDataUpdatedEvent":
 					goto("/game")
