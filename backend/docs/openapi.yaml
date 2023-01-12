@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: RFID-Monopoly
+  version: 1.0.0
+  description: This is the backend to provide the game logic for monopoly
+tags:
+- name: "games"
+paths:
+  /games:
+    post:
+      tags:
+      - "games"
+      summary: Create a new game
+  /games/current:
+    get:
+      tags:
+      - "games"
+      summary: Get the current game
+    patch:
+      tags:
+      - "games"
+      summary: Patch the information of the current game (e.g. to end it)
+  /games/current/players/{playerId}:
+    patch:
+      tags:
+      - "games"
+      summary: Patch a player (e.g. the position)
+  /games/current/properties/{propertyIndex}:
+    patch:
+      tags:
+      - "games"
+      summary: Patch a property (e.g. its owner)
+  /games/current/transactions/current:
+    patch:
+      tags:
+      - "games"
+      summary: Patch the current transaction (e.g. accept it)
+  /games/current/cards/current:
+    patch:
+      tags:
+      - "games"
+      summary: Patch the current card (e.g. accept it)
+  
+    
+    
+    
+    
+    
